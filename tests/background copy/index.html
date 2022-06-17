@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallax Class</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="main">
+        <div id="container">
+            <canvas id="canvas1"></canvas>
+        </div>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <td>layer</td>
+                        <td>variable</td>
+                        <td>current value</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>back</td>
+                        <td>x</td>
+                        <td><span id="showBackX"></span></td>
+                    </tr>
+                    <tr>
+                        <td>back</td>
+                        <td>x + width</td>
+                        <td><span id="showBackXPlus"></span></td>
+                    </tr>
+                    <tr>
+                        <td>back</td>
+                        <td>difference</td>
+                        <td><span id="showBackDifference"></span></td>
+                    </tr>
+
+                    <tr>
+                        <td>middle</td>
+                        <td>x</td>
+                        <td><span id="showMiddleX"></span></td>
+                    </tr>
+                    <tr>
+                        <td>middle</td>
+                        <td>x + width</td>
+                        <td><span id="showMiddleXPlus"></span></td>
+                    </tr>
+                    <tr>
+                        <td>middle</td>
+                        <td>difference</td>
+                        <td><span id="showMiddleDifference"></span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>near</td>
+                        <td>x</td>
+                        <td><span id="showNearX"></span></td>
+                    </tr>
+                    <tr>
+                        <td>near</td>
+                        <td>x + width</td>
+                        <td><span id="showNearXPlus"></span></td>
+                    </tr>
+                    <tr>
+                        <td>near</td>
+                        <td>Difference</td>
+                        <td><span id="showNearDifference"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+</body>
+</html>
