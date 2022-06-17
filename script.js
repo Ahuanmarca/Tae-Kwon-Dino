@@ -312,6 +312,7 @@ function animate() {
 
     
 
+    // Showing values below the character
     document.querySelector("#showAction").innerText = playerState.action;
     document.querySelector("#showDirection").innerText = playerState.direction;
     document.querySelector("#showJumping").innerText = playerState.jumping;
@@ -321,6 +322,11 @@ function animate() {
     document.querySelector("#showFrameCoordinate").innerText = frameX;
     document.querySelector("#showLoopFrame").innerText = loopFrame;
     document.querySelector("#showGameFrame").innerText = gameFrame;
+
+    document.querySelector("#showBackX").innerText = background.layers[0].x;
+    document.querySelector("#showMiddleX").innerText = background.layers[1].x;
+    document.querySelector("#showNearX").innerText = background.layers[2].x;
+    document.querySelector('#showGroundX').innerText = background.layers[3].x;
 
     (loopFrame % staggerFrames == 0) && gameFrame++;
     loopFrame++;
