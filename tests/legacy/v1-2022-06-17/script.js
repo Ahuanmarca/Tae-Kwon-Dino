@@ -43,32 +43,6 @@ const background = {
 }
 
 
-class Player {
-    constructor() {
-
-        this.currentSpeed = 0;
-
-        this.action = "idle";
-        this.direction = "right";
-        this.groundPosition = floorPosition - spriteHeight;
-
-        this.jumping = false;
-        this.running = false;
-
-        this.x = CANVAS_WIDTH / 2 - spriteHeight / 2;
-        this.y = floorPosition - spriteHeight;
-        this.velocityX = 0;
-        this.velocityY = 0;
-
-        this.movementSpeed = 0.3;
-        this.jump_force = -30;
-        
-    }
-}
-
-const shyGuy = new Player();
-
-
 // Layer class needs:
 //      image URL
 //      distance
