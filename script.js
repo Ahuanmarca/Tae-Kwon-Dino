@@ -44,29 +44,35 @@ const background = {
 
 
 class Player {
-    constructor() {
+    constructor(x, y) {
 
+        // Absolute position on map
+        this.mapPosition = 100;
+
+        // The background needs this
         this.currentSpeed = 0;
 
-        this.action = "idle";
+        this.animation = "idle";
         this.direction = "right";
         this.groundPosition = floorPosition - spriteHeight;
 
         this.jumping = false;
         this.running = false;
 
-        this.x = CANVAS_WIDTH / 2 - spriteHeight / 2;
-        this.y = floorPosition - spriteHeight;
+        this.x = x;
+        this.y = y;
         this.velocityX = 0;
         this.velocityY = 0;
 
         this.movementSpeed = 0.3;
         this.jump_force = -30;
-        
     }
+    
 }
 
-const shyGuy = new Player();
+const shyGuy = new Player(
+    x = CANVAS_WIDTH / 2 - spriteHeight / 2, 
+    y = floorPosition - spriteHeight);
 
 
 // Layer class needs:
@@ -209,6 +215,8 @@ class InputHandler {
 
 const input = new InputHandler();
 
+const jumpLand = document.querySelector("#jumpLand");
+
 function animate() {
 
     let tmpPlayerSpeed = 0;
@@ -307,8 +315,15 @@ function animate() {
     // Floor limit
     if (playerState.y > floorPosition - spriteHeight) {
         playerState.y = floorPosition - spriteHeight;
+
+        if (playerState.jumping == true) {
+            jumpLand.play();
+        }
+
         playerState.jumping = false;
     }
+
+
 
     context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
@@ -362,10 +377,25 @@ function animate() {
 
 animate();
 
+const jumpStart = document.querySelector("#jumpStart");
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowUp') {
+        jumpStart.play();
+    }
+});
 
 
 
+// const byteSound = document.querySelector("#byteSound");
+// window.addEventListener('keydown', (e) => {
+//     if (e.key === ' ') {
+//         byteSound.play();
+//     }
+// });
 
+// window.addEventListener('keydown', (e) => {
+//     console.log(e.key);
+// });
 
 
 
