@@ -7,9 +7,11 @@ const spriteWidth = 96;
 const spriteHeight = 72;
 const groundThickness = 55;
 const floorPosition = CANVAS_HEIGHT - groundThickness;
+const spriteGroundPosition = floorPosition - spriteHeight;
 const faceRightSheet = importImage("assets/dino-right.png");
 const faceLeftSheet = importImage("assets/dino-left.png");
 const maximumSpriteSpeed = 1;
+
 
 let gameFrame = 0;
 let loopFrame = 0;
@@ -42,47 +44,59 @@ const background = {
     layers: [],
 }
 
+// const foo = import("./assets/dino-right.png")
+
 
 class Player {
     constructor(x, y) {
-
-        // Absolute position on map
-        this.mapPosition = 100;
-
-        // The background needs this
-        this.currentSpeed = 0;
-
-        this.animation = "idle";
-        this.direction = "right";
-        this.groundPosition = floorPosition - spriteHeight;
-
-        this.jumping = false;
-        this.running = false;
-
-        this.x = x;
-        this.y = y;
-        this.velocityX = 0;
-        this.velocityY = 0;
-
-        this.movementSpeed = 0.3;
-        this.jump_force = -30;
-    }
-    
-    updateAnimation(newAnimation) {
-        this.animation = newAnimation;
-    }
-
-    updateDirection(newDirection) {
-        this.direction = newDirection;
+        this.state = {
+            absolutePosition:100,
+            currentSpeed: 0,
+            action: "idle",
+            direction: "right",
+            groundPosition: floorPosition - spriteHeight, // ! DON'T LIKE
+            isGrounded : true, // ! NOT USING
+            jumping: false,
+            running: false,
+            x: x,
+            y: y,
+            velocityX: 0,
+            velocityY: 0,
+            movementSpeed: 0.3,
+            jumpForce: -30,
+            // spriteData: 
+        }
     }
 
 
+    set = {
+        action: {
+            idle: () => this.state.action = "idle",
+            walk: () => this.state.action = "walk",
+            run: () => this.state.action = "run",
+            jump: () => this.state.action = "jump",
+        },
+        direction: {
+            right: () => this.state.direction = "right",
+            left: () => this.state.direction = "left",
+        },
+    }
 
+    // Sprite canvas animation
+    draw(frameX) {
+        context.drawImage(
+            (this.state.direction == "right") ? faceRightSheet : faceLeftSheet,
+            frameX, 0, spriteWidth, spriteHeight,
+            this.state.x, this.state.y, spriteWidth, spriteHeight
+        );
+    }
 }
 
 const shyGuy = new Player(
     x = CANVAS_WIDTH / 2 - spriteHeight / 2, 
-    y = floorPosition - spriteHeight);
+    y = floorPosition - spriteHeight
+);
+
 
 
 // Layer class needs:
@@ -224,22 +238,13 @@ class InputHandler {
 }
 
 const input = new InputHandler();
+const jumpLand = document.querySelector("#SNDjumpLand");
+const URU = new Player(CANVAS_WIDTH / 4, 353);
 
-const jumpLand = document.querySelector("#jumpLand");
+let useDino = false;
+let useUru = true;
 
 function animate() {
-
-    let tmpPlayerSpeed = 0;
-
-    if (input.keys.includes("ArrowRight") && input.keys.includes("Shift")) tmpPlayerSpeed = 4;
-    if (input.keys.includes("ArrowLeft") && input.keys.includes("Shift")) tmpPlayerSpeed = -4;
-    if (input.keys.includes("ArrowRight") && !input.keys.includes("Shift")) tmpPlayerSpeed = 1;
-    if (input.keys.includes("ArrowLeft") && !input.keys.includes("Shift")) tmpPlayerSpeed = -1;
-    
-    playerState.currentSpeed = tmpPlayerSpeed;
-    background.baseSpeed = playerState.currentSpeed;
-
-
 
     // ------------------------------
     // WICH KEYS ARE BEING PRESSED ??
@@ -251,89 +256,185 @@ function animate() {
     const ArrowUp = input.keys.includes("ArrowUp");
     const ArorwDown = input.keys.includes("ArrowDown");
 
-    // ------------------------------
-    // UDDATE THE SPRITE ANIMATION !!
-    // ------------------------------
-    if (KeyQty === 0) playerState.action = "idle";
-    playerState.running = Shift ? true : false;
 
-    if (KeyQty === 1) {
-        if (Shift) playerState.action = "idle";
+    if (useUru) {
+
+        // ------------------------------
+        // UDDATE THE SPRITE ANIMATION !! -- USING CLASS !!
+        // ------------------------------
+
+        // Idle ?
+        if (!ArrowLeft && !ArrowRight && !ArrowUp) URU.set.action.idle();
+
+        // Jumping ?
+        URU.state.jumping = (URU.state.y != URU.state.groundPosition) ? true : false;
+
+        // Running ?
+        if (Shift && ArrowLeft) {
+            URU.set.action.run();
+            URU.set.direction.left();
+        }
+        if (Shift && ArrowRight) {
+            URU.set.action.run();
+            URU.set.direction.right();
+        }
+        
+        // Walking ?
+        if (KeyQty === 1) {
+            if (Shift) URU.set.action.idle();
+            if (ArrowRight) {
+                URU.set.action.walk();
+                URU.set.direction.right();
+            }       
+            if (ArrowLeft) {
+                URU.set.action.walk();
+                URU.set.direction.left();
+            }
+        }
+
+        // -------------------------------------------
+        // UPDATE CHARACTER'S POSITION IN THE SCREEN!! -- USING CLASS !!
+        // -------------------------------------------
+
+        // Move Left Or Right
         if (ArrowRight) {
-            playerState.action = "walk";
-            playerState.direction = "right";
-        }       
+            URU.state.velocityX += URU.state.movementSpeed;
+        }
         if (ArrowLeft) {
-            playerState.action = "walk";
-            playerState.direction = "left";
+            URU.state.velocityX -= URU.state.movementSpeed;
         }
+
+        // Jump
+        if (ArrowUp && !URU.state.jumping) {
+            URU.state.velocityY = URU.state.jumpForce;
+            URU.state.jumping = true;
+            const jumpStart = document.querySelector("#SNDjumpStart");
+            jumpStart.play();
+        }
+
+        // Gravity
+        URU.state.velocityY += 1;
+
+        // Vertical Movement
+        URU.state.y += URU.state.velocityY;
+
+        // Friction
+        URU.state.velocityX *= 0.9;
+        URU.state.velocityY *= 0.9;
+
+        // Floor Limit
+        if (URU.state.y > floorPosition - spriteHeight) {
+            URU.state.y = floorPosition - spriteHeight;
+
+            if (URU.state.jumping == true) {
+                jumpLand.play();
+            }
+
+            URU.state.jumping = false;
+        }
+
+
     }
 
-    if (KeyQty == 2) {
-        if (playerState.running) {
-            if (ArrowRight) {
-                playerState.action = "run";
-                playerState.direction = "right";
-            }
-            if (ArrowLeft) {
-                playerState.action = "run";
-                playerState.direction = "left";
-            }
-        } else {
+
+
+
+    let tmpPlayerSpeed = 0;
+
+    if (input.keys.includes("ArrowRight") && input.keys.includes("Shift")) tmpPlayerSpeed = 4;
+    if (input.keys.includes("ArrowLeft") && input.keys.includes("Shift")) tmpPlayerSpeed = -4;
+    if (input.keys.includes("ArrowRight") && !input.keys.includes("Shift")) tmpPlayerSpeed = 2;
+    if (input.keys.includes("ArrowLeft") && !input.keys.includes("Shift")) tmpPlayerSpeed = -2;
+    
+    playerState.currentSpeed = tmpPlayerSpeed;
+    background.baseSpeed = playerState.currentSpeed;
+
+
+
+
+    if (useDino) {
+
+        // ------------------------------
+        // UDDATE THE SPRITE ANIMATION !! -- NOT USING CLASS
+        // ------------------------------
+        if (KeyQty === 0) playerState.action = "idle";
+        playerState.running = Shift ? true : false;
+
+        if (KeyQty === 1) {
+            if (Shift) playerState.action = "idle";
             if (ArrowRight) {
                 playerState.action = "walk";
                 playerState.direction = "right";
-            }
+            }       
             if (ArrowLeft) {
                 playerState.action = "walk";
                 playerState.direction = "left";
             }
-        }     
-    }
-
-
-    // -------------------------------------------
-    // UPDATE CHARACTER'S POSITION IN THE SCREEN!!
-    // -------------------------------------------
-
-
-    // Move to the sides
-    if (ArrowRight) {
-        playerState.velocityX += playerState.movementSpeed;
-    }
-    if (ArrowLeft) {
-        playerState.velocityX -= playerState.movementSpeed;
-    }
-
-
-    // Jump
-    if (ArrowUp && !playerState.jumping) {
-        playerState.velocityY = playerState.jump_force;
-        playerState.jumping = true;
-    }
-
-    // Gravity
-    playerState.velocityY += 1;
-
-    // Vertical movement
-    playerState.y += playerState.velocityY;
-
-    // Friction
-    playerState.velocityX *= 0.9;
-    playerState.velocityY *= 0.9;
-
-    // Floor limit
-    if (playerState.y > floorPosition - spriteHeight) {
-        playerState.y = floorPosition - spriteHeight;
-
-        if (playerState.jumping == true) {
-            jumpLand.play();
         }
 
-        playerState.jumping = false;
+        if (KeyQty == 2) {
+            if (playerState.running) {
+                if (ArrowRight) {
+                    playerState.action = "run";
+                    playerState.direction = "right";
+                }
+                if (ArrowLeft) {
+                    playerState.action = "run";
+                    playerState.direction = "left";
+                }
+            } else {
+                if (ArrowRight) {
+                    playerState.action = "walk";
+                    playerState.direction = "right";
+                }
+                if (ArrowLeft) {
+                    playerState.action = "walk";
+                    playerState.direction = "left";
+                }
+            }     
+        }
+
+
+        // -------------------------------------------
+        // UPDATE CHARACTER'S POSITION IN THE SCREEN!!
+        // -------------------------------------------
+        
+        // Move to the sides
+        if (ArrowRight) {
+            playerState.velocityX += playerState.movementSpeed;
+        }
+        if (ArrowLeft) {
+            playerState.velocityX -= playerState.movementSpeed;
+        }
+
+
+        // Jump
+        if (ArrowUp && !playerState.jumping) {
+            playerState.velocityY = playerState.jump_force;
+            playerState.jumping = true;
+        }
+
+        // Gravity
+        playerState.velocityY += 1;
+
+        // Vertical movement
+        playerState.y += playerState.velocityY;
+
+        // Friction
+        playerState.velocityX *= 0.9;
+        playerState.velocityY *= 0.9;
+
+        // Floor limit
+        if (playerState.y > floorPosition - spriteHeight) {
+            playerState.y = floorPosition - spriteHeight;
+
+            if (playerState.jumping == true) {
+                jumpLand.play();
+            }
+
+            playerState.jumping = false;
+        }
     }
-
-
 
     context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
@@ -341,7 +442,8 @@ function animate() {
     let animationFrame = gameFrame % animationLength;
 
     // Frame coordinate inside the PNG file
-    let frameX = animations[playerState.action][animationFrame];
+    // let frameX = animations[playerState.action][animationFrame];
+    let frameX = animations[URU.state.action][animationFrame];
 
     background.layers.forEach(layer => {
         layer.updateSpeed();
@@ -351,10 +453,16 @@ function animate() {
 
     // Sprite canvas animation
     context.drawImage(
+        // PNG file
         (playerState.direction == "right") ? faceRightSheet : faceLeftSheet,
+        // Crop inside of the PNG file
         frameX, 0, spriteWidth, spriteHeight,
+        // Position of the sprite within the canvas
         playerState.x, playerState.y, spriteWidth, spriteHeight
     );
+
+    URU.draw(frameX);
+
 
     // Draw floor
     // context.beginPath();
@@ -365,15 +473,15 @@ function animate() {
     
 
     // Showing values below the character
-    document.querySelector("#showAction").innerText = playerState.action;
-    document.querySelector("#showDirection").innerText = playerState.direction;
-    document.querySelector("#showJumping").innerText = playerState.jumping;
-    document.querySelector("#showRunning").innerText = playerState.running;
+    document.querySelector("#showAction").innerText = URU.state.action;
+    document.querySelector("#showDirection").innerText = URU.state.direction;
+    document.querySelector("#showJumping").innerText = URU.state.jumping;
+    // document.querySelector("#showRunning").innerText = URU.state.running;
     document.querySelector("#showAnimationLength").innerText = animationLength;
     document.querySelector("#showAnimationFrame").innerText = animationFrame;
     document.querySelector("#showFrameCoordinate").innerText = frameX;
-    document.querySelector("#showLoopFrame").innerText = loopFrame;
-    document.querySelector("#showGameFrame").innerText = gameFrame;
+    // document.querySelector("#showLoopFrame").innerText = loopFrame;
+    // document.querySelector("#showGameFrame").innerText = gameFrame;
 
     document.querySelector("#showBackX").innerText = background.layers[0].x;
     document.querySelector("#showMiddleX").innerText = background.layers[1].x;
@@ -387,12 +495,15 @@ function animate() {
 
 animate();
 
-const jumpStart = document.querySelector("#jumpStart");
-window.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowUp') {
-        jumpStart.play();
-    }
-});
+
+
+
+// const jumpStart = document.querySelector("#jumpStart");
+// window.addEventListener('keydown', (e) => {
+//     if (e.key === 'ArrowUp') {
+//         jumpStart.play();
+//     }
+// });
 
 
 
