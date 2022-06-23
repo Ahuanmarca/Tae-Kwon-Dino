@@ -68,6 +68,16 @@ class Player {
         this.jump_force = -30;
     }
     
+    updateAnimation(newAnimation) {
+        this.animation = newAnimation;
+    }
+
+    updateDirection(newDirection) {
+        this.direction = newDirection;
+    }
+
+
+
 }
 
 const shyGuy = new Player(
