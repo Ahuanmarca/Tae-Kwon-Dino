@@ -452,14 +452,14 @@ function animate() {
     });
 
     // Sprite canvas animation
-    context.drawImage(
+//     context.drawImage(
         // PNG file
-        (playerState.direction == "right") ? faceRightSheet : faceLeftSheet,
+//         (playerState.direction == "right") ? faceRightSheet : faceLeftSheet,
         // Crop inside of the PNG file
-        frameX, 0, spriteWidth, spriteHeight,
+//         frameX, 0, spriteWidth, spriteHeight,
         // Position of the sprite within the canvas
-        playerState.x, playerState.y, spriteWidth, spriteHeight
-    );
+//         playerState.x, playerState.y, spriteWidth, spriteHeight
+//     );
 
     URU.draw(frameX);
 
