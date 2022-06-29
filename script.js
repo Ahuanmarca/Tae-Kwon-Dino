@@ -18,33 +18,6 @@ let loopFrame = 0;
 let staggerFrames = 10;
 
 
-// Background stuff
-const background = {
-    baseSpeed: 0,
-    width: 1024,
-    height: 480,
-    files: [
-        {
-            url: "assets/back.png",
-            distance: 10,
-        },
-        {
-            url: "assets/middle.png",
-            distance: 3.5,
-        },
-        {
-            url: "assets/near.png",
-            distance: 1.5,
-        },
-        {
-            url: "assets/ground.png",
-            distance: 1,
-        },
-    ],
-    layers: [],
-}
-
-// const foo = import("./assets/dino-right.png")
 
 
 class Player {
@@ -68,7 +41,6 @@ class Player {
         }
     }
 
-
     set = {
         action: {
             idle: () => this.state.action = "idle",
@@ -81,6 +53,8 @@ class Player {
             left: () => this.state.direction = "left",
         },
     }
+
+    foo = "foo"
 
     // Sprite canvas animation
     draw(frameX) {
@@ -155,7 +129,7 @@ background.files.forEach(file => {
 const playerState = {
 
     // The background needs this
-    currentSpeed: 0,
+    // currentSpeed: 0,
 
     action: "idle",
     direction: "right",
@@ -241,7 +215,6 @@ const input = new InputHandler();
 const jumpLand = document.querySelector("#SNDjumpLand");
 const URU = new Player(CANVAS_WIDTH / 4, 353);
 
-let useDino = false;
 let useUru = true;
 
 function animate() {
@@ -336,9 +309,6 @@ function animate() {
 
     }
 
-
-
-
     let tmpPlayerSpeed = 0;
 
     if (input.keys.includes("ArrowRight") && input.keys.includes("Shift")) tmpPlayerSpeed = 4;
@@ -349,93 +319,6 @@ function animate() {
     playerState.currentSpeed = tmpPlayerSpeed;
     background.baseSpeed = playerState.currentSpeed;
 
-
-
-
-    if (useDino) {
-
-        // ------------------------------
-        // UDDATE THE SPRITE ANIMATION !! -- NOT USING CLASS
-        // ------------------------------
-        if (KeyQty === 0) playerState.action = "idle";
-        playerState.running = Shift ? true : false;
-
-        if (KeyQty === 1) {
-            if (Shift) playerState.action = "idle";
-            if (ArrowRight) {
-                playerState.action = "walk";
-                playerState.direction = "right";
-            }       
-            if (ArrowLeft) {
-                playerState.action = "walk";
-                playerState.direction = "left";
-            }
-        }
-
-        if (KeyQty == 2) {
-            if (playerState.running) {
-                if (ArrowRight) {
-                    playerState.action = "run";
-                    playerState.direction = "right";
-                }
-                if (ArrowLeft) {
-                    playerState.action = "run";
-                    playerState.direction = "left";
-                }
-            } else {
-                if (ArrowRight) {
-                    playerState.action = "walk";
-                    playerState.direction = "right";
-                }
-                if (ArrowLeft) {
-                    playerState.action = "walk";
-                    playerState.direction = "left";
-                }
-            }     
-        }
-
-
-        // -------------------------------------------
-        // UPDATE CHARACTER'S POSITION IN THE SCREEN!!
-        // -------------------------------------------
-        
-        // Move to the sides
-        if (ArrowRight) {
-            playerState.velocityX += playerState.movementSpeed;
-        }
-        if (ArrowLeft) {
-            playerState.velocityX -= playerState.movementSpeed;
-        }
-
-
-        // Jump
-        if (ArrowUp && !playerState.jumping) {
-            playerState.velocityY = playerState.jump_force;
-            playerState.jumping = true;
-        }
-
-        // Gravity
-        playerState.velocityY += 1;
-
-        // Vertical movement
-        playerState.y += playerState.velocityY;
-
-        // Friction
-        playerState.velocityX *= 0.9;
-        playerState.velocityY *= 0.9;
-
-        // Floor limit
-        if (playerState.y > floorPosition - spriteHeight) {
-            playerState.y = floorPosition - spriteHeight;
-
-            if (playerState.jumping == true) {
-                jumpLand.play();
-            }
-
-            playerState.jumping = false;
-        }
-    }
-
     context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
     const animationLength = animations[playerState.action].length;
@@ -445,32 +328,16 @@ function animate() {
     // let frameX = animations[playerState.action][animationFrame];
     let frameX = animations[URU.state.action][animationFrame];
 
+    // Background class drawings
     background.layers.forEach(layer => {
         layer.updateSpeed();
         layer.updatePostion();
         layer.draw();
     });
 
-    // Sprite canvas animation
-//     context.drawImage(
-        // PNG file
-//         (playerState.direction == "right") ? faceRightSheet : faceLeftSheet,
-        // Crop inside of the PNG file
-//         frameX, 0, spriteWidth, spriteHeight,
-        // Position of the sprite within the canvas
-//         playerState.x, playerState.y, spriteWidth, spriteHeight
-//     );
-
+    // Player class drawing
     URU.draw(frameX);
 
-
-    // Draw floor
-    // context.beginPath();
-    // context.moveTo(0, floorPosition);
-    // context.lineTo(CANVAS_WIDTH, floorPosition);
-    // context.stroke();
-
-    
 
     // Showing values below the character
     document.querySelector("#showAction").innerText = URU.state.action;
@@ -494,62 +361,3 @@ function animate() {
 }
 
 animate();
-
-
-
-
-// const jumpStart = document.querySelector("#jumpStart");
-// window.addEventListener('keydown', (e) => {
-//     if (e.key === 'ArrowUp') {
-//         jumpStart.play();
-//     }
-// });
-
-
-
-// const byteSound = document.querySelector("#byteSound");
-// window.addEventListener('keydown', (e) => {
-//     if (e.key === ' ') {
-//         byteSound.play();
-//     }
-// });
-
-// window.addEventListener('keydown', (e) => {
-//     console.log(e.key);
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// HELPERS
-function importImage(imageURL) {
-    const importedImage = new Image();
-    importedImage.src = imageURL;
-    return importedImage;
-}
