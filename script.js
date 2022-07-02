@@ -48,19 +48,22 @@ function animate() {
 
     // Jumping ?
     URU.state.jumping = (URU.state.y != URU.state.groundPosition) ? true : false;
+    if (URU.state.jumping) {
+        URU.set.action.jump();
+    }
 
     // Running ?
-    if (Shift && ArrowLeft) {
+    if (Shift && ArrowLeft && !URU.state.jumping) {
         URU.set.action.run();
         URU.set.direction.left();
     }
-    if (Shift && ArrowRight) {
+    if (Shift && ArrowRight && !URU.state.jumping) {
         URU.set.action.run();
         URU.set.direction.right();
     }
     
     // Walking ?
-    if (KeyQty === 1) {
+    if (KeyQty === 1 && !URU.state.jumping) {
         if (Shift) URU.set.action.idle();
         if (ArrowRight) {
             URU.set.action.walk();

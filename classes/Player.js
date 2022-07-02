@@ -34,16 +34,25 @@ class Player {
     // ! Ignoring Shift Running for the moment
     updateVelocityX(ArrowRight, ArrowLeft, Shift) {
         if (ArrowRight) {
-            this.state.velocityX += this.state.movementSpeed;
+            if (Shift) {
+                this.state.velocityX += this.state.movementSpeed*3;
+            } else {
+                this.state.velocityX += this.state.movementSpeed;
+            }
         }
         if (ArrowLeft) {
-            this.state.velocityX -= this.state.movementSpeed;
+            if (Shift) {
+                this.state.velocityX -= this.state.movementSpeed*3;
+            } else {
+                this.state.velocityX -= this.state.movementSpeed;
+            }
         }
     }
 
     updateVelocityY(ArrowUp) {
         if (ArrowUp && !this.state.jumping) {
             this.state.velocityY = this.state.jumpForce;
+            this.state.velocityX *= 2;
             this.state.jumping = true;
             jumpStart.play();
         }
@@ -109,7 +118,7 @@ class Player {
         const animationLength = this.metadata.animations[this.state.action].length;
         const animationFrame = gameFrame % animationLength;
         const frameU = this.metadata.animations[this.state.action][animationFrame];
-        const frameV = 0; // ! Need to solve this, really bad that it's hardcoded
+        const frameV = 0; // TODO: Don't use hardcoded value!!
 
         context.drawImage(
             // Use the correct PNG file, depending on direction facing
