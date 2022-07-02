@@ -20,8 +20,9 @@ class Player {
             isGrounded : true, // ! NOT USING
             jumping: false,
             running: false,
-            x: position.x || 0,
-            y: position.y || 0,
+            // Position of the sprite within the canvas
+            x: position.x,
+            y: position.y,
             velocityX: 0,
             velocityY: 0,
             movementSpeed: 0.3,
@@ -30,6 +31,7 @@ class Player {
 
     }
 
+    // ! Ignoring Shift Running for the moment
     updateVelocityX(ArrowRight, ArrowLeft, Shift) {
         if (ArrowRight) {
             this.state.velocityX += this.state.movementSpeed;
@@ -44,6 +46,47 @@ class Player {
             this.state.velocityY = this.state.jumpForce;
             this.state.jumping = true;
             jumpStart.play();
+        }
+    }
+
+    // ! By turning this off, the sprite remains on the same
+    // ! spot within the canvas, thus moving only relative to the background
+    // !        The problem is that I NEED the sprite to move within
+    // !        the canvas to get a "viewport" effect
+    horizontalMovement() {
+        // this.state.x += this.state.velocityX;
+    }
+
+    verticalMovement() {
+        this.state.y += this.state.velocityY;
+    }
+
+    applyGrativy(gForce) {
+        this.state.velocityY += gForce;
+    }
+
+    horizontalFriction(hfForce) {
+        if (Math.abs(this.state.velocityX) > 0.05) {
+            this.state.velocityX *= hfForce;
+        } else {
+            this.state.velocityX = 0;
+        }
+    }
+
+    verticalFriction(vfForce) {
+        this.state.velocityY *= vfForce;
+    }
+
+    applyFloorLimit() {
+        if (this.state.y > this.state.groundPosition) {
+            this.state.y = this.state.groundPosition;
+
+            if (this.state.jumping === true) {
+                jumpLand.play();
+            }
+
+            this.state.jumping = false;
+            this.state.velocityY = 0; // ! Should Down Force be always present?
         }
     }
 

@@ -22,10 +22,8 @@ const backgroundInfo = {
         },
         {
             url: "assets/sprites/ground.png",
-            distance: 1,
+            distance: 0.9,
         },
     ],
 
-    // This should go inside a Layers Class or something...
-    layers: [],
 }

@@ -64,9 +64,9 @@ class Background {
         
     }
 
-    updateLayers() {
+    updateLayers(spriteSpeed) {
         this.layers.forEach(layer => {
-            layer.updateSpeed(this.baseSpeed);
+            layer.updateSpeed(spriteSpeed);
             layer.updatePosition();
             layer.draw();
         });
