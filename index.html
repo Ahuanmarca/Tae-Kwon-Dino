@@ -12,12 +12,18 @@
     <canvas id="canvas1"></canvas>
 
     <div unselectable="on">
-        <b><u>Player character</u></b>
+        <b><u>URU</u></b>
         <table>
             <tr><td>action</td><td><span id="showAction"></span></td></tr>
             <tr><td>direction</td><td><span id="showDirection"></span></td></tr>
             <tr><td>jumping</td><td><span id="showJumping"></span></td></tr>
             <!-- <tr><td>running</td><td><span id="showRunning"></span></td></tr> -->
+
+            <tr><td>velocityX</td><td><span id="showVelocityX"></span></td></tr>
+            <tr><td>velocityY</td><td><span id="showVelocityY"></span></td></tr>
+            <tr><td>positionX</td><td><span id="showPositionX"></span></td></tr>
+            <tr><td>positionY</td><td><span id="showPositionY"></span></td></tr>
+
             <tr><td>animation length</td><td><span id="showAnimationLength"></span></td></tr>
             <tr><td>animation frame</td><td><span id="showAnimationFrame"></span></td></tr>
             <tr><td>frame u</td><td><span id="showFrameCoordinate"></span></td></tr>
@@ -40,9 +46,14 @@
     <audio id="SNDjumpStart" src="assets/sounds/Jump-2.wav"></audio>
     <audio id="SNDjumpLand" src="assets/sounds/jumpland.wav"></audio>
 
+    <!-- Info (sprites, background, etc) -->
+    <script src="info.js"></script>
+    <script src="info/background_info.js"></script>
+
     <!-- Helpers -->
     <script src="helpers/getAnimations.js"></script>
     <script src="helpers/importImage.js"></script>
+    <script src="helpers/createLayers.js"></script>
     <!-- <script src="debug/showVariables.js"></script> -->
 
     <!-- Classes -->
@@ -50,8 +61,7 @@
     <script src="classes/Layer.js"></script>
     <script src="classes/InputHandler.js"></script>
 
-    <!-- Info (sprites, background, etc) -->
-    <script src="info.js"></script>
+
 
     <!-- Driver code -->
     <script src="script.js"></script>

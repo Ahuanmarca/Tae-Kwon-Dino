@@ -16,18 +16,35 @@ class Player {
             currentSpeed: 0,
             action: "idle",
             direction: "right",
-            groundPosition: floorPosition - spriteHeight, // ! DON'T LIKE
+            groundPosition: floorPosition - this.metadata.spriteHeight, // ! DON'T LIKE
             isGrounded : true, // ! NOT USING
             jumping: false,
             running: false,
-            x: position.x,
-            y: position.y,
+            x: position.x || 0,
+            y: position.y || 0,
             velocityX: 0,
             velocityY: 0,
             movementSpeed: 0.3,
             jumpForce: -30,
         }
 
+    }
+
+    updateVelocityX(ArrowRight, ArrowLeft, Shift) {
+        if (ArrowRight) {
+            this.state.velocityX += this.state.movementSpeed;
+        }
+        if (ArrowLeft) {
+            this.state.velocityX -= this.state.movementSpeed;
+        }
+    }
+
+    updateVelocityY(ArrowUp) {
+        if (ArrowUp && !this.state.jumping) {
+            this.state.velocityY = this.state.jumpForce;
+            this.state.jumping = true;
+            jumpStart.play();
+        }
     }
 
     set = {

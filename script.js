@@ -3,26 +3,29 @@ const context = canvas.getContext("2d");
 const CANVAS_WIDTH = canvas.width = 640;
 const CANVAS_HEIGHT = canvas.height = 480;
 
-// const spriteWidth = 96;
-const spriteHeight = 72;
 const groundThickness = 55;
 const floorPosition = CANVAS_HEIGHT - groundThickness;
-const spriteGroundPosition = floorPosition - spriteHeight;
+// const spriteGroundPosition = floorPosition - spriteHeight;
 const maximumSpriteSpeed = 1;
 
 let gameFrame = 0;
 let loopFrame = 0;
 let staggerFrames = 10;
 
-// Create instance of Player Object for main character
+
+// Create instance of Player Class for main character
 const URU = new Player({x: CANVAS_WIDTH / 4, y: 353}, spriteInfo);
 
-// Create instances of Layer Object for each background layer
+
+// Create instances of Layer Class for each background layer
 background.files.forEach(file => {
     background.layers.push(new Layer(imageURL = file.url, distance = file.distance))
 });
 
-// Create instance of Input Handler class
+// Create instance of Background Class
+const BACKGROUND = new Background(backgroundInfo);
+
+// Create instance of InputHandler Class
 const input = new InputHandler();
 
 // Select sounds from html document
@@ -31,7 +34,7 @@ const jumpLand = document.querySelector("#SNDjumpLand");
 
 
 let useUru = true;
-let showVariables = false;
+let showVariables = true;
 
 function animate() {
 
@@ -80,23 +83,13 @@ function animate() {
     }
 
     // -------------------------------------------
-    // UPDATE CHARACTER'S POSITION IN THE SCREEN!! -- USING CLASS !!
+    // UPDATE CHARACTER'S POSITION ON THE WORLD!! -- USING CLASS !!
     // -------------------------------------------
 
-    // Move Left Or Right
-    if (ArrowRight) {
-        URU.state.velocityX += URU.state.movementSpeed;
-    }
-    if (ArrowLeft) {
-        URU.state.velocityX -= URU.state.movementSpeed;
-    }
+    URU.updateVelocityX(ArrowRight, ArrowLeft, Shift);
+    URU.updateVelocityY(ArrowUp);
 
-    // Jump
-    if (ArrowUp && !URU.state.jumping) {
-        URU.state.velocityY = URU.state.jumpForce;
-        URU.state.jumping = true;
-        jumpStart.play();
-    }
+
 
     // Gravity
     URU.state.velocityY += 1;
@@ -104,48 +97,50 @@ function animate() {
     // Vertical Movement
     URU.state.y += URU.state.velocityY;
 
-    // Friction
-    URU.state.velocityX *= 0.9;
-    URU.state.velocityY *= 0.9;
+    // Horizontal Friction
+
+    if (Math.abs(URU.state.velocityX) > 0.05) {
+        URU.state.velocityX *= 0.9;
+    } else {
+        URU.state.velocityX = 0;
+    }
+
+    // Vertical Friction
+    URU.state.velocityY *= 0.94;
 
     // Floor Limit
-    if (URU.state.y > floorPosition - spriteHeight) {
-        URU.state.y = floorPosition - spriteHeight;
+    if (URU.state.y > URU.state.groundPosition) {
+        URU.state.y = URU.state.groundPosition;
 
         if (URU.state.jumping == true) {
             jumpLand.play();
         }
 
         URU.state.jumping = false;
+        URU.state.velocityY = 0; // ! Not sure about this, should down force always be present?
     }
-
-
 
     let tmpPlayerSpeed = 0;
 
-    if (input.keys.includes("ArrowRight") && input.keys.includes("Shift")) tmpPlayerSpeed = 4;
-    if (input.keys.includes("ArrowLeft") && input.keys.includes("Shift")) tmpPlayerSpeed = -4;
-    if (input.keys.includes("ArrowRight") && !input.keys.includes("Shift")) tmpPlayerSpeed = 2;
-    if (input.keys.includes("ArrowLeft") && !input.keys.includes("Shift")) tmpPlayerSpeed = -2;
+    if (ArrowRight && Shift) tmpPlayerSpeed = 4;
+    if (ArrowLeft && Shift) tmpPlayerSpeed = -4;
+    if (ArrowRight && !Shift) tmpPlayerSpeed = 2;
+    if (ArrowLeft && !Shift) tmpPlayerSpeed = -2;
     
     URU.state.currentSpeed = tmpPlayerSpeed;
     background.baseSpeed = URU.state.currentSpeed;
 
     context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
-    // Background class draws itself 😀
-    background.layers.forEach(layer => {
-        layer.updateSpeed();
-        layer.updatePostion();
-        layer.draw();
-    });
+    // Background layers update and draw themselves 😀
+    BACKGROUND.updateLayers();
 
     // Player class draws itself 😀
     URU.draw(gameFrame);
 
 
 
-    // if (showVariables) {
+    if (showVariables) {
         // Showing values below the character
 
         const animationLength = URU.metadata.animations[URU.state.action].length;
@@ -156,8 +151,15 @@ function animate() {
         document.querySelector("#showDirection").innerText = URU.state.direction;
         document.querySelector("#showJumping").innerText = URU.state.jumping;
         // document.querySelector("#showRunning").innerText = URU.state.running;
+
+        document.querySelector('#showVelocityX').innerText = URU.state.velocityX;
+        document.querySelector('#showVelocityY').innerText = URU.state.velocityY;
+        document.querySelector('#showPositionX').innerText = URU.state.x;
+        document.querySelector('#showPositionY').innerText = URU.state.y;
+
+
         document.querySelector("#showAnimationLength").innerText = animationLength;
-        document.querySelector("#showAnimationFrame").innerText = gameFrame % URU.metadata.animations[URU.state.action].length;
+        document.querySelector("#showAnimationFrame").innerText = animationFrame;
         document.querySelector("#showFrameCoordinate").innerText = frameU;
         document.querySelector("#showLoopFrame").innerText = loopFrame;
         document.querySelector("#showGameFrame").innerText = gameFrame;
@@ -165,7 +167,7 @@ function animate() {
         document.querySelector("#showMiddleX").innerText = background.layers[1].x;
         document.querySelector("#showNearX").innerText = background.layers[2].x;
         document.querySelector('#showGroundX').innerText = background.layers[3].x;
-    // }
+    }
 
     (loopFrame % staggerFrames == 0) && gameFrame++;
     loopFrame++;
