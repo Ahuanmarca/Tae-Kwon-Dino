@@ -6,19 +6,19 @@ const background = {
     height: 480,
     files: [
         {
-            url: "assets/back.png",
+            url: "assets/sprites/back.png",
             distance: 10,
         },
         {
-            url: "assets/middle.png",
+            url: "assets/sprites/middle.png",
             distance: 3.5,
         },
         {
-            url: "assets/near.png",
+            url: "assets/sprites/near.png",
             distance: 1.5,
         },
         {
-            url: "assets/ground.png",
+            url: "assets/sprites/ground.png",
             distance: 1,
         },
     ],
@@ -28,20 +28,41 @@ const background = {
 
 const spriteInfo = {
     
-    "metadata": {
-        "fileRight": "assets/dino-right.png",
-        "fileLeft": "assets/dino-left.png",
-        "spriteWidth": 96,
-        "spriteHeight": 72
+    metadata: {
+        fileRight: "assets/sprites/dino-right.png",
+        fileLeft: "assets/sprites/dino-left.png",
+        spriteWidth: 96,
+        spriteHeight: 72,
+        singleRow: true,
     },
     
-    "actions" : [
-        ["idle", 4],
-        ["walk", 6],
-        ["kick", 4],
-        ["hurt", 3],
-        ["jump", 1],
-        ["run", 6]
+    animationsStates: [
+
+        {
+            name: "idle",
+            frames: 4,            
+        },
+        {
+            name: "walk",
+            frames: 6,            
+        },
+        {
+            name: "kick",
+            frames: 4,            
+        },
+        {
+            name: "hurt",
+            frames: 3,            
+        },
+        {
+            name: "jump",
+            frames: 1,            
+        },
+        {
+            name: "run",
+            frames: 6,            
+        },
     ]
+
 }
 

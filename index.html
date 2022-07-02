@@ -12,36 +12,49 @@
     <canvas id="canvas1"></canvas>
 
     <div unselectable="on">
-        <br>action: <span id="showAction"></span>
-        direction: <span id="showDirection"></span>
-        jumping: <span id="showJumping"></span>
-        <!-- <br>running: <span id="showRunning"></span> -->
-        <br>animation length: <span id="showAnimationLength"></span>
-        <br>animation frame: <span id="showAnimationFrame"></span>
-        <br>frame coordinate: <span id="showFrameCoordinate"></span>
-        <!-- <br>loop frame: <span id="showLoopFrame"></span> -->
-        <!-- <br>game frame: <span id="showGameFrame"></span> -->
+        <b><u>Player character</u></b>
+        <table>
+            <tr><td>action</td><td><span id="showAction"></span></td></tr>
+            <tr><td>direction</td><td><span id="showDirection"></span></td></tr>
+            <tr><td>jumping</td><td><span id="showJumping"></span></td></tr>
+            <!-- <tr><td>running</td><td><span id="showRunning"></span></td></tr> -->
+            <tr><td>animation length</td><td><span id="showAnimationLength"></span></td></tr>
+            <tr><td>animation frame</td><td><span id="showAnimationFrame"></span></td></tr>
+            <tr><td>frame u</td><td><span id="showFrameCoordinate"></span></td></tr>
+        </table>
+        <b><u>Background</u></b>
+        <table>
+            <tr><td>back</td><td><span id="showBackX"></span></td></tr>
+            <tr><td>middle</td><td><span id="showMiddleX"></span></td></tr>
+            <tr><td>near</td><td><span id="showNearX"></span></td></tr>
+            <tr><td>ground</td><td><span id="showGroundX"></span></td></tr>
+        </table>
+        <b><u>State</u></b>
+        <br>loop frame: <span id="showLoopFrame"></span>
+        <br>game frame: <span id="showGameFrame"></span>
     </div>
     
-    <div>
-        <br>Background:
-        <br>back: <span id="showBackX"></span>
-        <!-- <br>back x + sprite width: <span id="showBackXPlus"></span> -->
-        <br>middle: <span id="showMiddleX"></span>
-        <!-- <br>middle x + sprite width: <span id="showMiddleXPlus"></span> -->
-        <br>near: <span id="showNearX"></span>
-        <!-- <br>bear x + sprite width: <span id="showNearXPlus"></span> -->
-        <br>ground: <span id="showGroundX"></span>
-    </div>
-
+    <!-- Import audio files -->
     <audio id="byteSound" src="assets/sounds/random2.wav"></audio>
     <audio id="attackSound" src="assets/sounds/tube-plastic-whoosh-01.wav"></audio>
-    
     <audio id="SNDjumpStart" src="assets/sounds/Jump-2.wav"></audio>
     <audio id="SNDjumpLand" src="assets/sounds/jumpland.wav"></audio>
 
+    <!-- Helpers -->
+    <script src="helpers/getAnimations.js"></script>
+    <script src="helpers/importImage.js"></script>
+    <!-- <script src="debug/showVariables.js"></script> -->
+
+    <!-- Classes -->
+    <script src="classes/Player.js"></script>
+    <script src="classes/Layer.js"></script>
+    <script src="classes/InputHandler.js"></script>
+
+    <!-- Info (sprites, background, etc) -->
     <script src="info.js"></script>
-    <script src="helpers.js"></script>
+
+    <!-- Driver code -->
     <script src="script.js"></script>
+
 </body>
 </html>
