@@ -120,9 +120,9 @@ function animate() {
         document.querySelector("#showAnimationFrame").innerText = animationFrame;
         document.querySelector("#showFrameCoordinate").innerText = frameU;
         document.querySelector("#showBackX").innerText = BACKGROUND.layers[0].x;
-        document.querySelector("#showMiddleX").innerText = BACKGROUND.layers[1].x;
-        document.querySelector("#showNearX").innerText = BACKGROUND.layers[2].x;
-        document.querySelector('#showGroundX').innerText = BACKGROUND.layers[3].x;
+        // document.querySelector("#showMiddleX").innerText = BACKGROUND.layers[1].x;
+        // document.querySelector("#showNearX").innerText = BACKGROUND.layers[2].x;
+        // document.querySelector('#showGroundX').innerText = BACKGROUND.layers[3].x;
 
         document.querySelector("#showLoopFrame").innerText = gameState.loopFrame;
         document.querySelector("#showGameFrame").innerText = gameState.gameFrame;

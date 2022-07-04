@@ -12,18 +12,18 @@ const backgroundInfo = {
             url: "assets/sprites/back.png",
             distance: 10,
         },
-        {
-            url: "assets/sprites/middle.png",
-            distance: 3.5,
-        },
-        {
-            url: "assets/sprites/near.png",
-            distance: 1.5,
-        },
-        {
-            url: "assets/sprites/ground.png",
-            distance: 0.9,
-        },
+        // {
+        //     url: "assets/sprites/middle.png",
+        //     distance: 3.5,
+        // },
+        // {
+        //     url: "assets/sprites/near.png",
+        //     distance: 1.5,
+        // },
+        // {
+        //     url: "assets/sprites/ground.png",
+        //     distance: 0.9,
+        // },
     ],
 
 }
