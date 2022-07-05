@@ -1,15 +1,33 @@
+
+/*
+
+    Tile map is defined with a 2-row String
+    
+    Types on first row
+        P: latform
+        W: west-wall
+        E: wast-wall
+        U: up-hill
+        D: down-hill
+    
+    Heights on second row
+        0: low
+        1: normal
+        2: high
+        3: very high
+
+    const stringMap = `
+        PPPDDPEWPPUUPPE
+        222210011123333
+    `
+
+*/
+
 const level_01 = {
 
     metadata: {
         level: 1,
         name: "The Moab",
-        score: {
-            title: "Expansion",
-            authod: "Ansimuz",
-            link: "https://soundcloud.com/ansimuz/expansion",
-        },
-        tileWidth: 64,
-        tileHeight: 256,
     },
 
     tileMapString: 
@@ -18,41 +36,61 @@ const level_01 = {
         222210011123333
         `,
 
-}
+    tilesInfo: {
 
+        /* Y POSITIONS	
+        low: 		CANVAS_HEIGHT - 64
+        normal: 	CANVAS_HEIGHT - 128
+        high: 		CANVAS_HEIGHT - 192
+        very high: 	CANVAS_HEIGHT - 256 */
 
-
-/*
-
-    TILE MAPS ARE DEFINED BY SIMPLE STRING CODES
-
-    Tile string codes:
-    - Types on first row
-    - Heights on second row
-    - Length of string / 2 = number of tiles on the whole level
+        width: 64,
+        heigth: 256,
+        
+        "W": {
+            name: "west-wall",
+            u: 26, // texture location
+            v: 32, // texture location
+            platform: true,
+            wall: true,
+            file: "assets/sprites/tileset-simple.png"
+        },
     
-    P: Platform
-    W: West wall
-    E: East wall
-    U: Uphill slope
-    D: Downhill slope
-    .: Pit, hole (no tiles)
+        "P": {
+            name: "platform",
+            u: 96,
+            v: 32,
+            platform: true,
+            wall: true,
+            file: "assets/sprites/tileset-simple.png"
+        },
+    
+        "E": {
+            name: "east-wall",
+            u: 192,
+            v: 32,
+            platform: true,
+            wall: true,
+            file: "assets/sprites/tileset-simple.png"
+        },
+    
+        "U": {
+            name: "up-hill",
+            u: 256,
+            v: 32,
+            platform: true,
+            wall: true,
+            file: "assets/sprites/tileset-simple.png"
+        },
+    
+        "D": {
+            name: "down-hill",
+            u: 352,
+            v: 32,
+            platform: true,
+            wall: true,
+            file: "assets/sprites/tileset-simple.png"
+        },
+    },
 
-    0: low
-    1: normal
-    2: high
-    3: very high
-
-    Example:
-    Reproducing the image from the artist's site
-    https://img.itch.zone/aW1hZ2UvMTMyNDcyNS83NzAzNzE3LnBuZw==/347x500/2ogaUw.png
-
-
-    `
-    PPPDDPEWPPUUPPE
-    222210011123333
-    `
-    ! THE LINE BREAK NEEDS TO BE ADRESSED 🙄
-
-
-*/
+}
