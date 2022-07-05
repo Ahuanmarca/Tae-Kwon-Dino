@@ -11,5 +11,3 @@ const CANVAS_HEIGHT = 480;
 
 const groundThickness = 55;
 const floorPosition = CANVAS_HEIGHT - groundThickness;
-
-

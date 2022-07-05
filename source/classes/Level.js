@@ -1,3 +1,65 @@
+// Contents:
+//      class Level
+//      class Tile
+//      class Layer
+//      class Background
+
+
+class Level {
+    constructor(levelInfo) {
+        this.level = levelInfo.metadata.level;
+        this.name = levelInfo.metadata.name;
+        this.tiles = createTiles(levelInfo.tilesInfo);
+        this.tileMap = getTileMap(levelInfo);
+        this.background = createBackground(levelInfo.backgroundInfo);
+    }
+}
+
+
+class Tile {
+    constructor(tileInfo) {
+        const { name, u, v, width, height, platform, wall, file } = tileInfo;
+
+        this.name = name;
+        this.u = u;
+        this.v = v;
+        this.width = width;
+        this.height = height;
+        this.platform = platform;
+        this.wall = wall;
+        this.file = importImage(file);
+    }
+}
+
+
+function createTiles(tilesInfo) {
+    const tiles = {};
+    tilesInfo.forEach(tile => {
+        tiles[tile.code] = new Tile(tile)
+    })
+    return tiles;
+}
+
+
+function getTileMap(levelInfo) {
+
+    const tileMapString = levelInfo.tileMapString.replaceAll("\n","").replaceAll(" ","");
+    const levelLength = tileMapString.length / 2;
+
+    const tileMap = []
+
+    for (i = 0; i < levelLength; i++) {
+        const tile = {};
+        tile.tileType = tileMapString[i];
+        tile.verticalPosition = tileMapString[i + levelLength];
+        tileMap.push(tile);
+    }
+
+    return tileMap;
+
+}
+
+
 class Layer {
     constructor(imageURL, distance, width, height, baseSpeed) {
 
@@ -53,6 +115,9 @@ class Layer {
     }
 }
 
+
+// The Background class collects all layers and controls them
+
 class Background {
     constructor(backgroundInfo) {
 
@@ -73,6 +138,13 @@ class Background {
     }
 }
 
+
+function createBackground(backgroundInfo) {
+    const createdBackground = new Background(backgroundInfo);
+    return createdBackground;
+}
+
+
 function createLayers(backgroundInfo) {
     const layers = [];
     const { width, height, baseSpeed } = backgroundInfo.metadata;
@@ -84,3 +156,5 @@ function createLayers(backgroundInfo) {
     
     return layers;
 }
+
+

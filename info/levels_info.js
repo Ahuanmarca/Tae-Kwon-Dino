@@ -22,13 +22,15 @@
 
 */
 
-const LEVEL_01 = {
+
+const LEVEL_01_INFO = {
 
     metadata: {
         level: 1,
         name: "The Moab",
         tileWidth: 64,
         tileHeight: 256,
+        levelHeight: 480,
     },
 
     tileMapString: `
@@ -107,5 +109,33 @@ const LEVEL_01 = {
             file: "assets/sprites/tileset-simple.png"
         }
     ],
+
+    backgroundInfo: {
+    
+        metadata: {
+            baseSpeed: 0,
+            width: 1024,
+            height: 480,
+        },
+    
+        files: [
+            {
+                url: "assets/sprites/back.png",
+                distance: 10,
+            },
+            {
+                url: "assets/sprites/middle.png",
+                distance: 3.5,
+            },
+            {
+                url: "assets/sprites/near.png",
+                distance: 1.5,
+            },
+            // {
+            //     url: "assets/sprites/ground.png",
+            //     distance: 0.9,
+            // },
+        ],
+    },
 
 }
