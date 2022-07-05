@@ -1,6 +1,6 @@
 const canvas = document.querySelector("#canvas1")
 ctx = canvas.getContext("2d");
-CANVAS_HEIGTH = canvas.height = 480;
+CANVAS_HEIGHT = canvas.height = 480;
 CANVAS_WIDTH = canvas.width = 720;
 
 // Little pink square
@@ -9,7 +9,7 @@ const body = {
     height: 32,
     width: 32,
     x: CANVAS_WIDTH / 2, //center of the canvas
-    y: CANVAS_HEIGTH / 4,
+    y: CANVAS_HEIGHT / 4,
     x_velocity: 0,
     y_velocity: 0,
     jumping: true,
@@ -82,9 +82,9 @@ loop = function() {
 
     // Floor
     //      Contact with the floor stops effect from gravity
-    if (body.y > CANVAS_HEIGTH - body.height - body.height) {
+    if (body.y > CANVAS_HEIGHT - body.height - body.height) {
         body.jumping = false;
-        body.y = CANVAS_HEIGTH - body.height - body.height;
+        body.y = CANVAS_HEIGHT - body.height - body.height;
         body.y_velocity = 0;
     }
 
@@ -101,7 +101,7 @@ loop = function() {
     // Canvas background
     ctx.beginPath();
     ctx.fillStyle = "darkgray";
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGTH);
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     // Square
     ctx.beginPath();
@@ -113,8 +113,8 @@ loop = function() {
     ctx.strokeStyle = "#777777";
     // ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.moveTo(0, CANVAS_HEIGTH - body.height);
-    ctx.lineTo(CANVAS_WIDTH, CANVAS_HEIGTH - body.height);
+    ctx.moveTo(0, CANVAS_HEIGHT - body.height);
+    ctx.lineTo(CANVAS_WIDTH, CANVAS_HEIGHT - body.height);
     ctx.stroke();
 
     window.requestAnimationFrame(loop);

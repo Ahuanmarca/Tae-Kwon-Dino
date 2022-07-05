@@ -1,4 +1,3 @@
-
 /*
 
     Tile map is defined with a 2-row String
@@ -23,74 +22,90 @@
 
 */
 
-const level_01 = {
+const LEVEL_01 = {
 
     metadata: {
         level: 1,
         name: "The Moab",
+        tileWidth: 64,
+        tileHeight: 256,
     },
 
-    tileMapString: 
-        `
+    tileMapString: `
         PPPDDPEWPPUUPPE
         222210011123333
-        `,
+    `,
 
-    tilesInfo: {
 
+    // Array with tile properties
+
+    tilesInfo: [
+        
         /* Y POSITIONS	
         low: 		CANVAS_HEIGHT - 64
         normal: 	CANVAS_HEIGHT - 128
         high: 		CANVAS_HEIGHT - 192
         very high: 	CANVAS_HEIGHT - 256 */
-
-        width: 64,
-        heigth: 256,
-        
-        "W": {
+    
+        {
+            code: "W", 
             name: "west-wall",
             u: 26, // texture location
             v: 32, // texture location
+            width: 64,
+            height: 256,
             platform: true,
             wall: true,
             file: "assets/sprites/tileset-simple.png"
         },
     
-        "P": {
+        {
+            code: "P",
             name: "platform",
             u: 96,
             v: 32,
+            width: 64,
+            height: 256,
             platform: true,
             wall: true,
             file: "assets/sprites/tileset-simple.png"
         },
     
-        "E": {
+        {
+            code: "E",
             name: "east-wall",
             u: 192,
             v: 32,
+            width: 64,
+            height: 256,
             platform: true,
             wall: true,
             file: "assets/sprites/tileset-simple.png"
         },
     
-        "U": {
+        {
+            code: "U",
             name: "up-hill",
             u: 256,
             v: 32,
+            width: 64,
+            height: 256,
             platform: true,
             wall: true,
             file: "assets/sprites/tileset-simple.png"
         },
     
-        "D": {
+        {
+            code: "D",
             name: "down-hill",
             u: 352,
             v: 32,
+            width: 64,
+            height: 256,
             platform: true,
             wall: true,
             file: "assets/sprites/tileset-simple.png"
-        },
-    },
+        }
+    ],
 
 }
