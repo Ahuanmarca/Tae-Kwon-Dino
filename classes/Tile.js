@@ -25,16 +25,17 @@ function testTileClass() {
     const testTileInfo = {
         metadata: {
             name: "Platform Tile",
-            u: 48,
-            v: 16,
-            with: 128,
-            heigth: 224,
+            u: 96,
+            v: 32,
+            width: 64,
+            heigth: 256,
             platform: true,
             wall: true,
             file: "assets/sprites/tileset.png"
         },
     }
     
+    console.log("Texture location and dimensions may be innacurate")
     const testTile = createTile(testTileInfo);
     console.log(testTile);
 }

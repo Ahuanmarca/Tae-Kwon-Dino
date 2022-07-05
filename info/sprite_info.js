@@ -39,45 +39,40 @@ const spriteInfo = {
 }
 
 /*
-    Platform:
-    - y position can be:
-    -       CANVAS_HEIGHT - tilesInfo.platform.metadata.height
-    -       CANVAS_HEIGHT - tilesInfo.leftWall.metadata.height
-    -           In this case, we need 4 darFillers below the platform
-    
-    LeftWall and RightWall:
-    - y position can be:
-    -       CANVAS_HEIGHT - tilesInfo.leftWall.metadata.height
+    Y POSITIONS	
+	low: 		CANVAS_HEIGHT - 64
+	normal: 	CANVAS_HEIGHT - 128
+	high: 		CANVAS_HEIGHT - 192
+	very high: 	CANVAS_HEIGHT - 256
 
-    LeftSolpe and RightSlope:
-    
-    
-
-
+	DIMENSIONS
+	platform: 	64 * 256
+	wall: 		64 * 256
+	slope:		64 * 256
 */
 
 const tilesInfo = {
 
-    platform: {
+    leftWall: {
         metadata: {
-            name: "Platform Tile",
-            u: 96,
+            name: "left-wall",
+            u: 26,
             v: 32,
             with: 64,
-            heigth: 128,
+            heigth: 256,
             platform: true,
             wall: true,
             file: "assets/sprites/tileset.png"
         },
     },
 
-    leftWall: {
+    platform: {
         metadata: {
-            name: "Left Wall Tile",
-            u: 26,
+            name: "platform",
+            u: 96,
             v: 32,
-            with: 38,
-            heigth: 192,
+            with: 64,
+            heigth: 256,
             platform: true,
             wall: true,
             file: "assets/sprites/tileset.png"
@@ -86,11 +81,11 @@ const tilesInfo = {
 
     rightWall: {
         metadata: {
-            name: "Right Wall Tile",
+            name: "right-wall",
             u: 192,
             v: 32,
-            with: 32,
-            heigth: 192,
+            with: 64,
+            heigth: 256,
             platform: true,
             wall: true,
             file: "assets/sprites/tileset.png"
@@ -99,11 +94,11 @@ const tilesInfo = {
 
     leftSlope: {
         metadata: {
-            name: "Left Slope Tile",
+            name: "left-slope",
             u: 256,
             v: 32,
             with: 64,
-            heigth: 128,
+            heigth: 256,
             platform: true,
             wall: true,
             file: "assets/sprites/tileset.png"
@@ -112,26 +107,13 @@ const tilesInfo = {
 
     rightSlope: {
         metadata: {
-            name: "Right Slope Tile",
+            name: "right-slope",
             u: 352,
             v: 32,
             with: 64,
-            heigth: 128,
+            heigth: 256,
             platform: true,
             wall: true,
-            file: "assets/sprites/tileset.png"
-        },
-    },
-
-    darkFiller: {
-        metadata: {
-            name: "Dark Filler Tile",
-            u: 96,
-            v: 192,
-            with: 32,
-            heigth: 32,
-            platform: false,
-            wall: false,
             file: "assets/sprites/tileset.png"
         },
     },
