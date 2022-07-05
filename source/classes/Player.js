@@ -1,3 +1,42 @@
+// TODO    Player need method to know the tiles around
+// TODO         The information needed is on the Level class
+
+`
+
+The player begins at some position.
+// ? How should I define the starting position of the player?
+// ? Should just use some arbitrary values for the moment. About the start of the level.
+
+Then uses a method to check if there's a limit below.
+If no limit, goes down. If limit, stops.
+// ? How can I achieve this?
+Knowing it's own position, can use the information on Level to chech for platform tiles below him.
+// ? But how? LOL.
+
+Say, player is at position 10.
+The first tile is at position 0 and has a width of 64 pixels.
+Then, the player is in it's range.
+
+So, player needs a method to determine the y position of it's current ground level.
+1) Checks it's own position.
+2) Checks if it's within the range of one or more tiles.
+3) If true, checks if the tiles have the "platform" property set to true
+4) Checks which of the tiles have a higher platform
+5) Sets the current ground level equal to the higher platform
+// ? Result: The sprite's position can't go below the platform level!!!
+It's important that the player begins on a position higher than the platform, the platform will prevent him from going below, but won't get him up in case the sprite somehow gets below the platform.
+
+METHOD NAME: checkGroundLevel() {
+    ...
+}
+
+`
+
+// TODO    Needs two separate positions:
+// TODO        An "absolute" position on the level map
+// TODO        A viewport position
+
+
 class Player {
     constructor(position, spriteInfo) {
         
