@@ -1,41 +1,3 @@
-// TODO    Player need method to know the tiles around
-// TODO         The information needed is on the Level class
-
-`
-
-The player begins at some position.
-// ? How should I define the starting position of the player?
-// ? Should just use some arbitrary values for the moment. About the start of the level.
-
-Then uses a method to check if there's a limit below.
-If no limit, goes down. If limit, stops.
-// ? How can I achieve this?
-Knowing it's own position, can use the information on Level to chech for platform tiles below him.
-// ? But how? LOL.
-
-Say, player is at position 10.
-The first tile is at position 0 and has a width of 64 pixels.
-Then, the player is in it's range.
-
-So, player needs a method to determine the y position of it's current ground level.
-1) Checks it's own position.
-2) Checks if it's within the range of one or more tiles.
-3) If true, checks if the tiles have the "platform" property set to true
-4) Checks which of the tiles have a higher platform
-5) Sets the current ground level equal to the higher platform
-// ? Result: The sprite's position can't go below the platform level!!!
-It's important that the player begins on a position higher than the platform, the platform will prevent him from going below, but won't get him up in case the sprite somehow gets below the platform.
-
-METHOD NAME: checkGroundLevel() {
-    ...
-}
-
-`
-
-// TODO    Needs two separate positions:
-// TODO        An "absolute" position on the level map
-// TODO        A viewport position
-
 
 class Player {
     constructor(position, spriteInfo) {
@@ -55,7 +17,8 @@ class Player {
             currentSpeed: 0,
             action: "idle",
             direction: "right",
-            groundPosition: floorPosition - this.metadata.spriteHeight, // ! DON'T LIKE
+            
+            groundPosition: floorPosition - this.metadata.spriteHeight,
             isGrounded : true, // ! NOT USING
             jumping: false,
             running: false,
@@ -67,6 +30,49 @@ class Player {
             movementSpeed: 0.3,
             jumpForce: -30,
         }
+
+        this.position = {
+            x: 10,
+            y: 10,
+        },
+
+        this.tmp = {
+            groundLevel: undefined,
+            velocityY: 0,
+        }
+    }
+
+
+    getGroundLevel() {
+        
+        const x = this.position.x;
+        const w = this.metadata.spriteWidth;
+
+        const leftTile = LEVEL_01.tileMap[x-x%64];
+        const rightTile = LEVEL_01.tileMap[(x+w)-(x+w)%64];
+
+        const groundLevel = Math.max(leftTile.y, rightTile.y);
+        this.tmp.groundLevel = groundLevel;
+    }
+
+    applyGravity_NEW() {
+        if (this.position.y < this.tmp.groundLevel - this.metadata.spriteHeight) {
+            this.tmp.velocityY += forces.gravity;
+            this.position.y += this.tmp.velocityY;
+        } else {
+            this.tmp.velocityY = 0;
+        }
+
+    }
+
+    drawBox() {
+
+        context.beginPath();
+        context.strokeStyle = "pink";
+        context.lineWidth = 10;
+        context.moveTo(this.position.x, this.position.y);
+        context.lineTo(this.position.x + this.metadata.spriteWidth, this.position.y + this.metadata.spriteHeight);
+        context.stroke();
 
     }
 
@@ -102,7 +108,7 @@ class Player {
     // !        The problem is that I NEED the sprite to move within
     // !        the canvas to get a "viewport" effect
     horizontalMovement() {
-        // this.state.x += this.state.velocityX;
+        this.state.x += this.state.velocityX;
     }
 
     verticalMovement() {
@@ -168,4 +174,7 @@ class Player {
             this.state.x, this.state.y, this.metadata.spriteWidth, this.metadata.spriteHeight
         );
     }
-}
+
+} // ! Player Class definition ends here !!
+
+

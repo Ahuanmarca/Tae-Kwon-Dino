@@ -12,6 +12,8 @@ class Level {
         this.tiles = createTiles(levelInfo.tilesInfo);
         this.tileMap = getTileMap(levelInfo);
         this.background = createBackground(levelInfo.backgroundInfo);
+
+        this.length = this.tileMap.length * 64;
     }
 }
 
@@ -28,6 +30,7 @@ class Tile {
         this.platform = platform;
         this.wall = wall;
         this.file = importImage(file);
+
     }
 }
 
@@ -45,14 +48,19 @@ function getTileMap(levelInfo) {
 
     const tileMapString = levelInfo.tileMapString.replaceAll("\n","").replaceAll(" ","");
     const levelLength = tileMapString.length / 2;
+    const tileWidth = levelInfo.metadata.tileWidth;
+    const levelHeight = levelInfo.metadata.levelHeight;
 
-    const tileMap = []
+    const tileMap = {}
 
     for (i = 0; i < levelLength; i++) {
         const tile = {};
-        tile.tileType = tileMapString[i];
-        tile.verticalPosition = tileMapString[i + levelLength];
-        tileMap.push(tile);
+        tile.type = tileMapString[i];
+        tile.y = levelHeight - (parseInt(tileMapString[i + levelLength])+1)*64;
+
+        tile.x = i * tileWidth;
+
+        tileMap[i*tileWidth] = tile;
     }
 
     return tileMap;

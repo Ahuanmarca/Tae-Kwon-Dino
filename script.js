@@ -89,6 +89,11 @@ function animate() {
     // Player class draws itself 😀
     URU.draw(gameState.gameFrame);
 
+    URU.getGroundLevel();
+    URU.applyGravity_NEW();
+
+    URU.drawBox();
+
     // Show variabels below the canvas
     showVariables();
 
