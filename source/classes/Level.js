@@ -13,7 +13,7 @@ class Level {
         this.tileMap = getTileMap(levelInfo);
         this.background = createBackground(levelInfo.backgroundInfo);
 
-        this.length = this.tileMap.length * 64;
+        this.length = Object.keys(this.tileMap).length * 64;
     }
 }
 

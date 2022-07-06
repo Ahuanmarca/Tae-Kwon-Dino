@@ -5,3 +5,7 @@
 span {
     color: magenta;
 }
+
+#canvas2 {
+    border: 1px solid black;
+}

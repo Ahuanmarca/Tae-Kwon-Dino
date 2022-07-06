@@ -9,8 +9,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="canvas1Container"></div>
-    <div id="miniMapContainer"></div>
+    <div id="canvas1Container">
+        <canvas id="canvas1"></canvas>
+    </div>
+    
+    <div id="miniMapContainer">
+        <canvas id="canvas2"></canvas>
+    </div>
 
     <div id="variablesDisplayContainer">
         <b><u>URU</u></b>
@@ -63,11 +68,14 @@
     <script src="source/classes/Player.js"></script>
     <script src="source/classes/InputHandler.js"></script>
     <script src="source/classes/Level.js"></script>
-
-
-
+    <script src="source/classes/MiniMap.js"></script>
+    
+    
+    
     <!-- Driver code -->
     <script src="script.js"></script>
+
+    
 
 </body>
 </html>
