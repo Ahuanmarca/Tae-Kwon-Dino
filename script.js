@@ -1,7 +1,10 @@
-const canvas = document.querySelector("#canvas1");
+const canvas = document.createElement("canvas");
+canvas.id = "canvas1";
 const context = canvas.getContext("2d");
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
+document.querySelector("#canvas1Container").appendChild(canvas);
+
 
 const gameState = {
     gameFrame:0,
