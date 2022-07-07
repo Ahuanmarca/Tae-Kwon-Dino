@@ -48,7 +48,7 @@ function animate() {
     // TODO Background should be handled by viewport
     // LEVEL_01.background.updateLayers(URU.state.velocityX);
 
-    URU.draw(gameState.gameFrame);
+    // URU.draw(gameState.gameFrame);
 
     // Interaction with the real map !!
 
