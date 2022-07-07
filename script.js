@@ -36,12 +36,14 @@ const jumpLand = document.querySelector("#SNDjumpLand");
 
 function animate() {
 
+    context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+
     URU.updateAnimation(INPUT);
     URU.updatePosition(INPUT);
     VIEW_PORT.updateAnchor(URU, LEVEL_01);
     VIEW_PORT.getTiles(LEVEL_01);
+    VIEW_PORT.drawTiles(LEVEL_01);
 
-    context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
     // TODO Background should be handled by viewport
     // LEVEL_01.background.updateLayers(URU.state.velocityX);

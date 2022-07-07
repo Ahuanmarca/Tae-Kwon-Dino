@@ -40,5 +40,29 @@ class Viewport {
             }
         }
     }
+
+    drawTiles(level) {
+        for (let key in this.tiles) {
+            
+            const x = this.tiles[key].x - this.anchor; // x position on viewport needs offset by anchor
+            const y = this.tiles[key].y;
+            const tile = level.tiles[this.tiles[key].type]; // Gets tile from LEVEL object
+            const u = tile.u;
+            const v = tile.v;
+            const tileWidth = tile.width;
+            const tileHeight = tile.height;
+
+            context.drawImage(
+                // Image file
+                tile.file,
+                // File crop
+                u, v, tileWidth, tileHeight,
+                // Position on Canvas
+                x, y, tileWidth, tileHeight
+            )
+            
+
+        }
+    }
 }
 
