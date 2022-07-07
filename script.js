@@ -39,6 +39,7 @@ function animate() {
     URU.updateAnimation(INPUT);
     URU.updatePosition(INPUT);
     VIEW_PORT.updateAnchor(URU, LEVEL_01);
+    VIEW_PORT.getTiles(LEVEL_01);
 
     context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
@@ -69,3 +70,5 @@ console.log("LEVEL_01");
 console.log(LEVEL_01);
 console.log("URU");
 console.log(URU);
+console.log('VIEW_PORT');
+console.log(VIEW_PORT);

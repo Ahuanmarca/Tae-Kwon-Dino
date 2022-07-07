@@ -16,6 +16,7 @@
 class Viewport {
     constructor() {
         this.anchor = 0;
+        this.tiles = {};
     }
 
     updateAnchor(player, level) {
@@ -27,6 +28,16 @@ class Viewport {
             this.anchor = player.mapPosition.x - 200;
         } else {
             this.anchor = player.mapPosition.x - 360;
+        }
+    }
+
+    getTiles(level) {
+        for (let key in level.tileMap) {
+            if (level.tileMap[key].x >= this.anchor && level.tileMap[key].x <= this.anchor + 640) {
+                this.tiles[key] = level.tileMap[key];
+            } else {
+                delete this.tiles[key]
+            }
         }
     }
 }
