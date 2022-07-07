@@ -10,7 +10,7 @@ class Player {
             spriteHeight: spriteInfo.metadata.spriteHeight,
             singleRow: spriteInfo.metadata.singleRow,
             animations: getAnimations(spriteInfo),
-        }
+        };
 
         this.state = {
             // absolutePosition:100, // For connecting the sprite with the "map"
@@ -29,22 +29,16 @@ class Player {
             velocityY: 0,
             movementSpeed: 0.3,
             jumpForce: -30,
-        }
+        };
 
         this.mapPosition = {
             x: 10,
             y: 10,
-        },
-
-        this.tmp = {
             groundLevel: undefined,
-            // velocityY: 0,
-        }
+        };
+
+
     }
-
-
-
-
 
 
     /*  
@@ -67,7 +61,7 @@ class Player {
         const rightTile = LEVEL_01.tileMap[(x+w)-(x+w)%64];
 
         const groundLevel = Math.max(leftTile.y, rightTile.y);
-        this.tmp.groundLevel = groundLevel;
+        this.mapPosition.groundLevel = groundLevel;
     }
 
 
@@ -90,9 +84,7 @@ class Player {
 
 
     updateVelocityY(ArrowUp) {
-        if (ArrowUp && this.mapPosition.y == this.tmp.groundLevel - this.metadata.spriteHeight) {
-            console.log(ArrowUp)
-            // console.log(this.state.jumping)
+        if (ArrowUp && this.mapPosition.y == this.mapPosition.groundLevel - this.metadata.spriteHeight) {
             this.state.velocityY = this.state.jumpForce;
             this.state.velocityX *= 2;
             this.state.jumping = true;  // ! Not working !!
@@ -132,9 +124,9 @@ class Player {
     }
 
     applyFloorLimit() {
-        if (this.mapPosition.y > this.tmp.groundLevel - this.metadata.spriteHeight) {
+        if (this.mapPosition.y > this.mapPosition.groundLevel - this.metadata.spriteHeight) {
             
-            this.mapPosition.y = this.tmp.groundLevel - this.metadata.spriteHeight;
+            this.mapPosition.y = this.mapPosition.groundLevel - this.metadata.spriteHeight;
 
             if (this.state.jumping === true) {
                 jumpLand.play();
@@ -147,7 +139,7 @@ class Player {
 
     updatePosition(INPUT) {
         const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = INPUT.keysDict;
-
+        this.getGroundLevel();
         this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
         this.updateVelocityY(ArrowUp);
         this.horizontalMovement();
@@ -183,7 +175,7 @@ class Player {
         if (!ArrowLeft && !ArrowRight && !ArrowUp) this.set.action.idle();
 
         // Jumping Sprite
-        if (this.mapPosition.y < this.tmp.groundLevel - this.metadata.spriteHeight) {
+        if (this.mapPosition.y < this.mapPosition.groundLevel - this.metadata.spriteHeight) {
             this.set.action.jump();
         }
 

@@ -5,7 +5,8 @@
 const LEVEL_01 = new Level(LEVEL_01_INFO);
 const URU = new Player({x: CANVAS_WIDTH / 4, y: 353}, spriteInfo);
 const INPUT = new InputHandler();
-const MINI_MAP = new MiniMap(LEVEL_01, URU, 0.25)
+const MINI_MAP = new MiniMap(LEVEL_01, URU, 0.25);
+const VIEW_PORT = new Viewport();
 
 // Main Canvas (game screen)
 const canvas = document.querySelector("#canvas1")
@@ -36,14 +37,15 @@ const jumpLand = document.querySelector("#SNDjumpLand");
 function animate() {
 
     URU.updateAnimation(INPUT);
-    URU.getGroundLevel();
     URU.updatePosition(INPUT);
+    VIEW_PORT.updateAnchor(URU, LEVEL_01);
 
     context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
-    LEVEL_01.background.updateLayers(URU.state.velocityX); // TODO Background should be handled by viewport
+    // TODO Background should be handled by viewport
+    // LEVEL_01.background.updateLayers(URU.state.velocityX);
 
-    // URU.draw(gameState.gameFrame);
+    URU.draw(gameState.gameFrame);
 
     // Interaction with the real map !!
 
@@ -59,7 +61,6 @@ function animate() {
     gameState.loopFrame++;
     requestAnimationFrame(animate);
 
-    // console.log(URU.state.jumping)
 }
 
 animate();
