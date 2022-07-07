@@ -103,10 +103,11 @@ class Player {
 
 
     updateVelocityY(ArrowUp) {
-        if (ArrowUp && !this.state.jumping) {
+        if (ArrowUp && this.mapPosition.y == this.tmp.groundLevel - this.metadata.spriteHeight) {
+            console.log(ArrowUp)
             // console.log(this.state.jumping)
             this.state.velocityY = this.state.jumpForce;
-            this.state.velocityX *= 1.2;
+            this.state.velocityX *= 2;
             this.state.jumping = true;  // ! Not working !!
             jumpStart.play();
         }
@@ -193,16 +194,15 @@ class Player {
         const KeyQty = input.keys.length;
         const { ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = input.keysBool;
 
-        // Idle
+        // Idle Sprite
         if (!ArrowLeft && !ArrowRight && !ArrowUp) this.set.action.idle();
 
-        // Jumping
-        this.state.jumping = (this.mapPosition.y != this.tmp.groundLevel) ? true : false;
-        if (this.state.jumping) {
+        // Jumping Sprite
+        if (this.mapPosition.y < this.tmp.groundLevel - this.metadata.spriteHeight) {
             this.set.action.jump();
         }
 
-        // Running
+        // Running Sprite
         if (Shift && ArrowLeft && !this.state.jumping) {
             this.set.action.run();
             this.set.direction.left();
@@ -212,7 +212,7 @@ class Player {
             this.set.direction.right();
         }
         
-        // Walking
+        // Walking Sprite
         if (KeyQty === 1 && !this.state.jumping) {
             if (Shift) this.set.action.idle();
             if (ArrowRight) {
