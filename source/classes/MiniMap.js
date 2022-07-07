@@ -4,11 +4,14 @@
 class MiniMap {
 
     constructor(levelInfo, player, scale) {
+
+        this.scale = scale;
+
         this.player = {
             width: 96/4,
             height: 72/4,
-            x: Math.floor(player.position.x*scale),
-            y: Math.floor(player.position.y*scale),
+            // x: Math.floor(player.position.x*scale),
+            // y: Math.floor(player.position.y*scale),
         }
         this.miniMap = {
             width: levelInfo.length*scale,
@@ -45,16 +48,24 @@ class MiniMap {
         }
     }
 
-    drawPlayer() {
+    
+
+    drawPlayer(player) {
+
+        const x = player.mapPosition.x * this.scale;
+        const y = player.mapPosition.y * this.scale;
+        const w = player.metadata.spriteWidth * this.scale;
+        const h = player.metadata.spriteHeight * this.scale;
+
         minCtx.beginPath();
         minCtx.strokeStyle = "#4d92bc";
         minCtx.lineWidth = 1;
 
-        minCtx.moveTo(this.player.x, this.player.y);
-        minCtx.lineTo(this.player.x+this.player.width, this.player.y);
-        minCtx.lineTo(this.player.x+this.player.width, this.player.y+this.player.height);
-        minCtx.lineTo(this.player.x, this.player.y+this.player.height);
-        minCtx.lineTo(this.player.x, this.player.y)
+        minCtx.moveTo(x, y);
+        minCtx.lineTo(x+w, y);
+        minCtx.lineTo(x+w, y+h);
+        minCtx.lineTo(x, y+h);
+        minCtx.lineTo(x, y)
         minCtx.stroke();
     }
 

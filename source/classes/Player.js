@@ -31,7 +31,7 @@ class Player {
             jumpForce: -30,
         }
 
-        this.position = {
+        this.mapPosition = {
             x: 10,
             y: 10,
         },
@@ -45,7 +45,7 @@ class Player {
 
     getGroundLevel() {
         
-        const x = this.position.x;
+        const x = this.mapPosition.x;
         const w = this.metadata.spriteWidth;
 
         const leftTile = LEVEL_01.tileMap[x-x%64];
@@ -56,27 +56,94 @@ class Player {
     }
 
     applyGravity_NEW() {
-        if (this.position.y < this.tmp.groundLevel - this.metadata.spriteHeight) {
+        if (this.mapPosition.y < this.tmp.groundLevel - this.metadata.spriteHeight) {
             this.tmp.velocityY += forces.gravity;
-            this.position.y += this.tmp.velocityY;
+            this.mapPosition.y += this.tmp.velocityY;
         } else {
             this.tmp.velocityY = 0;
         }
 
     }
 
-    drawBox() {
 
-        context.beginPath();
-        context.strokeStyle = "pink";
-        context.lineWidth = 10;
-        context.moveTo(this.position.x, this.position.y);
-        context.lineTo(this.position.x + this.metadata.spriteWidth, this.position.y + this.metadata.spriteHeight);
-        context.stroke();
+    /*  
+    ╭━━━╮╱╱╱╱╱╭╮╱╱╱╱╭━━━┳╮╱╱╱╱╱╱╱╭╮
+    ┃╭━╮┃╱╱╱╱╭╯╰╮╱╱╱┃╭━╮┃┃╱╱╱╱╱╱╭╯╰╮
+    ┃╰━━┳━━┳━╋╮╭╋━━╮┃╰━━┫╰━┳━━┳━┻╮╭╯
+    ╰━━╮┃╭╮┃╭╋┫┃┃┃━┫╰━━╮┃╭╮┃┃━┫┃━┫┃
+    ┃╰━╯┃╰╯┃┃┃┃╰┫┃━┫┃╰━╯┃┃┃┃┃━┫┃━┫╰╮
+    ╰━━━┫╭━┻╯╰┻━┻━━╯╰━━━┻╯╰┻━━┻━━┻━╯
+    ╱╱╱╱┃┃
+    ╱╱╱╱╰╯
+    ---------------------------
+    UDDATE THE SPRITE ANIMATION
+    --------------------------- */
 
+    updateAnimation(input) {
+
+        const KeyQty = input.keys.length;
+        const { ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = input.keysBool;
+
+        // Idle
+        if (!ArrowLeft && !ArrowRight && !ArrowUp) this.set.action.idle();
+
+        // Jumping
+        this.state.jumping = (this.state.y != this.state.groundPosition) ? true : false;
+        if (this.state.jumping) {
+            this.set.action.jump();
+        }
+
+        // Running
+        if (Shift && ArrowLeft && !this.state.jumping) {
+            this.set.action.run();
+            this.set.direction.left();
+        }
+        if (Shift && ArrowRight && !this.state.jumping) {
+            this.set.action.run();
+            this.set.direction.right();
+        }
+        
+        // Walking
+        if (KeyQty === 1 && !this.state.jumping) {
+            if (Shift) this.set.action.idle();
+            if (ArrowRight) {
+                this.set.action.walk();
+                this.set.direction.right();
+            }       
+            if (ArrowLeft) {
+                this.set.action.walk();
+                this.set.direction.left();
+            }
+        }
     }
 
-    // ! Ignoring Shift Running for the moment
+
+    set = {
+        action: {
+            idle: () => this.state.action = "idle",
+            walk: () => this.state.action = "walk",
+            run: () => this.state.action = "run",
+            jump: () => this.state.action = "jump",
+        },
+        direction: {
+            right: () => this.state.direction = "right",
+            left: () => this.state.direction = "left",
+        },
+    }
+
+
+    /*  
+    ╭━╮╭━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╮
+    ┃┃╰╯┃┃╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╯╰╮
+    ┃╭╮╭╮┣━━┳╮╭┳━━┳╮╭┳━━┳━╋╮╭╯
+    ┃┃┃┃┃┃╭╮┃╰╯┃┃━┫╰╯┃┃━┫╭╮┫┃
+    ┃┃┃┃┃┃╰╯┣╮╭┫┃━┫┃┃┃┃━┫┃┃┃╰╮
+    ╰╯╰╯╰┻━━╯╰╯╰━━┻┻┻┻━━┻╯╰┻━╯
+    --------------------------
+    UDDATE THE SPRITE POSITION
+    -------------------------- */
+
+
     updateVelocityX(ArrowRight, ArrowLeft, Shift) {
         if (ArrowRight) {
             if (Shift) {
@@ -93,6 +160,7 @@ class Player {
             }
         }
     }
+
 
     updateVelocityY(ArrowUp) {
         if (ArrowUp && !this.state.jumping) {
@@ -144,20 +212,33 @@ class Player {
         }
     }
 
-    set = {
-        action: {
-            idle: () => this.state.action = "idle",
-            walk: () => this.state.action = "walk",
-            run: () => this.state.action = "run",
-            jump: () => this.state.action = "jump",
-        },
-        direction: {
-            right: () => this.state.direction = "right",
-            left: () => this.state.direction = "left",
-        },
-    }
+    updatePosition(INPUT) {
+        const KeyQty = INPUT.keys.length;
+        const { ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = INPUT.keysBool;
 
-    // Sprite canvas animation
+        this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
+        this.updateVelocityY(ArrowUp);
+        this.horizontalMovement();
+        this.verticalMovement();
+        this.applyGrativy(forces.gravity);
+        this.horizontalFriction(forces.friction.horizontal);
+        this.verticalFriction(forces.friction.vertical);
+        this.applyFloorLimit();
+
+    }
+    
+    /*
+    ╭━━━╮╱╱╱╱╱╱╱╱╱╭╮
+    ┃╭━╮┃╱╱╱╱╱╱╱╱╭╯╰╮
+    ┃┃╱┃┣━╮╭┳╮╭┳━┻╮╭╋┳━━┳━╮
+    ┃╰━╯┃╭╮╋┫╰╯┃╭╮┃┃┣┫╭╮┃╭╮╮
+    ┃╭━╮┃┃┃┃┃┃┃┃╭╮┃╰┫┃╰╯┃┃┃┃
+    ╰╯╱╰┻╯╰┻┻┻┻┻╯╰┻━┻┻━━┻╯╰╯
+    -----------------------
+    SPRITE CANVAS ANIMATION
+    ----------------------- */
+
+
     draw(gameFrame) {
 
         const animationLength = this.metadata.animations[this.state.action].length;

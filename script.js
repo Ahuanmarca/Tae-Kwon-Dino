@@ -35,65 +35,8 @@ const jumpLand = document.querySelector("#SNDjumpLand");
 
 function animate() {
 
-    // ------------------------------
-    // WICH KEYS ARE BEING PRESSED ??
-    // ------------------------------
-    const KeyQty = INPUT.keys.length;
-    const Shift = INPUT.keys.includes("Shift");
-    const ArrowRight = INPUT.keys.includes("ArrowRight");
-    const ArrowLeft = INPUT.keys.includes("ArrowLeft");
-    const ArrowUp = INPUT.keys.includes("ArrowUp");
-    const ArorwDown = INPUT.keys.includes("ArrowDown");
-
-
-    // ------------------------------
-    // UDDATE THE SPRITE ANIMATION !! -- USING CLASS !!
-    // ------------------------------
-
-    // Idle ?
-    if (!ArrowLeft && !ArrowRight && !ArrowUp) URU.set.action.idle();
-
-    // Jumping ?
-    URU.state.jumping = (URU.state.y != URU.state.groundPosition) ? true : false;
-    if (URU.state.jumping) {
-        URU.set.action.jump();
-    }
-
-    // Running ?
-    if (Shift && ArrowLeft && !URU.state.jumping) {
-        URU.set.action.run();
-        URU.set.direction.left();
-    }
-    if (Shift && ArrowRight && !URU.state.jumping) {
-        URU.set.action.run();
-        URU.set.direction.right();
-    }
-    
-    // Walking ?
-    if (KeyQty === 1 && !URU.state.jumping) {
-        if (Shift) URU.set.action.idle();
-        if (ArrowRight) {
-            URU.set.action.walk();
-            URU.set.direction.right();
-        }       
-        if (ArrowLeft) {
-            URU.set.action.walk();
-            URU.set.direction.left();
-        }
-    }
-
-    // -------------------------------------------
-    // UPDATE CHARACTER'S POSITION ON THE WORLD!! -- USING CLASS !!
-    // -------------------------------------------
-
-    URU.updateVelocityX(ArrowRight, ArrowLeft, Shift);
-    URU.updateVelocityY(ArrowUp);
-    URU.horizontalMovement();
-    URU.verticalMovement();
-    URU.applyGrativy(forces.gravity);
-    URU.horizontalFriction(forces.friction.horizontal);
-    URU.verticalFriction(forces.friction.vertical);
-    URU.applyFloorLimit();
+    URU.updateAnimation(INPUT);
+    URU.updatePosition(INPUT);
 
     context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
@@ -106,11 +49,9 @@ function animate() {
     URU.getGroundLevel();
     URU.applyGravity_NEW();
 
-    URU.drawBox();
-
-    minCtx.clearRect(0,0,LEVEL_01.width,480/4);
+    minCtx.clearRect(0, 0, LEVEL_01.length/4, 480/4);
     MINI_MAP.drawSurface(LEVEL_01);
-    MINI_MAP.drawPlayer();
+    MINI_MAP.drawPlayer(URU);
 
     // Show variabels below the canvas
     showVariables();
