@@ -58,6 +58,8 @@ function animate() {
     (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
     gameState.loopFrame++;
     requestAnimationFrame(animate);
+
+    // console.log(URU.state.jumping)
 }
 
 animate();

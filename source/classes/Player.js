@@ -57,17 +57,7 @@ class Player {
     ------------------------------ */
 
 
-    getGroundLevel() {
-        
-        const x = this.mapPosition.x;
-        const w = this.metadata.spriteWidth;
 
-        const leftTile = LEVEL_01.tileMap[x-x%64];
-        const rightTile = LEVEL_01.tileMap[(x+w)-(x+w)%64];
-
-        const groundLevel = Math.max(leftTile.y, rightTile.y);
-        this.tmp.groundLevel = groundLevel;
-    }
 
 
     /*  
@@ -80,6 +70,18 @@ class Player {
     --------------------------
     UDDATE THE SPRITE POSITION
     -------------------------- */
+
+
+    getGroundLevel() {
+        const x = this.mapPosition.x;
+        const w = this.metadata.spriteWidth;
+
+        const leftTile = LEVEL_01.tileMap[x-x%64];
+        const rightTile = LEVEL_01.tileMap[(x+w)-(x+w)%64];
+
+        const groundLevel = Math.max(leftTile.y, rightTile.y);
+        this.tmp.groundLevel = groundLevel;
+    }
 
 
     updateVelocityX(ArrowRight, ArrowLeft, Shift) {
@@ -185,6 +187,7 @@ class Player {
     UDDATE THE SPRITE ANIMATION
     --------------------------- */
 
+
     updateAnimation(input) {
 
         const KeyQty = input.keys.length;
@@ -237,101 +240,6 @@ class Player {
         },
     }
 
-
-    /*  
-    ╭━╮╭━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╮
-    ┃┃╰╯┃┃╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╯╰╮
-    ┃╭╮╭╮┣━━┳╮╭┳━━┳╮╭┳━━┳━╋╮╭╯
-    ┃┃┃┃┃┃╭╮┃╰╯┃┃━┫╰╯┃┃━┫╭╮┫┃
-    ┃┃┃┃┃┃╰╯┣╮╭┫┃━┫┃┃┃┃━┫┃┃┃╰╮
-    ╰╯╰╯╰┻━━╯╰╯╰━━┻┻┻┻━━┻╯╰┻━╯
-    --------------------------
-    UDDATE THE SPRITE POSITION
-    -------------------------- */
-
-
-    // updateVelocityX(ArrowRight, ArrowLeft, Shift) {
-    //     if (ArrowRight) {
-    //         if (Shift) {
-    //             this.state.velocityX += this.state.movementSpeed*3;
-    //         } else {
-    //             this.state.velocityX += this.state.movementSpeed;
-    //         }
-    //     }
-    //     if (ArrowLeft) {
-    //         if (Shift) {
-    //             this.state.velocityX -= this.state.movementSpeed*3;
-    //         } else {
-    //             this.state.velocityX -= this.state.movementSpeed;
-    //         }
-    //     }
-    // }
-
-
-    // updateVelocityY(ArrowUp) {
-    //     if (ArrowUp && !this.state.jumping) {
-    //         this.state.velocityY = this.state.jumpForce;
-    //         this.state.velocityX *= 2;
-    //         this.state.jumping = true;
-    //         jumpStart.play();
-    //     }
-    // }
-
-    // // ! By turning this off, the sprite remains on the same
-    // // ! spot within the canvas, thus moving only relative to the background
-    // // !        The problem is that I NEED the sprite to move within
-    // // !        the canvas to get a "viewport" effect
-    // horizontalMovement() {
-    //     this.state.x += this.state.velocityX;
-    // }
-
-    // verticalMovement() {
-    //     this.state.y += this.state.velocityY;
-    // }
-
-    // applyGrativy(gForce) {
-    //     this.state.velocityY += gForce;
-    // }
-
-    // horizontalFriction(hfForce) {
-    //     if (Math.abs(this.state.velocityX) > 0.05) {
-    //         this.state.velocityX *= hfForce;
-    //     } else {
-    //         this.state.velocityX = 0;
-    //     }
-    // }
-
-    // verticalFriction(vfForce) {
-    //     this.state.velocityY *= vfForce;
-    // }
-
-    // applyFloorLimit() {
-    //     if (this.state.y > this.state.groundPosition) {
-    //         this.state.y = this.state.groundPosition;
-
-    //         if (this.state.jumping === true) {
-    //             jumpLand.play();
-    //         }
-
-    //         this.state.jumping = false;
-    //         this.state.velocityY = 0; // ! Should Down Force be always present?
-    //     }
-    // }
-
-    // updatePosition(INPUT) {
-    //     const KeyQty = INPUT.keys.length;
-    //     const { ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = INPUT.keysBool;
-
-    //     this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
-    //     this.updateVelocityY(ArrowUp);
-    //     this.horizontalMovement();
-    //     this.verticalMovement();
-    //     this.applyGrativy(forces.gravity);
-    //     this.horizontalFriction(forces.friction.horizontal);
-    //     this.verticalFriction(forces.friction.vertical);
-    //     this.applyFloorLimit();
-
-    // }
     
     /*
     ╭━━━╮╱╱╱╱╱╱╱╱╱╭╮
@@ -363,5 +271,3 @@ class Player {
     }
 
 } // ! Player Class definition ends here !!
-
-
