@@ -38,9 +38,23 @@ class Player {
 
         this.tmp = {
             groundLevel: undefined,
-            velocityY: 0,
+            // velocityY: 0,
         }
     }
+
+
+    /*
+    ╭━╮╭━╮
+    ┃┃╰╯┃┃
+    ┃╭╮╭╮┣━━┳━━╮
+    ┃┃┃┃┃┃╭╮┃╭╮┃
+    ┃┃┃┃┃┃╭╮┃╰╯┃
+    ╰╯╰╯╰┻╯╰┫╭━╯
+    ╱╱╱╱╱╱╱╱┃┃
+    ╱╱╱╱╱╱╱╱╰╯
+    ------------------------------
+    MOVE THE SPRITE WITHIN THE MAP
+    ------------------------------ */
 
 
     getGroundLevel() {
@@ -55,15 +69,107 @@ class Player {
         this.tmp.groundLevel = groundLevel;
     }
 
-    applyGravity_NEW() {
-        if (this.mapPosition.y < this.tmp.groundLevel - this.metadata.spriteHeight) {
-            this.tmp.velocityY += forces.gravity;
-            this.mapPosition.y += this.tmp.velocityY;
+
+    /*  
+    ╭━╮╭━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╮
+    ┃┃╰╯┃┃╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╯╰╮
+    ┃╭╮╭╮┣━━┳╮╭┳━━┳╮╭┳━━┳━╋╮╭╯
+    ┃┃┃┃┃┃╭╮┃╰╯┃┃━┫╰╯┃┃━┫╭╮┫┃
+    ┃┃┃┃┃┃╰╯┣╮╭┫┃━┫┃┃┃┃━┫┃┃┃╰╮
+    ╰╯╰╯╰┻━━╯╰╯╰━━┻┻┻┻━━┻╯╰┻━╯
+    --------------------------
+    UDDATE THE SPRITE POSITION
+    -------------------------- */
+
+
+    updateVelocityX(ArrowRight, ArrowLeft, Shift) {
+        if (ArrowRight) {
+            if (Shift) {
+                this.state.velocityX += this.state.movementSpeed*2;
+            } else {
+                this.state.velocityX += this.state.movementSpeed;
+            }
+        }
+        if (ArrowLeft) {
+            if (Shift) {
+                this.state.velocityX -= this.state.movementSpeed*2;
+            } else {
+                this.state.velocityX -= this.state.movementSpeed;
+            }
+        }
+    }
+
+
+    updateVelocityY(ArrowUp) {
+        if (ArrowUp && !this.state.jumping) {
+            // console.log(this.state.jumping)
+            this.state.velocityY = this.state.jumpForce;
+            this.state.velocityX *= 1.2;
+            this.state.jumping = true;  // ! Not working !!
+            jumpStart.play();
+        }
+    }
+
+    horizontalMovement() {
+        if (this.mapPosition.x < 5) {
+            this.mapPosition.x = 5;
+        } else if (this.mapPosition.x > LEVEL_01.length / 2) {
+            this.mapPosition.x = LEVEL_01.length / 2
         } else {
-            this.tmp.velocityY = 0;
+            this.mapPosition.x += this.state.velocityX;
         }
 
     }
+
+    verticalMovement() {
+        this.mapPosition.y += this.state.velocityY;
+    }
+
+    applyGrativy(gForce) {
+        this.state.velocityY += gForce;
+    }
+
+    horizontalFriction(hfForce) {
+        if (Math.abs(this.state.velocityX) > 0.05) {
+            this.state.velocityX *= hfForce;
+        } else {
+            this.state.velocityX = 0;
+        }
+    }
+
+    verticalFriction(vfForce) {
+        this.state.velocityY *= vfForce;
+    }
+
+    applyFloorLimit() {
+        if (this.mapPosition.y > this.tmp.groundLevel - this.metadata.spriteHeight) {
+            
+            this.mapPosition.y = this.tmp.groundLevel - this.metadata.spriteHeight;
+
+            // if (this.state.jumping === true) {
+            //     jumpLand.play();
+            // }
+
+            this.state.jumping = false;
+            this.state.velocityY = 0; // ! Should Down Force be always present?
+        }
+    }
+
+    updatePosition(INPUT) {
+        const KeyQty = INPUT.keys.length;
+        const { ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = INPUT.keysBool;
+
+        this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
+        this.updateVelocityY(ArrowUp);
+        this.horizontalMovement();
+        this.verticalMovement();
+        this.applyGrativy(forces.gravity);
+        this.horizontalFriction(forces.friction.horizontal);
+        this.verticalFriction(forces.friction.vertical);
+        this.applyFloorLimit();
+
+    }
+
 
 
     /*  
@@ -88,7 +194,7 @@ class Player {
         if (!ArrowLeft && !ArrowRight && !ArrowUp) this.set.action.idle();
 
         // Jumping
-        this.state.jumping = (this.state.y != this.state.groundPosition) ? true : false;
+        this.state.jumping = (this.mapPosition.y != this.tmp.groundLevel) ? true : false;
         if (this.state.jumping) {
             this.set.action.jump();
         }
@@ -144,88 +250,88 @@ class Player {
     -------------------------- */
 
 
-    updateVelocityX(ArrowRight, ArrowLeft, Shift) {
-        if (ArrowRight) {
-            if (Shift) {
-                this.state.velocityX += this.state.movementSpeed*3;
-            } else {
-                this.state.velocityX += this.state.movementSpeed;
-            }
-        }
-        if (ArrowLeft) {
-            if (Shift) {
-                this.state.velocityX -= this.state.movementSpeed*3;
-            } else {
-                this.state.velocityX -= this.state.movementSpeed;
-            }
-        }
-    }
+    // updateVelocityX(ArrowRight, ArrowLeft, Shift) {
+    //     if (ArrowRight) {
+    //         if (Shift) {
+    //             this.state.velocityX += this.state.movementSpeed*3;
+    //         } else {
+    //             this.state.velocityX += this.state.movementSpeed;
+    //         }
+    //     }
+    //     if (ArrowLeft) {
+    //         if (Shift) {
+    //             this.state.velocityX -= this.state.movementSpeed*3;
+    //         } else {
+    //             this.state.velocityX -= this.state.movementSpeed;
+    //         }
+    //     }
+    // }
 
 
-    updateVelocityY(ArrowUp) {
-        if (ArrowUp && !this.state.jumping) {
-            this.state.velocityY = this.state.jumpForce;
-            this.state.velocityX *= 2;
-            this.state.jumping = true;
-            jumpStart.play();
-        }
-    }
+    // updateVelocityY(ArrowUp) {
+    //     if (ArrowUp && !this.state.jumping) {
+    //         this.state.velocityY = this.state.jumpForce;
+    //         this.state.velocityX *= 2;
+    //         this.state.jumping = true;
+    //         jumpStart.play();
+    //     }
+    // }
 
-    // ! By turning this off, the sprite remains on the same
-    // ! spot within the canvas, thus moving only relative to the background
-    // !        The problem is that I NEED the sprite to move within
-    // !        the canvas to get a "viewport" effect
-    horizontalMovement() {
-        this.state.x += this.state.velocityX;
-    }
+    // // ! By turning this off, the sprite remains on the same
+    // // ! spot within the canvas, thus moving only relative to the background
+    // // !        The problem is that I NEED the sprite to move within
+    // // !        the canvas to get a "viewport" effect
+    // horizontalMovement() {
+    //     this.state.x += this.state.velocityX;
+    // }
 
-    verticalMovement() {
-        this.state.y += this.state.velocityY;
-    }
+    // verticalMovement() {
+    //     this.state.y += this.state.velocityY;
+    // }
 
-    applyGrativy(gForce) {
-        this.state.velocityY += gForce;
-    }
+    // applyGrativy(gForce) {
+    //     this.state.velocityY += gForce;
+    // }
 
-    horizontalFriction(hfForce) {
-        if (Math.abs(this.state.velocityX) > 0.05) {
-            this.state.velocityX *= hfForce;
-        } else {
-            this.state.velocityX = 0;
-        }
-    }
+    // horizontalFriction(hfForce) {
+    //     if (Math.abs(this.state.velocityX) > 0.05) {
+    //         this.state.velocityX *= hfForce;
+    //     } else {
+    //         this.state.velocityX = 0;
+    //     }
+    // }
 
-    verticalFriction(vfForce) {
-        this.state.velocityY *= vfForce;
-    }
+    // verticalFriction(vfForce) {
+    //     this.state.velocityY *= vfForce;
+    // }
 
-    applyFloorLimit() {
-        if (this.state.y > this.state.groundPosition) {
-            this.state.y = this.state.groundPosition;
+    // applyFloorLimit() {
+    //     if (this.state.y > this.state.groundPosition) {
+    //         this.state.y = this.state.groundPosition;
 
-            if (this.state.jumping === true) {
-                jumpLand.play();
-            }
+    //         if (this.state.jumping === true) {
+    //             jumpLand.play();
+    //         }
 
-            this.state.jumping = false;
-            this.state.velocityY = 0; // ! Should Down Force be always present?
-        }
-    }
+    //         this.state.jumping = false;
+    //         this.state.velocityY = 0; // ! Should Down Force be always present?
+    //     }
+    // }
 
-    updatePosition(INPUT) {
-        const KeyQty = INPUT.keys.length;
-        const { ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = INPUT.keysBool;
+    // updatePosition(INPUT) {
+    //     const KeyQty = INPUT.keys.length;
+    //     const { ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = INPUT.keysBool;
 
-        this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
-        this.updateVelocityY(ArrowUp);
-        this.horizontalMovement();
-        this.verticalMovement();
-        this.applyGrativy(forces.gravity);
-        this.horizontalFriction(forces.friction.horizontal);
-        this.verticalFriction(forces.friction.vertical);
-        this.applyFloorLimit();
+    //     this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
+    //     this.updateVelocityY(ArrowUp);
+    //     this.horizontalMovement();
+    //     this.verticalMovement();
+    //     this.applyGrativy(forces.gravity);
+    //     this.horizontalFriction(forces.friction.horizontal);
+    //     this.verticalFriction(forces.friction.vertical);
+    //     this.applyFloorLimit();
 
-    }
+    // }
     
     /*
     ╭━━━╮╱╱╱╱╱╱╱╱╱╭╮

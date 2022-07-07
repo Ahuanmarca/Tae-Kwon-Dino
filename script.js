@@ -36,19 +36,18 @@ const jumpLand = document.querySelector("#SNDjumpLand");
 function animate() {
 
     URU.updateAnimation(INPUT);
+    URU.getGroundLevel();
     URU.updatePosition(INPUT);
 
     context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
-    // Background layers update and draw themselves 😀
-    LEVEL_01.background.updateLayers(URU.state.velocityX);
+    LEVEL_01.background.updateLayers(URU.state.velocityX); // TODO Background should be handled by viewport
 
-    // Player class draws itself 😀
-    URU.draw(gameState.gameFrame);
+    // URU.draw(gameState.gameFrame);
 
-    URU.getGroundLevel();
-    URU.applyGravity_NEW();
+    // Interaction with the real map !!
 
+    // Minimap
     minCtx.clearRect(0, 0, LEVEL_01.length/4, 480/4);
     MINI_MAP.drawSurface(LEVEL_01);
     MINI_MAP.drawPlayer(URU);
