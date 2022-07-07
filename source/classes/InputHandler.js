@@ -1,7 +1,13 @@
+// Handrles
+//      Array containing the keys as strings
+//      Number of keys being pressed
+//      Dictionary with pressed keys as booleans 
+
 class InputHandler {
     constructor() {
         this.keys = [];
-        this.keysBool = {
+        this.keysDict = {
+            KeyQty: 0,
             ArrowDown: false,
             ArrowUp: false,
             ArrowLeft: false,
@@ -17,7 +23,8 @@ class InputHandler {
                     e.key === 'Shift' ||
                     e.key === 'v' ) {
                 this.keys.indexOf(e.key) === -1 && this.keys.push(e.key);
-                this.keysBool[e.key] = true;
+                this.keysDict[e.key] = true;
+                this.keysDict.KeyQty = this.keys.length;
             }
         })
         window.addEventListener('keyup', e => {
@@ -28,7 +35,8 @@ class InputHandler {
                     e.key === 'Shift' ||
                     e.key === 'v' ) {
                 this.keys.splice(this.keys.indexOf(e.key), 1);
-                this.keysBool[e.key] = false;
+                this.keysDict[e.key] = false;
+                this.keysDict.KeyQty = this.keys.length;
             }
         })
     }

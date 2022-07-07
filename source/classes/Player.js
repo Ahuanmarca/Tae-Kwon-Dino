@@ -43,19 +43,6 @@ class Player {
     }
 
 
-    /*
-    ╭━╮╭━╮
-    ┃┃╰╯┃┃
-    ┃╭╮╭╮┣━━┳━━╮
-    ┃┃┃┃┃┃╭╮┃╭╮┃
-    ┃┃┃┃┃┃╭╮┃╰╯┃
-    ╰╯╰╯╰┻╯╰┫╭━╯
-    ╱╱╱╱╱╱╱╱┃┃
-    ╱╱╱╱╱╱╱╱╰╯
-    ------------------------------
-    MOVE THE SPRITE WITHIN THE MAP
-    ------------------------------ */
-
 
 
 
@@ -116,8 +103,8 @@ class Player {
     horizontalMovement() {
         if (this.mapPosition.x < 5) {
             this.mapPosition.x = 5;
-        } else if (this.mapPosition.x > LEVEL_01.length / 2) {
-            this.mapPosition.x = LEVEL_01.length / 2
+        } else if (this.mapPosition.x > LEVEL_01.length - this.metadata.spriteWidth - 10) {
+            this.mapPosition.x > LEVEL_01.length - this.metadata.spriteWidth - 10
         } else {
             this.mapPosition.x += this.state.velocityX;
         }
@@ -149,9 +136,9 @@ class Player {
             
             this.mapPosition.y = this.tmp.groundLevel - this.metadata.spriteHeight;
 
-            // if (this.state.jumping === true) {
-            //     jumpLand.play();
-            // }
+            if (this.state.jumping === true) {
+                jumpLand.play();
+            }
 
             this.state.jumping = false;
             this.state.velocityY = 0; // ! Should Down Force be always present?
@@ -159,8 +146,7 @@ class Player {
     }
 
     updatePosition(INPUT) {
-        const KeyQty = INPUT.keys.length;
-        const { ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = INPUT.keysBool;
+        const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = INPUT.keysDict;
 
         this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
         this.updateVelocityY(ArrowUp);
@@ -191,8 +177,7 @@ class Player {
 
     updateAnimation(input) {
 
-        const KeyQty = input.keys.length;
-        const { ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = input.keysBool;
+        const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = input.keysDict;
 
         // Idle Sprite
         if (!ArrowLeft && !ArrowRight && !ArrowUp) this.set.action.idle();
