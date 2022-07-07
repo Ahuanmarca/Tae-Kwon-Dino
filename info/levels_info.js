@@ -34,10 +34,9 @@ const LEVEL_01_INFO = {
     },
 
     tileMapString: `
-        PPPDDPEWPPUUPPE
-        222210011123333
+        PPPPDDPPPPPPEWPPPPUUPPPPEWPPDPPPPUPPUPPP
+        2222210000000111112333333222211112223333
     `,
-
 
     // Array with tile properties
 

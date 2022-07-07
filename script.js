@@ -110,6 +110,7 @@ function animate() {
 
     minCtx.clearRect(0,0,LEVEL_01.width,480/4);
     MINI_MAP.drawSurface(LEVEL_01);
+    MINI_MAP.drawPlayer();
 
     // Show variabels below the canvas
     showVariables();

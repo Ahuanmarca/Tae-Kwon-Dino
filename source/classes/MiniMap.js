@@ -4,18 +4,16 @@
 class MiniMap {
 
     constructor(levelInfo, player, scale) {
-
         this.player = {
+            width: 96/4,
+            height: 72/4,
             x: Math.floor(player.position.x*scale),
             y: Math.floor(player.position.y*scale),
         }
-    
         this.miniMap = {
             width: levelInfo.length*scale,
-            // ? Need the actual value to index the level object?
             tileWidth: 64/4,
         }
-
     }
 
     drawSurface(levelInfo) {
@@ -48,7 +46,16 @@ class MiniMap {
     }
 
     drawPlayer() {
+        minCtx.beginPath();
+        minCtx.strokeStyle = "#4d92bc";
+        minCtx.lineWidth = 1;
 
+        minCtx.moveTo(this.player.x, this.player.y);
+        minCtx.lineTo(this.player.x+this.player.width, this.player.y);
+        minCtx.lineTo(this.player.x+this.player.width, this.player.y+this.player.height);
+        minCtx.lineTo(this.player.x, this.player.y+this.player.height);
+        minCtx.lineTo(this.player.x, this.player.y)
+        minCtx.stroke();
     }
 
 }
