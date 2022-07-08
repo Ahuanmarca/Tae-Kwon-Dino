@@ -9,43 +9,62 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="gameContainer">
-        <canvas id="canvas1"></canvas>
-    </div>
+
+    <div id="columnsContainer">
+
+        <div id="column1">
+            <div id="gameContainer">
+                <canvas id="canvas1"></canvas>
+            </div>
+            
+            <div id="miniMapContainer">
+                <canvas id="canvas2"></canvas>
+            </div>
+        </div>
     
-    <div id="miniMapContainer">
-        <canvas id="canvas2"></canvas>
+        <div id="column2">
+            <div id="variablesDisplayContainer">
+                <b><u>URU</u></b>
+                <table>
+                    <tr><td>action</td><td><span id="showAction"></span></td></tr>
+                    <tr><td>direction</td><td><span id="showDirection"></span></td></tr>
+                    <tr><td>jumping</td><td><span id="showJumping"></span></td></tr>
+                    <tr><td>running</td><td><span id="showRunning"></span></td></tr>
+        
+                    <tr><td>vel x</td><td><span id="showVelocityX"></span></td></tr>
+                    <tr><td>vel y</td><td><span id="showVelocityY"></span></td></tr>
+                    <tr><td>pos x</td><td><span id="showPositionX"></span></td></tr>
+                    <tr><td>pos y</td><td><span id="showPositionY"></span></td></tr>
+        
+                    <tr><td>sprites</td><td><span id="showAnimationFrame"></span>/<span id="showAnimationLength"></span></td></tr>
+                    <tr><td>u</td><td><span id="showFrameCoordinate"></span></td></tr>
+                </table>
+                <b><u>Level</u></b>
+                <table>
+                    <tr><td>level length</td><td><span id="showLevelLength"></span></td></tr>
+                    <tr><td>background - back</td><td><span id="showBackX"></span></td></tr>
+                    <tr><td>background - middle</td><td><span id="showMiddleX"></span></td></tr>
+                    <tr><td>background - near</td><td><span id="showNearX"></span></td></tr>
+                </table>
+                <b><u>State</u></b>
+                <table>
+                    <tr><td>loop frame</td><td><span id="showLoopFrame"></span></td></tr>
+                    <tr><td>game frame</td><td><span id="showGameFrame"></span></td></tr>
+                    <tr><td>input</td><td><span id="showInput"></span></td></tr>
+                </table>
+                <b><u>Viewport</u></b>
+                <table>
+                    <tr><td>anchor</td><td><span id="showViewportAnchor"></span></td></tr>
+                    <tr><td>offset</td><td><span id="showOffset"></span></td></tr>
+                    <tr><td>left tile</td><td><span id="showLeftTile"></span></td></tr>
+                    <tr><td>right tile</td><td><span id="showRightTile"></span></td></tr>
+                </table>
+            </div>
+        </div>
+
     </div>
 
-    <div id="variablesDisplayContainer">
-        <b><u>URU</u></b>
-        <table>
-            <tr><td>action</td><td><span id="showAction"></span></td></tr>
-            <tr><td>direction</td><td><span id="showDirection"></span></td></tr>
-            <tr><td>jumping</td><td><span id="showJumping"></span></td></tr>
-            <!-- <tr><td>running</td><td><span id="showRunning"></span></td></tr> -->
 
-            <tr><td>velocityX</td><td><span id="showVelocityX"></span></td></tr>
-            <tr><td>velocityY</td><td><span id="showVelocityY"></span></td></tr>
-            <tr><td>positionX</td><td><span id="showPositionX"></span></td></tr>
-            <tr><td>positionY</td><td><span id="showPositionY"></span></td></tr>
-
-            <tr><td>animation length</td><td><span id="showAnimationLength"></span></td></tr>
-            <tr><td>animation frame</td><td><span id="showAnimationFrame"></span></td></tr>
-            <tr><td>frame u</td><td><span id="showFrameCoordinate"></span></td></tr>
-        </table>
-        <b><u>Background</u></b>
-        <table>
-            <tr><td>back</td><td><span id="showBackX"></span></td></tr>
-            <tr><td>middle</td><td><span id="showMiddleX"></span></td></tr>
-            <tr><td>near</td><td><span id="showNearX"></span></td></tr>
-            <tr><td>ground</td><td><span id="showGroundX"></span></td></tr>
-        </table>
-        <b><u>State</u></b>
-        <br>loop frame: <span id="showLoopFrame"></span>
-        <br>game frame: <span id="showGameFrame"></span>
-        <br>input: <span id="showInput"></span>
-    </div>
     
     <!-- Import audio files -->
     <audio id="byteSound" src="assets/sounds/random2.wav"></audio>

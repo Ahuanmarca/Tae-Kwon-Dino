@@ -23,12 +23,14 @@ class Player {
             jumping: false,
             running: false,
             // Position of the sprite within the canvas
-            x: position.x,
-            y: position.y,
+            // x: position.x,
+            // y: position.y,
             velocityX: 0,
             velocityY: 0,
             movementSpeed: 0.3,
             jumpForce: -30,
+            leftTile: undefined,
+            rightTile: undefined,
         };
 
         this.mapPosition = {
@@ -54,13 +56,20 @@ class Player {
 
 
     getGroundLevel() {
+        // TODO: DON'T USE HARDCODED VALUESSSS !!
         const x = this.mapPosition.x;
         const w = this.metadata.spriteWidth;
 
-        const leftTile = LEVEL_01.tileMap[x-x%64];
-        const rightTile = LEVEL_01.tileMap[(x+w)-(x+w)%64];
+        const hitX = x + 32;
+        const hitW = w - 32;
 
-        const groundLevel = Math.max(leftTile.y, rightTile.y);
+        // this.state.leftTile = LEVEL_01.tileMap[x-x%64];
+        // this.state.rightTile = LEVEL_01.tileMap[(x+w)-(x+w)%64];
+        
+        this.state.leftTile = LEVEL_01.tileMap[hitX-hitX%64];
+        this.state.rightTile = LEVEL_01.tileMap[(x+hitW)-(x+hitW)%64];
+
+        const groundLevel = Math.min(this.state.leftTile.y, this.state.rightTile.y);
         this.mapPosition.groundLevel = groundLevel;
     }
 
@@ -189,6 +198,9 @@ class Player {
             this.set.direction.right();
         }
         
+        // Running state, not using for anything but display
+        this.state.running = (this.state.action === "run") ? true : false;
+
         // Walking Sprite
         if (KeyQty === 1 && !this.state.jumping) {
             if (Shift) this.set.action.idle();

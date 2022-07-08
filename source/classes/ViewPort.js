@@ -2,14 +2,24 @@
 // TODO Don't use hard coded values !!
 
 class Viewport {
-    constructor() {
+    constructor(player, level) {
         this.anchor = 0;
         this.tiles = {};
+
+        this.vpWidth = 640;
+        this.vpHeight = 480;
+
+        this.faceRightOffset = 200;
+        this.faceLeftOffset = 360;
+
+        this.vpTail = 0;
+        this.vpHead = level.length;
+
     }
 
 
     updateAnchor(player, level) {
-        if (player.mapPosition.x < 200) {
+        if (player.mapPosition.x < 200 || (player.mapPosition.x < 360 && player.state.direction === "left")) {
             this.anchor = 0;
         } else if (player.mapPosition.x > level.length - 440) {
             this.anchor = level.length - 640;
@@ -67,7 +77,7 @@ class Viewport {
     }
 
 
-    drawPlayer(player, gameFrame) {
+    drawPlayer(level, player, gameFrame) {
 
         const animationLength = player.metadata.animations[player.state.action].length;
         const animationFrame = gameFrame % animationLength;
@@ -81,7 +91,19 @@ class Viewport {
         //      If facing right: 200
         //      If facing left: 360
 
-        const x = (player.state.direction === "right") ? 200 : 360;
+        let x = undefined;
+
+        if (this.anchor === 0) {
+            // Viewport locked at level's start
+            x = player.mapPosition.x;
+        } else if (this.anchor === level.length - 640) {
+            // Viewport locked al level's end
+            x = 640 - (level.length - player.mapPosition.x);
+        } else {
+            // Standart Viewport
+            x = (player.state.direction === "right") ? this.faceRightOffset : this.faceLeftOffset;
+        }
+
 
         context.drawImage(
             // Use the correct PNG file, depending on direction facing
@@ -91,6 +113,14 @@ class Viewport {
             // Sprite position on canvas
             x, y, player.metadata.spriteWidth, player.metadata.spriteHeight
         );
+
     }
+
+
+    drawBackground(player, level) {
+        level.background.updateLayers(player.state.velocityX);
+    }
+
+
 }
 

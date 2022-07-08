@@ -9,3 +9,25 @@ span {
 #canvas2 {
     border: 1px solid black;
 }
+
+table {
+    border: 1px solid black;
+}
+td {
+    border: 1px solid black;
+    width: 160px;
+    max-width: 160px;
+}
+
+#columnsContainer {
+    display: flex;
+    justify-content: space-around;
+}
+
+#column1 {
+    width: 640;
+}
+
+#column2 {
+    width: 640;
+}
