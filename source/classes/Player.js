@@ -54,7 +54,6 @@ class Player {
     UDDATE THE SPRITE POSITION
     -------------------------- */
 
-
     getGroundLevel() {
         // TODO: DON'T USE HARDCODED VALUESSSS !!
         const x = this.mapPosition.x;
@@ -62,9 +61,6 @@ class Player {
 
         const hitX = x + 32;
         const hitW = w - 32;
-
-        // this.state.leftTile = LEVEL_01.tileMap[x-x%64];
-        // this.state.rightTile = LEVEL_01.tileMap[(x+w)-(x+w)%64];
         
         this.state.leftTile = LEVEL_01.tileMap[hitX-hitX%64];
         this.state.rightTile = LEVEL_01.tileMap[(x+hitW)-(x+hitW)%64];

@@ -1,6 +1,3 @@
-// ! Not sure about the order of declaration, switched them around a little bit because of some declarations that were needed
-
-
 // Game Objects
 const LEVEL_01 = new Level(LEVEL_01_INFO);
 const URU = new Player({x: CANVAS_WIDTH / 4, y: 353}, spriteInfo);
@@ -14,20 +11,17 @@ const context = canvas.getContext("2d");
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
-
 // Secondary canvas for minimap
 const canvas2 = document.querySelector("#canvas2")
 const minCtx = canvas2.getContext("2d");
 canvas2.width = LEVEL_01.length / 4;
 canvas2.height = 480 / 4;
 
-
 const gameState = {
     gameFrame:0,
     loopFrame: 0,
     staggerFrames: 10,  
 }
-
 
 // Select sounds from html document
 const jumpStart = document.querySelector("#SNDjumpStart");
