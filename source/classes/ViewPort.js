@@ -1,15 +1,3 @@
-    /*
-    ╭━╮╭━╮
-    ┃┃╰╯┃┃
-    ┃╭╮╭╮┣━━┳━━╮
-    ┃┃┃┃┃┃╭╮┃╭╮┃
-    ┃┃┃┃┃┃╭╮┃╰╯┃
-    ╰╯╰╯╰┻╯╰┫╭━╯
-    ╱╱╱╱╱╱╱╱┃┃
-    ╱╱╱╱╱╱╱╱╰╯
-    ------------------------------
-    MOVE THE SPRITE WITHIN THE MAP
-    ------------------------------ */
 
 // TODO Don't use hard coded values !!
 
@@ -31,6 +19,18 @@ class Viewport {
             this.anchor = Math.floor(player.mapPosition.x) - 360;
         }
     }
+
+
+    /*    
+    ╭━━━━┳╮
+    ┃╭╮╭╮┃┃
+    ╰╯┃┃┣┫┃╭━━┳━━╮
+    ╱╱┃┃┣┫┃┃┃━┫━━┫
+    ╱╱┃┃┃┃╰┫┃━╋━━┃
+    ╱╱╰╯╰┻━┻━━┻━━╯
+    -----------------------------
+    Get the tiles, draw the tiles
+    ----------------------------- */
 
 
     getTiles(level) {
@@ -71,16 +71,25 @@ class Viewport {
 
         const animationLength = player.metadata.animations[player.state.action].length;
         const animationFrame = gameFrame % animationLength;
-        const frameU = player.metadata.animations[player.state.action][animationFrame];
-        const frameV = 0; // TODO: Don't use hardcoded value!!
+        const u = player.metadata.animations[player.state.action][animationFrame];
+        const v = 0; // TODO: Don't use hardcoded value!!
+
+        // Get player y position from it's map position
+        const y = player.mapPosition.y + 16;
+
+        // Player's x position:
+        //      If facing right: 200
+        //      If facing left: 360
+
+        const x = (player.state.direction === "right") ? 200 : 360;
 
         context.drawImage(
             // Use the correct PNG file, depending on direction facing
             (player.state.direction == "right") ? player.metadata.faceRightSheet : player.metadata.faceLeftSheet,
             // Crop the PNG file
-            frameU, frameV, player.metadata.spriteWidth, player.metadata.spriteHeight,
+            u, v, player.metadata.spriteWidth, player.metadata.spriteHeight,
             // Sprite position on canvas
-            player.state.x, player.state.y, player.metadata.spriteWidth, player.metadata.spriteHeight
+            x, y, player.metadata.spriteWidth, player.metadata.spriteHeight
         );
     }
 }

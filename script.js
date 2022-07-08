@@ -43,7 +43,7 @@ function animate() {
     VIEW_PORT.updateAnchor(URU, LEVEL_01);
     VIEW_PORT.getTiles(LEVEL_01);
     VIEW_PORT.drawTiles(LEVEL_01);
-
+    VIEW_PORT.drawPlayer(URU, gameState.gameFrame)
 
     // TODO Background should be handled by viewport
     // LEVEL_01.background.updateLayers(URU.state.velocityX);
