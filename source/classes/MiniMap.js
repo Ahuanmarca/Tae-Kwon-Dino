@@ -1,48 +1,67 @@
 // TODO: DON'T USE HARD CODED VALUESSS
-// 1/4 scale minimap below the main viewport
+// 1*this.scale scale minimap below the main viewport
 
 class MiniMap {
 
-    constructor(levelInfo, player, scale) {
+    constructor(level, player, scale) {
 
         this.scale = scale;
 
+
         this.player = {
-            width: 96/4,
-            height: 72/4,
+            width: player.metadata.spriteWidth*scale,
+            height: player.metadata.spriteHeight*scale,
             // x: Math.floor(player.position.x*scale),
             // y: Math.floor(player.position.y*scale),
         }
         this.miniMap = {
-            width: levelInfo.length*scale,
-            tileWidth: 64/4,
+            width: level.length*scale,
+            tileWidth: level.tileWidth * scale,
         }
     }
 
-    drawSurface(levelInfo) {
+    drawSurface(level) {
 
-        for (let key in levelInfo.tileMap) {
+
+
+        for (let key in level.tileMap) {
+
+            const tile = level.tileMap[key]
+
+            const x = level.tileMap[key].x*this.scale;
+            const y = level.tileMap[key].y*this.scale;
+            const w = level.tileWidth*this.scale;
+            const h = level.tileHeight*this.scale;
+             // TODO don't use hard coded value
+            const slope = h*0.25; // ? because the slope is 1/4th of the tile's height
+            const bottom = level.levelHeight * this.scale;
+
             minCtx.beginPath();
-            minCtx.strokeStyle = "brown";
-            minCtx.lineWidth = 1;
+            minCtx.strokeStyle = "brown"; // TODO don't use hard coded value
+            minCtx.lineWidth = 1; // TODO don't use hard coded value
   
-            if (levelInfo.tileMap[key].type === "D") {
-                minCtx.moveTo(levelInfo.tileMap[key].x/4, levelInfo.tileMap[key].y/4);
-                minCtx.lineTo(levelInfo.tileMap[key].x/4 + 16, levelInfo.tileMap[key].y/4 + 64/4 );
-            } else if (levelInfo.tileMap[key].type === "U") {
-                minCtx.moveTo(levelInfo.tileMap[key].x/4, levelInfo.tileMap[key].y/4+64/4);
-                minCtx.lineTo(levelInfo.tileMap[key].x/4 + 16, levelInfo.tileMap[key].y/4);
-            } else if (levelInfo.tileMap[key].type === "W") {
-                minCtx.moveTo(levelInfo.tileMap[key].x/4 + (64/4)/2, 480/4)
-                minCtx.lineTo(levelInfo.tileMap[key].x/4 + (64/4)/2, levelInfo.tileMap[key].y/4)
-                minCtx.lineTo(levelInfo.tileMap[key].x/4 + 16, levelInfo.tileMap[key].y/4);
-            } else if (levelInfo.tileMap[key].type === "E") {
-                minCtx.moveTo(levelInfo.tileMap[key].x/4, levelInfo.tileMap[key].y/4);
-                minCtx.lineTo(levelInfo.tileMap[key].x/4 + (64/4)/2, levelInfo.tileMap[key].y/4);
-                minCtx.lineTo(levelInfo.tileMap[key].x/4 + (64/4)/2, 480/4);
+            if (tile.type === "D") {
+                // downhill slope
+                minCtx.moveTo(x, y);
+                minCtx.lineTo(x+w, y+slope );
+            } else if (tile.type === "U") {
+                // uphill slope
+                minCtx.moveTo(x, y+slope);
+                minCtx.lineTo(x+w, y);
+            } else if (tile.type === "W") {
+                // west wall
+                minCtx.moveTo(x+w/2, bottom) // TODO don't use hard coded value
+                minCtx.lineTo(x+w/2, y) // TODO don't use hard coded value
+                minCtx.lineTo(x+w, y);
+            } else if (tile.type === "E") {
+                // east wall
+                minCtx.moveTo(x, y);
+                minCtx.lineTo(x+w/2, y); // TODO don't use hard coded value
+                minCtx.lineTo(x+w/2, bottom); // TODO don't use hard coded value
             } else {
-                minCtx.moveTo(levelInfo.tileMap[key].x/4, levelInfo.tileMap[key].y/4);
-                minCtx.lineTo(levelInfo.tileMap[key].x/4 + 16, levelInfo.tileMap[key].y/4);
+                // platform
+                minCtx.moveTo(x, y);
+                minCtx.lineTo(x+w, y);
             }
             minCtx.stroke();
         }
@@ -52,20 +71,20 @@ class MiniMap {
 
     drawPlayer(player) {
 
-        const x = player.mapPosition.x * this.scale;
-        const y = player.mapPosition.y * this.scale;
-        const w = player.metadata.spriteWidth * this.scale;
-        const h = player.metadata.spriteHeight * this.scale;
+        const x = player.mapPosition.x*this.scale;
+        const y = player.mapPosition.y*this.scale;
+        const w = player.metadata.spriteWidth*this.scale;
+        const h = player.metadata.spriteHeight*this.scale;
 
         minCtx.beginPath();
         minCtx.strokeStyle = "#4d92bc";
         minCtx.lineWidth = 1;
 
-        minCtx.moveTo(x, y);
-        minCtx.lineTo(x+w, y);
-        minCtx.lineTo(x+w, y+h);
-        minCtx.lineTo(x, y+h);
-        minCtx.lineTo(x, y)
+        minCtx.moveTo(x,y);
+        minCtx.lineTo(x+w,y);
+        minCtx.lineTo(x+w,y+h);
+        minCtx.lineTo(x,y+h);
+        minCtx.lineTo(x,y)
         minCtx.stroke();
     }
 

@@ -9,11 +9,15 @@ class Level {
     constructor(levelInfo) {
         this.level = levelInfo.metadata.level;
         this.name = levelInfo.metadata.name;
+        this.tileWidth = levelInfo.metadata.tileWidth;
+        this.tileHeight = levelInfo.metadata.tileHeight;
+        this.levelHeight = levelInfo.metadata.levelHeight;
+
         this.tiles = createTiles(levelInfo.tilesInfo);
         this.tileMap = getTileMap(levelInfo);
         this.background = createBackground(levelInfo.backgroundInfo);
-
-        this.length = Object.keys(this.tileMap).length * 64; // TODO rename variable, gets confused with length property of some objects
+        // TODO rename variable, gets confused with length property of some objects
+        this.length = Object.keys(this.tileMap).length * levelInfo.metadata.tileWidth; 
     }
 }
 
@@ -30,7 +34,6 @@ class Tile {
         this.platform = platform;
         this.wall = wall;
         this.file = importImage(file);
-
     }
 }
 

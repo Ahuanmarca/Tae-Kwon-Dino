@@ -135,10 +135,6 @@ const LEVEL_01_INFO = {
                 url: "assets/sprites/near.png",
                 distance: 1.5,
             },
-            // {
-            //     url: "assets/sprites/ground.png",
-            //     distance: 0.9,
-            // },
         ],
     },
 
