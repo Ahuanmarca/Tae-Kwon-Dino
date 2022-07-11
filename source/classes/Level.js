@@ -13,6 +13,7 @@ class Level {
         this.tileHeight = levelInfo.metadata.tileHeight;
         this.levelHeight = levelInfo.metadata.levelHeight;
 
+        this.tileTypes = levelInfo.tileTypes;
         this.tiles = createTiles(levelInfo.tilesInfo);
         this.tileMap = getTileMap(levelInfo);
         this.background = createBackground(levelInfo.backgroundInfo);

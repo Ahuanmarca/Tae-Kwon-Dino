@@ -67,3 +67,5 @@ console.log("URU");
 console.log(URU);
 console.log('VIEW_PORT');
 console.log(VIEW_PORT);
+console.log('MINI_MAP');
+console.log(MINI_MAP);

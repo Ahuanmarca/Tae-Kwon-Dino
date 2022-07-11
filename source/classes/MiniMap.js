@@ -1,4 +1,10 @@
 // TODO I think the constructor needs to create more properties when the class is instanced
+miniMapConfig = {
+    surfaceColor: "brown",
+    surfaceWidth: 1,
+
+}
+
 
 class MiniMap {
 
@@ -12,38 +18,46 @@ class MiniMap {
         }
 
         this.miniMap = {
-            width: level.length*scale,
-            tileWidth: level.tileWidth * scale,
+            // account for the 0.25 scale on drawSurface() method
+            levelLength: level.length,
+            levelHeight: level.levelHeight,
+            tileWidth: level.tileWidth,
+            tileHeight: level.tileHeight,
+            tyleTypes: level.tileTypes,
+            tileMap: level.tileMap,
+            tiles: level.tiles,
+            levelName: level.name,
         }
     }
 
-    drawSurface(level) {
+    drawSurface() {
 
-        for (let key in level.tileMap) {
+        for (let key in this.miniMap.tileMap) {
 
-            const tile = level.tileMap[key]
+            // TODO I have access to individual tile's information, figure out a way
+            // TODO to use that information to simplify the conditionals
 
-            const x = level.tileMap[key].x*this.scale;
-            const y = level.tileMap[key].y*this.scale;
-            const w = level.tileWidth*this.scale;
-            const h = level.tileHeight*this.scale;
-             // TODO don't use hard coded value
-            const slope = h*0.25; // ? because the slope is 1/4th of the tile's height
-            const bottom = level.levelHeight * this.scale;
+            const scale = this.scale;
+            const tile = this.miniMap.tileMap[key];
+            const { height, width, platform, slope, wall } = this.miniMap.tiles[tile.type];
+
+            const x = tile.x * scale;
+            const y = tile.y * scale;
+            const w = width * scale;
+            const h = height * scale;
+            
+            const sB = slope[0] * scale; // Slope Begins
+            const sE = slope[1] * scale; // Slope Ends
+
+            const bottom = this.miniMap.levelHeight * scale;
 
             minCtx.beginPath();
-            minCtx.strokeStyle = "brown"; // TODO don't use hard coded value
-            minCtx.lineWidth = 1; // TODO don't use hard coded value
+            minCtx.strokeStyle = miniMapConfig.surfaceColor;
+            minCtx.lineWidth = miniMapConfig.surfaceWidth;
   
-            if (tile.type === "D") {
-                // downhill slope
-                minCtx.moveTo(x, y);
-                minCtx.lineTo(x+w, y+slope );
-            } else if (tile.type === "U") {
-                // uphill slope
-                minCtx.moveTo(x, y+slope);
-                minCtx.lineTo(x+w, y);
-            } else if (tile.type === "W") {
+
+
+            if (tile.type === "W") {
                 // west wall
                 minCtx.moveTo(x+w/2, bottom) // TODO don't use hard coded value
                 minCtx.lineTo(x+w/2, y) // TODO don't use hard coded value
@@ -54,15 +68,15 @@ class MiniMap {
                 minCtx.lineTo(x+w/2, y); // TODO don't use hard coded value
                 minCtx.lineTo(x+w/2, bottom); // TODO don't use hard coded value
             } else {
-                // platform
-                minCtx.moveTo(x, y);
-                minCtx.lineTo(x+w, y);
+                // platform, uphill, downhill
+                minCtx.moveTo(x, y+sB);
+                minCtx.lineTo(x+w, y+sE);
             }
             minCtx.stroke();
         }
     }
 
-    
+
 
     drawPlayer(player) {
 

@@ -33,8 +33,17 @@ const LEVEL_01_INFO = {
         levelHeight: 480,
     },
 
+    tileTypes: {
+        platform: "P",
+        westWall: "W",
+        eastWall: "E",
+        upHill: "U",
+        downHill: "D",
+        hole: "H",
+    },
+
     tileMapString: `
-        PPPPDDPPPPPPEWPPPPUUPPPPEWPPDPPPPUPPUPPP
+        PPPPDDPPPPEHHWPPPPUUPPPPEWPPDPPPPUPPUPPP
         2222210000000111112333333222211112223333
     `,
 
@@ -52,7 +61,7 @@ const LEVEL_01_INFO = {
         normal: 	CANVAS_HEIGHT - 128
         high: 		CANVAS_HEIGHT - 192
         very high: 	CANVAS_HEIGHT - 256 */
-    
+
         {
             code: "W", 
             name: "west-wall",
@@ -60,11 +69,9 @@ const LEVEL_01_INFO = {
             v: 32, // texture location
             width: 64,
             height: 256,
-            platform: true,
-            platformStart: 32,
-            platformEnd: 64,
+            platform: [true, [32, 64]],
             wall: true,
-            slope: 0, // change of height from x to x + width
+            slope: [0, 0], // change of y height from x to x + width
             file: "assets/sprites/tileset-simple.png"
         },
     
@@ -75,11 +82,9 @@ const LEVEL_01_INFO = {
             v: 32,
             width: 64,
             height: 256,
-            platform: true,
-            platformStart: 0,
-            platformEnd: 64,
-            wall: true,
-            slope: 0,
+            platform: [true, [0, 64]],
+            wall: false,
+            slope: [0, 0],
             file: "assets/sprites/tileset-simple.png"
         },
     
@@ -90,11 +95,9 @@ const LEVEL_01_INFO = {
             v: 32,
             width: 64,
             height: 256,
-            platform: true,
-            platformStart: 0,
-            platformEnd: 32,
+            platform: [true, [0, 32]],
             wall: true,
-            slope: 0,
+            slope: [0, 0],
             file: "assets/sprites/tileset-simple.png"
         },
     
@@ -105,11 +108,9 @@ const LEVEL_01_INFO = {
             v: 32,
             width: 64,
             height: 256,
-            platform: true,
-            platformStart: 0,
-            platformEnd: 64,
+            platform: [true, [0, 64]],
             wall: true,
-            slope: -64,
+            slope: [64, 0],
             file: "assets/sprites/tileset-simple.png"
         },
     
@@ -120,16 +121,29 @@ const LEVEL_01_INFO = {
             v: 32,
             width: 64,
             height: 256,
-            platform: true,
-            platformStart: 0,
-            platformEnd: 64,
+            platform: [true, [0, 64]],
             wall: true,
-            slope: 64,
+            slope: [0, 64],
             file: "assets/sprites/tileset-simple.png"
-        }
+        },
+
+        {
+            code: "H",
+            name: "hole",
+            u: 416,
+            v: 32,
+            width: 64,
+            height: 256,
+            platform: [false, [0, 64]],
+            wall: false,
+            slope: [0, 0],
+            file: "assets/sprites/tileset-simple.png"
+        },
+
+
     ],
 
-    
+
     backgroundInfo: {
     
         metadata: {
