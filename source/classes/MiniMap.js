@@ -1,7 +1,7 @@
-// TODO I think the constructor needs to create more properties when the class is instanced
 miniMapConfig = {
     surfaceColor: "brown",
     surfaceWidth: 1,
+    playerBoxLineWidth: 1,
 
 }
 
@@ -34,49 +34,40 @@ class MiniMap {
 
         for (let key in this.miniMap.tileMap) {
 
-            // TODO I have access to individual tile's information, figure out a way
-            // TODO to use that information to simplify the conditionals
-
             const scale = this.scale;
             const tile = this.miniMap.tileMap[key];
             const { height, width, platform, slope, wall } = this.miniMap.tiles[tile.type];
 
             const x = tile.x * scale;
             const y = tile.y * scale;
-            const w = width * scale;
-            const h = height * scale;
-            
+            const bottom = this.miniMap.levelHeight * scale;
+
+            // Slope start and slope end
+            //      If there's no slope, just starts and ends at 0
             const sB = slope[0] * scale; // Slope Begins
             const sE = slope[1] * scale; // Slope Ends
 
-            const bottom = this.miniMap.levelHeight * scale;
+            // Platform start and end
+            //      So each platforms draws from it's start to it's end, instead of using the tile width
+            const pS = platform[1][0] * scale;
+            const pE = platform[1][1] * scale;
 
             minCtx.beginPath();
             minCtx.strokeStyle = miniMapConfig.surfaceColor;
             minCtx.lineWidth = miniMapConfig.surfaceWidth;
-  
 
+            // Draw platforms
+            minCtx.moveTo(x+pS, y+sB);
+            minCtx.lineTo(x+pE, y+sE);
 
-            if (tile.type === "W") {
-                // west wall
-                minCtx.moveTo(x+w/2, bottom) // TODO don't use hard coded value
-                minCtx.lineTo(x+w/2, y) // TODO don't use hard coded value
-                minCtx.lineTo(x+w, y);
-            } else if (tile.type === "E") {
-                // east wall
-                minCtx.moveTo(x, y);
-                minCtx.lineTo(x+w/2, y); // TODO don't use hard coded value
-                minCtx.lineTo(x+w/2, bottom); // TODO don't use hard coded value
-            } else {
-                // platform, uphill, downhill
-                minCtx.moveTo(x, y+sB);
-                minCtx.lineTo(x+w, y+sE);
-            }
-            minCtx.stroke();
+            // Draw walls
+            wall && minCtx.moveTo((x+pE)-pS, y);
+            wall && minCtx.lineTo((x+pE)-pS, bottom);
+        
+            // Perform the stroke, unless the tile is a "Hole"
+            tile.type != "H" && minCtx.stroke();
         }
     }
-
-
 
     drawPlayer(player) {
 
@@ -87,7 +78,7 @@ class MiniMap {
 
         minCtx.beginPath();
         minCtx.strokeStyle = "#4d92bc";
-        minCtx.lineWidth = 1;
+        minCtx.lineWidth = miniMapConfig.playerBoxLineWidth;
 
         minCtx.moveTo(x,y);
         minCtx.lineTo(x+w,y);

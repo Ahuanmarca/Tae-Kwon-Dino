@@ -109,7 +109,7 @@ const LEVEL_01_INFO = {
             width: 64,
             height: 256,
             platform: [true, [0, 64]],
-            wall: true,
+            wall: false,
             slope: [64, 0],
             file: "assets/sprites/tileset-simple.png"
         },
@@ -122,7 +122,7 @@ const LEVEL_01_INFO = {
             width: 64,
             height: 256,
             platform: [true, [0, 64]],
-            wall: true,
+            wall: false,
             slope: [0, 64],
             file: "assets/sprites/tileset-simple.png"
         },
