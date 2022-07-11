@@ -61,7 +61,10 @@ const LEVEL_01_INFO = {
             width: 64,
             height: 256,
             platform: true,
+            platformStart: 32,
+            platformEnd: 64,
             wall: true,
+            slope: 0, // change of height from x to x + width
             file: "assets/sprites/tileset-simple.png"
         },
     
@@ -73,7 +76,10 @@ const LEVEL_01_INFO = {
             width: 64,
             height: 256,
             platform: true,
+            platformStart: 0,
+            platformEnd: 64,
             wall: true,
+            slope: 0,
             file: "assets/sprites/tileset-simple.png"
         },
     
@@ -85,7 +91,10 @@ const LEVEL_01_INFO = {
             width: 64,
             height: 256,
             platform: true,
+            platformStart: 0,
+            platformEnd: 32,
             wall: true,
+            slope: 0,
             file: "assets/sprites/tileset-simple.png"
         },
     
@@ -97,7 +106,10 @@ const LEVEL_01_INFO = {
             width: 64,
             height: 256,
             platform: true,
+            platformStart: 0,
+            platformEnd: 64,
             wall: true,
+            slope: -64,
             file: "assets/sprites/tileset-simple.png"
         },
     
@@ -109,11 +121,15 @@ const LEVEL_01_INFO = {
             width: 64,
             height: 256,
             platform: true,
+            platformStart: 0,
+            platformEnd: 64,
             wall: true,
+            slope: 64,
             file: "assets/sprites/tileset-simple.png"
         }
     ],
 
+    
     backgroundInfo: {
     
         metadata: {

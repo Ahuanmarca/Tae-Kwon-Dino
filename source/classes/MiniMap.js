@@ -1,5 +1,4 @@
-// TODO: DON'T USE HARD CODED VALUESSS
-// 1*this.scale scale minimap below the main viewport
+// TODO I think the constructor needs to create more properties when the class is instanced
 
 class MiniMap {
 
@@ -7,13 +6,11 @@ class MiniMap {
 
         this.scale = scale;
 
-
         this.player = {
             width: player.metadata.spriteWidth*scale,
             height: player.metadata.spriteHeight*scale,
-            // x: Math.floor(player.position.x*scale),
-            // y: Math.floor(player.position.y*scale),
         }
+
         this.miniMap = {
             width: level.length*scale,
             tileWidth: level.tileWidth * scale,
@@ -21,8 +18,6 @@ class MiniMap {
     }
 
     drawSurface(level) {
-
-
 
         for (let key in level.tileMap) {
 

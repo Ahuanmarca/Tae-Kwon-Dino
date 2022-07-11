@@ -24,7 +24,17 @@ class Level {
 
 class Tile {
     constructor(tileInfo) {
-        const { name, u, v, width, height, platform, wall, file } = tileInfo;
+        const { name, 
+            u, 
+            v, 
+            width, 
+            height, 
+            platform,
+            platformStart,
+            platformEnd, 
+            wall, 
+            slope, 
+            file } = tileInfo;
 
         this.name = name;
         this.u = u;
@@ -32,7 +42,10 @@ class Tile {
         this.width = width;
         this.height = height;
         this.platform = platform;
+        this.platformStart = platformStart;
+        this.platformEnd = platformEnd;
         this.wall = wall;
+        this.slope = slope;
         this.file = importImage(file);
     }
 }
@@ -50,7 +63,7 @@ function createTiles(tilesInfo) {
 function getTileMap(levelInfo) {
 
     const tileMapString = levelInfo.tileMapString.replaceAll("\n","").replaceAll(" ","");
-    const levelLength = tileMapString.length / 2;
+    const levelLength = tileMapString.length / 2; // TODO Don't use hard coded value
     const tileWidth = levelInfo.metadata.tileWidth;
     const levelHeight = levelInfo.metadata.levelHeight;
 
