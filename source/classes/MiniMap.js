@@ -18,12 +18,12 @@ class MiniMap {
         }
 
         this.miniMap = {
-            // account for the 0.25 scale on drawSurface() method
+            // account for the scale on drawSurface() method
             levelLength: level.length,
             levelHeight: level.levelHeight,
             tileWidth: level.tileWidth,
             tileHeight: level.tileHeight,
-            tyleTypes: level.tileTypes,
+            tileTypes: level.tileTypes,
             tileMap: level.tileMap,
             tiles: level.tiles,
             levelName: level.name,
@@ -48,7 +48,7 @@ class MiniMap {
             const sE = slope[1] * scale; // Slope Ends
 
             // Platform start and end
-            //      So each platforms draws from it's start to it's end, instead of using the tile width
+            //      So each platforms draws from it's start to it's end, instead of using tile width
             const pS = platform[1][0] * scale;
             const pE = platform[1][1] * scale;
 
@@ -65,7 +65,7 @@ class MiniMap {
             wall && minCtx.lineTo((x+pE)-pS, bottom);
         
             // Perform the stroke, unless the tile is a "Hole"
-            tile.type != "H" && minCtx.stroke();
+            tile.type != this.miniMap.tileTypes.hole && minCtx.stroke();
         }
     }
 
