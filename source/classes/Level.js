@@ -86,10 +86,10 @@ function getTileMap(levelInfo) {
 
 
 class Layer {
-    constructor(imageURL, distance, width, height, baseSpeed) {
+    constructor(imageURL, depth, width, height) {
 
         this.imageURL = imageURL;
-        this.distance = distance;
+        this.depth = depth; // Bigger means further from the screen
 
         // Layer position (starts at x = 0, y = 0)
         this.y = 0;
@@ -102,25 +102,13 @@ class Layer {
         // Import image from file
         this.image = importImage(imageURL);
 
-        // More distance = Less speed
-        this.speed = baseSpeed / distance;
-
-    }
-
-    // CHANGE SPEED DINAMICALLY BASED ON OTHER FACTORS, LIKE CHARACTER POSITION....
-    updateSpeed(baseSpeed) {
-        this.speed = baseSpeed / this.distance;
     }
 
     // Update X position of current layer
-    updatePosition() {
-        if (this.x < -this.width) {
-            this.x = 0;
-        } else if (this.x > 0) {
-            this.x = -this.width;
-        } else {
-            this.x = this.x - this.speed;
-        }
+    updatePosition(anchor) {
+        
+        this.x = -anchor / this.depth;
+
     }
 
     // Draws the image two times so they can stitch together when scrolling
@@ -146,7 +134,6 @@ class Layer {
 class Background {
     constructor(backgroundInfo) {
 
-        this.baseSpeed = backgroundInfo.metadata.baseSpeed;
         this.width = backgroundInfo.metadata.width;
         this.height = backgroundInfo.metadata.height;
 
@@ -154,10 +141,10 @@ class Background {
         
     }
 
-    updateLayers(spriteSpeed) {
+    updateLayers(anchor) {
         this.layers.forEach(layer => {
-            layer.updateSpeed(spriteSpeed);
-            layer.updatePosition();
+            // layer.updateSpeed(spriteSpeed);
+            layer.updatePosition(anchor);
             layer.draw();
         });
     }
@@ -175,7 +162,7 @@ function createLayers(backgroundInfo) {
     const { width, height, baseSpeed } = backgroundInfo.metadata;
 
     backgroundInfo.files.forEach(file => {
-        const layer = new Layer(file.url, file.distance, width, height, baseSpeed);
+        const layer = new Layer(file.url, file.depth, width, height, baseSpeed);
         layers.push(layer);
     });
     

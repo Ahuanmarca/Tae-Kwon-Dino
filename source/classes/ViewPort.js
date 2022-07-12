@@ -118,7 +118,7 @@ class Viewport {
 
 
     drawBackground(player, level) {
-        level.background.updateLayers(player.state.velocityX);
+        level.background.updateLayers(this.anchor);
     }
 
 

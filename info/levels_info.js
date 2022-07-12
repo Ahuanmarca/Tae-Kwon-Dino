@@ -147,7 +147,6 @@ const LEVEL_01_INFO = {
     backgroundInfo: {
     
         metadata: {
-            baseSpeed: 0,
             width: 1024,
             height: 480,
         },
@@ -155,15 +154,15 @@ const LEVEL_01_INFO = {
         files: [
             {
                 url: "assets/sprites/back.png",
-                distance: 10,
+                depth: 10,
             },
             {
                 url: "assets/sprites/middle.png",
-                distance: 3.5,
+                depth: 3.5,
             },
             {
                 url: "assets/sprites/near.png",
-                distance: 1.5,
+                depth: 1.5,
             },
         ],
     },
