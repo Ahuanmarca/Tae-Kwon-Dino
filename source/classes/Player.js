@@ -29,17 +29,27 @@ class Player {
             velocityY: 0,
             movementSpeed: 0.3,
             jumpForce: -30,
+            
             leftTile: undefined,
             rightTile: undefined,
+            centerTile: undefined,
         };
 
         this.mapPosition = {
+            // Center X and Center Y
+            cX: undefined,
+            cY: undefined,
+            // Left and top
             x: 10,
             y: 10,
             groundLevel: undefined,
         };
 
 
+    }
+
+    updateCenterX() {
+        this.mapPosition.cX = this.mapPosition.x + this.metadata.spriteWidth / 2;
     }
 
 
@@ -55,6 +65,7 @@ class Player {
     -------------------------- */
 
     getGroundLevel() {
+    
         // TODO: DON'T USE HARDCODED VALUESSSS !!
         const x = this.mapPosition.x;
         const w = this.metadata.spriteWidth;
@@ -62,11 +73,25 @@ class Player {
         const hitX = x + 32;
         const hitW = w - 32;
         
+        // TODO Use a currentLevel variable instead of hard coding LEVEL_01, so this is reusable
         this.state.leftTile = LEVEL_01.tileMap[hitX-hitX%64];
         this.state.rightTile = LEVEL_01.tileMap[(x+hitW)-(x+hitW)%64];
+        this.state.centerTile = LEVEL_01.getTileInfo(this.mapPosition.cX);
+        
+        const { type: tileType, x: tileX, y: tileY } = this.state.centerTile;
+        const { platform, slope, width: tileWidth } = LEVEL_01.tiles[tileType];
 
-        const groundLevel = Math.min(this.state.leftTile.y, this.state.rightTile.y);
-        this.mapPosition.groundLevel = groundLevel;
+        // start and end of slope
+        const y1 = tileY + slope[0];
+        const y2 = tileY + slope[1];
+
+        // Offset is:
+        // Distance from tileX to cX, in percentage of the tile
+        const offset = (this.mapPosition.cX - tileX) / tileWidth;
+
+        const newGroundLevel = y1*(1-offset) + y2*offset;
+        
+        this.mapPosition.groundLevel = newGroundLevel;
     }
 
 
@@ -144,6 +169,9 @@ class Player {
 
     updatePosition(INPUT) {
         const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = INPUT.keysDict;
+
+        this.updateCenterX();
+        
         this.getGroundLevel();
         this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
         this.updateVelocityY(ArrowUp);
@@ -153,7 +181,6 @@ class Player {
         this.horizontalFriction(forces.friction.horizontal);
         this.verticalFriction(forces.friction.vertical);
         this.applyFloorLimit();
-
     }
 
 

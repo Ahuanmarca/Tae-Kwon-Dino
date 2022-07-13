@@ -38,6 +38,7 @@ function showVariables() {
     document.querySelector("#showViewportAnchor").innerText = VIEW_PORT.anchor;
     document.querySelector("#showOffset").innerText = "TODO";
     document.querySelector("#showLeftTile").innerText = URU.state.leftTile.type;
+    document.querySelector("#showCenterTile").innerText = URU.state.centerTile.type;
     document.querySelector("#showRightTile").innerText = URU.state.rightTile.type;
 
 }

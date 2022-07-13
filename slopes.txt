@@ -1,0 +1,13 @@
+
+In getgrounlevel we need to get the tile info for center x
+
+Get the tile offset in percentage inside the tile
+
+y1 start of the elevation of the tile
+and y2, the two sides of the tile
+
+y1*(1-offset) + y2*offset
+
+find the offset in 01, distance inside the tile divided by the width of the tile
+
+offset

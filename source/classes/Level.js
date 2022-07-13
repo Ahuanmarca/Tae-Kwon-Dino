@@ -20,6 +20,12 @@ class Level {
         // TODO rename variable, gets confused with length property of some objects
         this.length = Object.keys(this.tileMap).length * levelInfo.metadata.tileWidth; 
     }
+
+    getTileInfo(x) {
+        const index = Math.round(x - (x % this.tileWidth));
+        const tile = this.tileMap[index];
+        return tile;
+    }
 }
 
 
@@ -31,8 +37,6 @@ class Tile {
             width, 
             height, 
             platform,
-            platformStart,
-            platformEnd, 
             wall, 
             slope, 
             file } = tileInfo;
@@ -43,8 +47,6 @@ class Tile {
         this.width = width;
         this.height = height;
         this.platform = platform;
-        this.platformStart = platformStart;
-        this.platformEnd = platformEnd;
         this.wall = wall;
         this.slope = slope;
         this.file = importImage(file);
