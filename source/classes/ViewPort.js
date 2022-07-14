@@ -12,6 +12,11 @@ class Viewport {
         this.faceRightOffset = 200;
         this.faceLeftOffset = 360;
 
+        this.currentOffset = 200;
+        this.offsetStep = 5;
+
+        this.dinoOffset = 200;
+
         this.vpTail = 0;
         this.vpHead = level.length;
 
@@ -24,9 +29,22 @@ class Viewport {
         } else if (player.mapPosition.x > level.length - 440) {
             this.anchor = level.length - 640;
         } else if (player.state.direction === "right") {
-            this.anchor = Math.floor(player.mapPosition.x) - 200;
+
+            // anchor is (x - 360), must get to (x - 200), it's a 160 difference
+            if (this.currentOffset > this.faceRightOffset) {
+                this.currentOffset -= this.offsetStep;
+            }
+
+            this.anchor = Math.floor(player.mapPosition.x) - this.currentOffset;
+
         } else {
-            this.anchor = Math.floor(player.mapPosition.x) - 360;
+            // this.anchor = Math.floor(player.mapPosition.x) - 360;
+
+            if (this.currentOffset < this.faceLeftOffset) {
+                this.currentOffset += this.offsetStep;
+            }
+
+            this.anchor = Math.floor(player.mapPosition.x) - this.currentOffset;
         }
     }
 
@@ -101,7 +119,17 @@ class Viewport {
             x = 640 - (level.length - player.mapPosition.x);
         } else {
             // Standart Viewport
-            x = (player.state.direction === "right") ? this.faceRightOffset : this.faceLeftOffset;
+            if (player.state.direction === "right") {
+                if (this.dinoOffset > 200) {
+                    this.dinoOffset -= this.offsetStep;
+                }
+                x = this.dinoOffset;
+            } else {
+                if (this.dinoOffset < 360) {
+                    this.dinoOffset += this.offsetStep;
+                }
+                x = this.dinoOffset;
+            }
         }
 
 

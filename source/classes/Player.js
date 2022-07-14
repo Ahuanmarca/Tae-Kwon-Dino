@@ -10,6 +10,7 @@ class Player {
             spriteHeight: spriteInfo.metadata.spriteHeight,
             singleRow: spriteInfo.metadata.singleRow,
             animations: getAnimations(spriteInfo),
+            sound: false,
         };
 
         this.state = {
@@ -118,7 +119,7 @@ class Player {
             this.state.velocityY = this.state.jumpForce;
             this.state.velocityX *= 2;
             this.state.jumping = true;  // ! Not working !!
-            jumpStart.play();
+            this.metadata.sound && jumpStart.play();
         }
     }
 
@@ -159,7 +160,7 @@ class Player {
             this.mapPosition.y = this.mapPosition.groundLevel - this.metadata.spriteHeight;
 
             if (this.state.jumping === true) {
-                jumpLand.play();
+                this.metadata.sound && jumpLand.play();
             }
 
             this.state.jumping = false;
