@@ -20,7 +20,7 @@ class Player {
             direction: "right",
             
             groundPosition: floorPosition - this.metadata.spriteHeight,
-            isGrounded : true, // ! NOT USING
+            isGrounded : true,
             jumping: false,
             running: false,
             // Position of the sprite within the canvas
@@ -65,6 +65,11 @@ class Player {
     UDDATE THE SPRITE POSITION
     -------------------------- */
 
+    updateIsGrounded() {
+        const difference = (this.mapPosition.groundLevel - this.metadata.spriteHeight) - this.mapPosition.y;
+        this.state.isGrounded = difference <= 6.5;
+    }
+
     getGroundLevel() {
     
         // TODO: DON'T USE HARDCODED VALUESSSS !!
@@ -75,24 +80,11 @@ class Player {
         const hitW = w - 32;
         
         // TODO Use a currentLevel variable instead of hard coding LEVEL_01, so this is reusable
-        this.state.leftTile = LEVEL_01.tileMap[hitX-hitX%64];
-        this.state.rightTile = LEVEL_01.tileMap[(x+hitW)-(x+hitW)%64];
+        this.state.leftTile = LEVEL_01.getTileInfo(hitX);
+        this.state.rightTile = LEVEL_01.getTileInfo(hitW + x);
         this.state.centerTile = LEVEL_01.getTileInfo(this.mapPosition.cX);
         
-        const { type: tileType, x: tileX, y: tileY } = this.state.centerTile;
-        const { platform, slope, width: tileWidth } = LEVEL_01.tiles[tileType];
-
-        // start and end of slope
-        const y1 = tileY + slope[0];
-        const y2 = tileY + slope[1];
-
-        // Offset is:
-        // Distance from tileX to cX, in percentage of the tile
-        const offset = (this.mapPosition.cX - tileX) / tileWidth;
-
-        const newGroundLevel = y1*(1-offset) + y2*offset;
-        
-        this.mapPosition.groundLevel = newGroundLevel;
+        this.mapPosition.groundLevel = LEVEL_01.getGroundHeight(this.mapPosition.cX) ;
     }
 
 
@@ -115,13 +107,14 @@ class Player {
 
 
     updateVelocityY(ArrowUp) {
-        if (ArrowUp && this.mapPosition.y == this.mapPosition.groundLevel - this.metadata.spriteHeight) {
+        if (ArrowUp && this.state.isGrounded) {
             this.state.velocityY = this.state.jumpForce;
             this.state.velocityX *= 2;
-            this.state.jumping = true;  // ! Not working !!
+            this.state.jumping = true;
             this.metadata.sound && jumpStart.play();
         }
     }
+
 
     horizontalMovement() {
         if (this.mapPosition.x < 5) {
@@ -139,7 +132,13 @@ class Player {
     }
 
     applyGrativy(gForce) {
-        this.state.velocityY += gForce;
+        if (!this.state.isGrounded) {
+            this.state.velocityY += gForce;
+        } 
+        // else {
+            // this.mapPosition.y = this.mapPosition.groundLevel - this.metadata.spriteHeight;
+            // TODO the magnet effect to fix the choppy animation on the down rump, but is causing a super jump
+        // }
     }
 
     horizontalFriction(hfForce) {
@@ -174,6 +173,8 @@ class Player {
         this.updateCenterX();
         
         this.getGroundLevel();
+        this.updateIsGrounded();
+
         this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
         this.updateVelocityY(ArrowUp);
         this.horizontalMovement();
@@ -207,11 +208,6 @@ class Player {
         // Idle Sprite
         if (!ArrowLeft && !ArrowRight && !ArrowUp) this.set.action.idle();
 
-        // Jumping Sprite
-        if (this.mapPosition.y < this.mapPosition.groundLevel - this.metadata.spriteHeight) {
-            this.set.action.jump();
-        }
-
         // Running Sprite
         if (Shift && ArrowLeft && !this.state.jumping) {
             this.set.action.run();
@@ -236,6 +232,11 @@ class Player {
                 this.set.action.walk();
                 this.set.direction.left();
             }
+        }
+
+        // Jumping Sprite
+        if (!this.state.isGrounded) {
+            this.set.action.jump();
         }
     }
 

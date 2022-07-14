@@ -26,6 +26,24 @@ class Level {
         const tile = this.tileMap[index];
         return tile;
     }
+
+    getGroundHeight(x) {
+        const info = this.getTileInfo(x);
+
+        // const { type: tileType, x: tileX, y: tileY } = info;
+        const { platform, slope, width: tileWidth } = this.tiles[info.type];
+
+        // start and end of slope
+        const y1 = info.y + slope[0];
+        const y2 = info.y + slope[1];
+
+        // Offset is:
+        // Distance from tileX to cX, in percentage of the tile
+        const offset = (x - info.x) / tileWidth;
+
+        return y1*(1-offset) + y2*offset;
+
+    }
 }
 
 

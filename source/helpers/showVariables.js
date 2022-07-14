@@ -11,6 +11,8 @@ function showVariables() {
     document.querySelector("#showDirection").innerText = URU.state.direction;
     document.querySelector("#showJumping").innerText = URU.state.jumping;
     document.querySelector("#showRunning").innerText = URU.state.running;
+    document.querySelector("#showIsGrounded").innerText = URU.state.isGrounded;
+    
 
     document.querySelector('#showVelocityX').innerText = URU.state.velocityX;
     document.querySelector('#showVelocityY').innerText = URU.state.velocityY;
