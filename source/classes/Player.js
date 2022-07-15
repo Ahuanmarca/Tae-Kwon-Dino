@@ -10,7 +10,7 @@ class Player {
             spriteHeight: spriteInfo.metadata.spriteHeight,
             singleRow: spriteInfo.metadata.singleRow,
             animations: getAnimations(spriteInfo),
-            sound: false,
+            sound: true,
         };
 
         this.state = {
@@ -23,6 +23,7 @@ class Player {
             isGrounded : true,
             jumping: false,
             running: false,
+            magnet: false,
             // Position of the sprite within the canvas
             // x: position.x,
             // y: position.y,
@@ -45,7 +46,6 @@ class Player {
             y: 10,
             groundLevel: undefined,
         };
-
 
     }
 

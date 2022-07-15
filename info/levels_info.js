@@ -22,7 +22,6 @@
 
 */
 
-
 const LEVEL_01_INFO = {
 
     metadata: {
