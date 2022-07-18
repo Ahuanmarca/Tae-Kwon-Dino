@@ -32,6 +32,8 @@ function animate() {
 
     context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
+    URU.updateState(INPUT);
+
     // Update sprite animation
     URU.updateAnimation(INPUT);
 

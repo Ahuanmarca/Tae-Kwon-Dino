@@ -2,7 +2,6 @@
 class Player {
     constructor(position, spriteInfo) {
         
-        // ! I'm not sure if I should destructure this variables first, for readability purposes
         this.metadata = {
             faceRightSheet: importImage(spriteInfo.metadata.fileRight),
             faceLeftSheet: importImage(spriteInfo.metadata.fileLeft),
@@ -14,28 +13,59 @@ class Player {
         };
 
         this.state = {
-            // absolutePosition:100, // For connecting the sprite with the "map"
-            currentSpeed: 0,
-            action: "idle",
-            direction: "right",
-            
-            groundPosition: floorPosition - this.metadata.spriteHeight,
-            isGrounded : true,
-            jumping: false,
-            running: false,
-            magnet: false,
-            // Position of the sprite within the canvas
-            // x: position.x,
-            // y: position.y,
+
+            // State properties
+            isIdle: undefined,
+            isWalking: undefined,
+            isRunning: undefined,
+            isJumping: undefined,
+            isFalling: undefined,
+            isGrounded : undefined,
+            isFacingRight: undefined,
+            isFacingLeft: undefined,
+
+            // Position (left and top)
+            x: 10, // TODO Get from config file
+            y:10, // TODO Get from config file
+            // Velocity
             velocityX: 0,
             velocityY: 0,
-            movementSpeed: 0.3,
+            // Center X and Center Y
+            cX: undefined,
+            cY: undefined,
+            // Previous y position
+            //      So we know if it's falling!
+            previousY : undefined,
+
             jumpForce: -30,
-            
+            movementSpeed: 0.3,
+
+
+            jumping: false,
+            falling: undefined,
+            running: false,
+            walking: false,
+
+            // animation properties
+            action: "idle",
+            direction: "right",
+
+            // usefull data for debugger
             leftTile: undefined,
             rightTile: undefined,
             centerTile: undefined,
+
         };
+
+        this.position = {
+            // Left and top
+            x: 10,
+            y: 10,
+            // Center X and Center Y
+            cX: undefined,
+            cY: undefined,
+            groundLevel: undefined,            
+        }
 
         this.mapPosition = {
             // Center X and Center Y
@@ -49,30 +79,82 @@ class Player {
 
     }
 
+
+    /*
+    ╭━━━╮╭╮╱╱╱╭╮╱╱╱╱╭╮╱╭╮╱╱╱╱╭╮╱╱╭╮
+    ┃╭━╮┣╯╰╮╱╭╯╰╮╱╱╱┃┃╱┃┃╱╱╱╱┃┃╱╭╯╰╮
+    ┃╰━━╋╮╭╋━┻╮╭╋━━╮┃┃╱┃┣━━┳━╯┣━┻╮╭╋━━╮
+    ╰━━╮┃┃┃┃╭╮┃┃┃┃━┫┃┃╱┃┃╭╮┃╭╮┃╭╮┃┃┃┃━┫
+    ┃╰━╯┃┃╰┫╭╮┃╰┫┃━┫┃╰━╯┃╰╯┃╰╯┃╭╮┃╰┫┃━┫
+    ╰━━━╯╰━┻╯╰┻━┻━━╯╰━━━┫╭━┻━━┻╯╰┻━┻━━╯
+    ╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱┃┃
+    ╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╰╯
+    -------------------------------------------
+    Only updates state booleans
+    Only cares about:
+        - Input
+        - Previous States
+        - Position
+    ------------------------------------------- */
+
+    updateState(input) {
+        const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = input.keysDict;
+
+        // Idle State
+        this.state.isIdle = (!ArrowLeft && !ArrowRight && !ArrowUp) && !this.state.isJumping;
+
+        // Direction State
+        if (ArrowLeft) {
+            this.state.isFacingLeft = true;
+            this.state.isFacingRight = false;
+        }
+        if (ArrowRight) {
+            this.state.isFacingLeft = false;
+            this.state.isFacingRight = true;    
+        }
+
+        // Running State
+        if (Shift && (ArrowLeft || ArrowRight)) {
+            this.state.isRunning = true;
+        } else {
+            this.state.isRunning = false;
+        }
+        
+        // Walking State
+        if ((ArrowLeft || ArrowRight) && !Shift && !this.state.isJumping) {
+            this.state.isWalking = true;
+        } else {
+            this.state.isWalking = false;
+        }
+
+        // Jumping State
+        this.state.isJumping = !this.state.isGrounded ? true : false;
+
+        // Falling State
+        if (this.mapPosition.y > this.state.previousY && !this.state.isGrounded) {
+            this.state.isFalling = true;
+        } else {
+            this.state.isFalling = false;            
+        }
+        this.state.previousY = this.mapPosition.y;
+        
+        // ! I'm not convinced about this way of evaluating the isGrounded state!!
+        // Grounded State 
+        const difference = (this.mapPosition.groundLevel - this.metadata.spriteHeight) - this.mapPosition.y;
+        this.state.isGrounded = difference <= 6.5;
+
+    }
+
+
+    
+    
     updateCenterX() {
         this.mapPosition.cX = this.mapPosition.x + this.metadata.spriteWidth / 2;
     }
 
-
-    /*  
-    ╭━╮╭━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╮
-    ┃┃╰╯┃┃╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╯╰╮
-    ┃╭╮╭╮┣━━┳╮╭┳━━┳╮╭┳━━┳━╋╮╭╯
-    ┃┃┃┃┃┃╭╮┃╰╯┃┃━┫╰╯┃┃━┫╭╮┫┃
-    ┃┃┃┃┃┃╰╯┣╮╭┫┃━┫┃┃┃┃━┫┃┃┃╰╮
-    ╰╯╰╯╰┻━━╯╰╯╰━━┻┻┻┻━━┻╯╰┻━╯
-    --------------------------
-    UDDATE THE SPRITE POSITION
-    -------------------------- */
-
-    updateIsGrounded() {
-        const difference = (this.mapPosition.groundLevel - this.metadata.spriteHeight) - this.mapPosition.y;
-        this.state.isGrounded = difference <= 6.5;
-    }
-
     getGroundLevel() {
     
-        // TODO: DON'T USE HARDCODED VALUESSSS !!
+        // TODO DON'T USE HARDCODED VALUESSSS !!
         const x = this.mapPosition.x;
         const w = this.metadata.spriteWidth;
 
@@ -87,6 +169,17 @@ class Player {
         this.mapPosition.groundLevel = LEVEL_01.getGroundHeight(this.mapPosition.cX) ;
     }
 
+
+    /*  
+    ╭━╮╭━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╮
+    ┃┃╰╯┃┃╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╯╰╮
+    ┃╭╮╭╮┣━━┳╮╭┳━━┳╮╭┳━━┳━╋╮╭╯
+    ┃┃┃┃┃┃╭╮┃╰╯┃┃━┫╰╯┃┃━┫╭╮┫┃
+    ┃┃┃┃┃┃╰╯┣╮╭┫┃━┫┃┃┃┃━┫┃┃┃╰╮
+    ╰╯╰╯╰┻━━╯╰╯╰━━┻┻┻┻━━┻╯╰┻━╯
+    --------------------------
+    UDDATE THE SPRITE POSITION
+    -------------------------- */
 
     updateVelocityX(ArrowRight, ArrowLeft, Shift) {
         if (ArrowRight) {
@@ -173,7 +266,7 @@ class Player {
         this.updateCenterX();
         
         this.getGroundLevel();
-        this.updateIsGrounded();
+        // this.updateIsGrounded();
 
         this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
         this.updateVelocityY(ArrowUp);
@@ -239,6 +332,7 @@ class Player {
             this.set.action.jump();
         }
     }
+
 
 
     set = {

@@ -1,5 +1,32 @@
 // Show variables below the Viewport
 
+const showingVariables = {
+    
+    // URU (Player)
+    player: {
+        animation: true,
+        direction: true,
+        jumpingState: true,
+        runningState: true,
+        groundedState: true,
+        velocityX: true,
+        velocityY: true,
+        positionX: true,
+        positionY: true,
+        animationLength: true,
+        animationFrame: true,
+        animationFrameCoordinate: true,
+
+    }
+
+
+
+
+
+
+
+}
+
 function showVariables() {
 
     // Showing values below the character
@@ -30,7 +57,6 @@ function showVariables() {
     document.querySelector("#showBackX").innerText = LEVEL_01.background.layers[0].x;
     document.querySelector("#showMiddleX").innerText = LEVEL_01.background.layers[1].x;
     document.querySelector("#showNearX").innerText = LEVEL_01.background.layers[2].x;
-    // document.querySelector('#showGroundX').innerText = LEVEL_01.background.layers[3].x;
 
     document.querySelector("#showLoopFrame").innerText = gameState.loopFrame;
     document.querySelector("#showGameFrame").innerText = gameState.gameFrame;
@@ -42,6 +68,16 @@ function showVariables() {
     document.querySelector("#showLeftTile").innerText = URU.state.leftTile.type;
     document.querySelector("#showCenterTile").innerText = URU.state.centerTile.type;
     document.querySelector("#showRightTile").innerText = URU.state.rightTile.type;
+
+    // New state variables
+    document.querySelector("#n0").innerText = URU.state.isIdle;
+    document.querySelector("#n1").innerText = URU.state.isWalking;
+    document.querySelector("#n2").innerText = URU.state.isRunning;
+    document.querySelector("#n3").innerText = URU.state.isJumping;
+    document.querySelector("#n4").innerText = URU.state.isFalling;
+    document.querySelector("#n5").innerText = URU.state.isGrounded;
+    document.querySelector("#n6").innerText = URU.state.isFacingRight;
+    document.querySelector("#n7").innerText = URU.state.isFacingLeft;
 
 }
 
