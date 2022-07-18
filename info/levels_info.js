@@ -47,8 +47,8 @@ const LEVEL_01_INFO = {
     `,
 
     // tileMapString: `
-    //     PPPPPPDDDPPPPPPPUUUPPPPPPPPP
-    //     3333333210000000123333000000
+    //     PPPPPPPPPPPPPPPPPPPP
+    //     00000111112222233333
     // `,
 
     // Array with tile properties

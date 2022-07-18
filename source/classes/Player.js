@@ -10,6 +10,7 @@ class Player {
             singleRow: spriteInfo.metadata.singleRow,
             animations: getAnimations(spriteInfo),
             sound: true,
+            hitBoxOffset: 32,
         };
 
         this.state = {
@@ -39,6 +40,7 @@ class Player {
 
             jumpForce: -30,
             movementSpeed: 0.3,
+            runSpeedMultiplier: 2,
 
 
             jumping: false,
@@ -98,7 +100,7 @@ class Player {
     ------------------------------------------- */
 
     updateState(input) {
-        const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = input.keysDict;
+        const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Shift, v } = input.keysDict;
 
         // Idle State
         this.state.isIdle = (!ArrowLeft && !ArrowRight && !ArrowUp) && !this.state.isJumping;
@@ -146,30 +148,6 @@ class Player {
     }
 
 
-    
-    
-    updateCenterX() {
-        this.mapPosition.cX = this.mapPosition.x + this.metadata.spriteWidth / 2;
-    }
-
-    getGroundLevel() {
-    
-        // TODO DON'T USE HARDCODED VALUESSSS !!
-        const x = this.mapPosition.x;
-        const w = this.metadata.spriteWidth;
-
-        const hitX = x + 32;
-        const hitW = w - 32;
-        
-        // TODO Use a currentLevel variable instead of hard coding LEVEL_01, so this is reusable
-        this.state.leftTile = LEVEL_01.getTileInfo(hitX);
-        this.state.rightTile = LEVEL_01.getTileInfo(hitW + x);
-        this.state.centerTile = LEVEL_01.getTileInfo(this.mapPosition.cX);
-        
-        this.mapPosition.groundLevel = LEVEL_01.getGroundHeight(this.mapPosition.cX) ;
-    }
-
-
     /*  
     ╭━╮╭━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╮
     ┃┃╰╯┃┃╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╯╰╮
@@ -177,47 +155,82 @@ class Player {
     ┃┃┃┃┃┃╭╮┃╰╯┃┃━┫╰╯┃┃━┫╭╮┫┃
     ┃┃┃┃┃┃╰╯┣╮╭┫┃━┫┃┃┃┃━┫┃┃┃╰╮
     ╰╯╰╯╰┻━━╯╰╯╰━━┻┻┻┻━━┻╯╰┻━╯
-    --------------------------
-    UDDATE THE SPRITE POSITION
-    -------------------------- */
+    ------------------------------
+    Cares about state and position
+    Should not use kbrd input
+    ------------------------------ */
+
+    updatePosition(input, level) {
+        const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Shift, v } = input.keysDict;
+
+        this.updateCenterX();
+        
+        this.getGroundLevel(level);
+
+        this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
+        this.updateVelocityY(ArrowUp);
+        this.horizontalMovement(level);
+        this.verticalMovement();
+        this.applyGrativy(forces.gravity);
+        this.horizontalFriction(forces.friction.horizontal);
+        this.verticalFriction(forces.friction.vertical);
+        this.applyFloorLimit();
+    }
+
+    updateCenterX() {
+        this.mapPosition.cX = this.mapPosition.x + this.metadata.spriteWidth / 2;
+    }
+
+    getGroundLevel(level) {
+    
+        const x = this.mapPosition.x;
+        const w = this.metadata.spriteWidth;
+
+        const hitX = x + this.metadata.hitBoxOffset;
+        const hitW = w - this.metadata.hitBoxOffset;
+        
+        this.state.leftTile = level.getTileInfo(hitX);
+        this.state.rightTile = level.getTileInfo(hitW + x);
+        this.state.centerTile = level.getTileInfo(this.mapPosition.cX);
+        
+        this.mapPosition.groundLevel = level.getGroundHeight(this.mapPosition.cX);
+    }
 
     updateVelocityX(ArrowRight, ArrowLeft, Shift) {
-        if (ArrowRight) {
-            if (Shift) {
-                this.state.velocityX += this.state.movementSpeed*2;
-            } else {
-                this.state.velocityX += this.state.movementSpeed;
-            }
+
+        // Walking velocity
+        if (!Shift) {
+            ArrowRight && (this.state.velocityX += this.state.movementSpeed);
+            ArrowLeft && (this.state.velocityX -= this.state.movementSpeed);
         }
-        if (ArrowLeft) {
-            if (Shift) {
-                this.state.velocityX -= this.state.movementSpeed*2;
-            } else {
-                this.state.velocityX -= this.state.movementSpeed;
-            }
+
+        // Running velocity
+        if (Shift) {
+            ArrowRight && (this.state.velocityX += this.state.movementSpeed*this.state.runSpeedMultiplier);
+            ArrowLeft && (this.state.velocityX -= this.state.movementSpeed*this.state.runSpeedMultiplier);
         }
+
     }
 
 
     updateVelocityY(ArrowUp) {
         if (ArrowUp && this.state.isGrounded) {
             this.state.velocityY = this.state.jumpForce;
-            this.state.velocityX *= 2;
-            this.state.jumping = true;
-            this.metadata.sound && jumpStart.play();
+            this.state.velocityX *= this.state.runSpeedMultiplier; // TODO Use another multiplier
+            // this.state.isJumping = true;
+            this.metadata.sound && jumpStart.play(); // TODO Create Sound Player Class
         }
     }
 
 
-    horizontalMovement() {
-        if (this.mapPosition.x < 5) {
-            this.mapPosition.x = 5;
-        } else if (this.mapPosition.x > LEVEL_01.length - this.metadata.spriteWidth - 10) {
-            this.mapPosition.x > LEVEL_01.length - this.metadata.spriteWidth - 10
+    horizontalMovement(level) {
+        if (this.mapPosition.x < level.borderBarrier) {
+            this.mapPosition.x = level.borderBarrier;
+        } else if (this.mapPosition.x > (level.length - this.metadata.spriteWidth) - level.borderBarrier) {
+            this.mapPosition.x = (level.length - this.metadata.spriteWidth) - level.borderBarrier;
         } else {
             this.mapPosition.x += this.state.velocityX;
         }
-
     }
 
     verticalMovement() {
@@ -230,7 +243,7 @@ class Player {
         } 
         // else {
             // this.mapPosition.y = this.mapPosition.groundLevel - this.metadata.spriteHeight;
-            // TODO the magnet effect to fix the choppy animation on the down rump, but is causing a super jump
+            // TODO the magnet effect to fix the choppy animation on the down ramp, but is causing a super jump
         // }
     }
 
@@ -251,7 +264,7 @@ class Player {
             
             this.mapPosition.y = this.mapPosition.groundLevel - this.metadata.spriteHeight;
 
-            if (this.state.jumping === true) {
+            if (this.state.isJumping === true) {
                 this.metadata.sound && jumpLand.play();
             }
 
@@ -260,23 +273,7 @@ class Player {
         }
     }
 
-    updatePosition(INPUT) {
-        const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = INPUT.keysDict;
 
-        this.updateCenterX();
-        
-        this.getGroundLevel();
-        // this.updateIsGrounded();
-
-        this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
-        this.updateVelocityY(ArrowUp);
-        this.horizontalMovement();
-        this.verticalMovement();
-        this.applyGrativy(forces.gravity);
-        this.horizontalFriction(forces.friction.horizontal);
-        this.verticalFriction(forces.friction.vertical);
-        this.applyFloorLimit();
-    }
 
 
 

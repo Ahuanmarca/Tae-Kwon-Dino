@@ -38,7 +38,7 @@ function animate() {
     URU.updateAnimation(INPUT);
 
     // Update player's position on the map
-    URU.updatePosition(INPUT);
+    URU.updatePosition(INPUT, LEVEL_01);
 
     // Viewport: renders tiles, player and background drawings
     VIEW_PORT.updateAnchor(URU, LEVEL_01);
