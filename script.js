@@ -1,7 +1,7 @@
 
-// runGame();
+runGame();
 
-// function runGame() {
+function runGame() {
 
     // Some variables that I still don't know where to put
     const CANVAS_WIDTH = 640;
@@ -52,7 +52,7 @@
         currentMiniMap.update(currentLevel, currentPlayer, miniContext);
 
         // Debugger
-        showVariables(currentLevel, currentPlayer, input, viewPort);
+        showVariables(currentLevel, currentPlayer, input, viewPort, gameState);
 
         (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
         gameState.loopFrame++;
@@ -71,5 +71,5 @@
     console.log('currentMiniMap');
     console.log(currentMiniMap);
 
-// }
+}
 

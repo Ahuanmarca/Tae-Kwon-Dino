@@ -33,11 +33,11 @@ class MiniMap {
 
     update(currentLevel, currentPlayer, miniContext) {
         miniContext.clearRect(0, 0, this.width, this.height);
-        this.drawSurface(currentLevel, miniContext);
-        this.drawPlayer(currentPlayer, miniContext);
+        this.drawSurfaceLine(currentLevel, miniContext);
+        this.drawPlayerBox(currentPlayer, miniContext);
     }
 
-    drawSurface(currentLevel, miniContext) {
+    drawSurfaceLine(currentLevel, miniContext) {
 
         for (let key in currentLevel.tileMap) {
 
@@ -77,7 +77,7 @@ class MiniMap {
         }
     }
 
-    drawPlayer(player) {
+    drawPlayerBox(player, miniContext) {
 
         const x = player.mapPosition.x*this.scale;
         const y = player.mapPosition.y*this.scale;

@@ -27,7 +27,7 @@ const showingVariables = {
 
 }
 
-function showVariables(level, player, input, viewPort) {
+function showVariables(level, player, input, viewPort, gameState) {
 
     // Showing values below the character
     const animationLength = player.metadata.animations[player.state.actionSprite].length;
