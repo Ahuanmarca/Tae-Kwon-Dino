@@ -9,7 +9,7 @@ class Player {
             spriteHeight: spriteInfo.metadata.spriteHeight,
             singleRow: spriteInfo.metadata.singleRow,
             animations: getAnimations(spriteInfo),
-            sound: true,
+            sound: false,
             hitBoxOffset: 32,
             actionSprites: {
                 idle: "idle",

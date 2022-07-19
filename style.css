@@ -2,10 +2,6 @@
     border: 1px solid black;
 }
 
-span {
-    color: magenta;
-}
-
 #canvas2 {
     border: 1px solid black;
 }
@@ -30,4 +26,8 @@ td {
 
 #column2 {
     width: 640;
+}
+
+.variableValues {
+    color: magenta;
 }

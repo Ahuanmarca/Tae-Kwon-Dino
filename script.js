@@ -9,7 +9,7 @@ function runGame() {
     const miniMapScale = 0.25;
 
     const gameState = {
-        gameFrame:0,
+        gameFrame: 0,
         loopFrame: 0,
         staggerFrames: 10,  
     }
@@ -48,7 +48,7 @@ function runGame() {
         currentMiniMap.update(currentLevel, currentPlayer, miniContext);
 
         // Debugger
-        showVariables(currentLevel, currentPlayer, input, viewPort, gameState);
+        showVariables("Player State", gameState, currentPlayer);
 
         (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
         gameState.loopFrame++;
@@ -66,6 +66,7 @@ function runGame() {
     console.log(viewPort);
     console.log('currentMiniMap');
     console.log(currentMiniMap);
+
 
 }
 

@@ -31,6 +31,7 @@ class Viewport {
         this.drawPlayer(currentLevel, currentPlayer, gameState.gameFrame, context)
     }
 
+    
     updateAnchor(player, level) {
 
         // Updates anchor and offset depending on player position
