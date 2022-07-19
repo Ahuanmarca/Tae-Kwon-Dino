@@ -1,9 +1,9 @@
 // Game Objects
-const LEVEL_01 = new Level(LEVEL_01_INFO);
-const URU = new Player({x: CANVAS_WIDTH / 4, y: 353}, spriteInfo);
-const INPUT = new InputHandler();
-const MINI_MAP = new MiniMap(LEVEL_01, URU, 0.25);
-const VIEW_PORT = new Viewport(URU, LEVEL_01);
+const currentLevel = new Level(LEVEL_01_INFO);
+const player = new Player({x: CANVAS_WIDTH / 4, y: 353}, spriteInfo);
+const input = new InputHandler();
+const MINI_MAP = new MiniMap(currentLevel, player, 0.25);
+const viewPort = new Viewport(player, currentLevel);
 
 // Main Canvas (game screen)
 const canvas = document.querySelector("#canvas1")
@@ -14,7 +14,7 @@ canvas.height = CANVAS_HEIGHT;
 // Secondary canvas for minimap
 const canvas2 = document.querySelector("#canvas2")
 const minCtx = canvas2.getContext("2d");
-canvas2.width = LEVEL_01.length / 4;
+canvas2.width = currentLevel.length / 4;
 canvas2.height = 480 / 4;
 
 const gameState = {
@@ -32,28 +32,28 @@ function animate() {
 
     context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
-    URU.updateState(INPUT);
+    player.updateState(input);
 
     // Update sprite animation
-    URU.updateAnimation();
+    player.updateAnimation();
 
     // Update player's position on the map
-    URU.updatePosition(INPUT, LEVEL_01);
+    player.updatePosition(input, currentLevel);
 
     // Viewport: renders tiles, player and background drawings
-    VIEW_PORT.updateAnchor(URU, LEVEL_01);
-    VIEW_PORT.getTiles(LEVEL_01);
-    VIEW_PORT.drawBackground(URU, LEVEL_01);
-    VIEW_PORT.drawTiles(LEVEL_01);
-    VIEW_PORT.drawPlayer(LEVEL_01, URU, gameState.gameFrame)
+    viewPort.updateAnchor(player, currentLevel);
+    viewPort.getTiles(currentLevel);
+    viewPort.drawBackground(player, currentLevel);
+    viewPort.drawTiles(currentLevel);
+    viewPort.drawPlayer(currentLevel, player, gameState.gameFrame)
 
     // Minimap
-    minCtx.clearRect(0, 0, LEVEL_01.length/4, 480/4);
-    MINI_MAP.drawSurface(LEVEL_01);
-    MINI_MAP.drawPlayer(URU);
+    minCtx.clearRect(0, 0, currentLevel.length/4, 480/4);
+    MINI_MAP.drawSurface(currentLevel);
+    MINI_MAP.drawPlayer(player);
 
     // Show variables below the canvas
-    showVariables();
+    showVariables(currentLevel, player, input, viewPort);
 
     (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
     gameState.loopFrame++;
@@ -63,11 +63,11 @@ function animate() {
 
 animate();
 
-console.log("LEVEL_01");
-console.log(LEVEL_01);
-console.log("URU");
-console.log(URU);
-console.log('VIEW_PORT');
-console.log(VIEW_PORT);
+console.log("currentLevel");
+console.log(currentLevel);
+console.log("player");
+console.log(player);
+console.log('viewPort');
+console.log(viewPort);
 console.log('MINI_MAP');
 console.log(MINI_MAP);

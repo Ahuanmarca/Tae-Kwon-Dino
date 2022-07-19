@@ -4,11 +4,11 @@
 class Viewport {
     constructor(player, level) {
         
-        this.anchor = 0;
-        this.tiles = {};
-        
         this.vpWidth = 640;
         this.vpHeight = 480;
+        
+        this.anchor = 0;
+        this.tiles = {};
         
         this.faceRightOffset = 200;
         this.faceLeftOffset = 360;
