@@ -314,7 +314,7 @@ class Player {
     -----------------------
     SPRITE CANVAS ANIMATION
     ----------------------- */
-    // TODO I'm not sure if this method should be here or in Viewport 🤔
+    // TODO I'm not sure if this method should be here or in Viewport🤔
 
     // draw(gameFrame) {
 

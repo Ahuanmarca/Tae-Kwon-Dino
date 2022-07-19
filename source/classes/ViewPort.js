@@ -3,43 +3,53 @@
 
 class Viewport {
     constructor(player, level) {
+        
         this.anchor = 0;
         this.tiles = {};
-
+        
         this.vpWidth = 640;
         this.vpHeight = 480;
-
+        
         this.faceRightOffset = 200;
         this.faceLeftOffset = 360;
-
+        
         this.currentOffset = 200;
         this.offsetStep = 5;
-
-        this.dinoOffset = 200;
-
+        
         this.vpTail = 0;
         this.vpHead = level.length;
-
+        
+        this.leftmostAnchor = level.length - level.length;
+        this.rightmostAnchor = level.length - this.vpWidth;
     }
 
 
     updateAnchor(player, level) {
-        if (player.mapPosition.x < 200 || (player.mapPosition.x < 360 && player.state.direction === "left")) {
-            this.anchor = 0;
-        } else if (player.mapPosition.x > level.length - 440) {
-            this.anchor = level.length - 640;
-        } else if (player.state.direction === "right") {
-            // offset is 360, must get to 200. it's a 160 difference
+
+        // Updates anchor and offset depending on player position
+        // ... and to which side is it facing
+        
+        if (player.mapPosition.x < this.faceRightOffset || 
+            (player.mapPosition.x < this.faceLeftOffset && player.state.isFacingLeft)
+            ) {
+            this.anchor = this.leftmostAnchor;
+
+        } else if (player.mapPosition.x > level.length - (this.vpWidth - this.faceRightOffset)) {
+            this.anchor = this.rightmostAnchor;
+
+        } else if (player.state.isFacingRight) {
             if (this.currentOffset > this.faceRightOffset) {
                 this.currentOffset -= this.offsetStep;
             }
             this.anchor = Math.floor(player.mapPosition.x) - this.currentOffset;
+
         } else {
             if (this.currentOffset < this.faceLeftOffset) {
                 this.currentOffset += this.offsetStep;
             }
             this.anchor = Math.floor(player.mapPosition.x) - this.currentOffset;
         }
+
     }
 
 
@@ -57,7 +67,7 @@ class Viewport {
 
     getTiles(level) {
         for (let key in level.tileMap) {
-            if (level.tileMap[key].x >= this.anchor - 64 && level.tileMap[key].x <= this.anchor + 640) {
+            if (level.tileMap[key].x >= this.anchor - level.tileWidth && level.tileMap[key].x <= this.anchor + this.vpWidth) {
                 this.tiles[key] = level.tileMap[key];
             } else {
                 delete this.tiles[key]
@@ -96,36 +106,18 @@ class Viewport {
         const u = player.metadata.animations[player.state.actionSprite][animationFrame];
         const v = 0; // TODO: Don't use hardcoded value!!
 
-        // Get player y position from it's map position
-        const y = player.mapPosition.y + 16;
-
-        // Player's x position:
-        //      If facing right: 200
-        //      If facing left: 360
+        // Get player Y position from it's map position
+        const y = player.mapPosition.y + 16; // si it's not at the border of the tile
 
         let x = undefined;
 
-        if (this.anchor === 0) {
-            // Viewport locked at level's start
+        if (this.anchor === this.leftmostAnchor) {
             x = player.mapPosition.x;
-        } else if (this.anchor === level.length - 640) {
-            // Viewport locked al level's end
-            x = 640 - (level.length - player.mapPosition.x);
+        } else if (this.anchor === this.rightmostAnchor) {
+            x = this.vpWidth - (level.length - player.mapPosition.x);
         } else {
-            // Standart Viewport
-            if (player.state.direction === "right") {
-                if (this.dinoOffset > 200) {
-                    this.dinoOffset -= this.offsetStep;
-                }
-                x = this.dinoOffset;
-            } else {
-                if (this.dinoOffset < 360) {
-                    this.dinoOffset += this.offsetStep;
-                }
-                x = this.dinoOffset;
-            }
+            x = this.currentOffset;
         }
-
 
         context.drawImage(
             // Use the correct PNG file, depending on direction facing
