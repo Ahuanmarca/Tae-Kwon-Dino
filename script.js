@@ -35,7 +35,7 @@ function animate() {
     URU.updateState(INPUT);
 
     // Update sprite animation
-    URU.updateAnimation(INPUT);
+    URU.updateAnimation();
 
     // Update player's position on the map
     URU.updatePosition(INPUT, LEVEL_01);

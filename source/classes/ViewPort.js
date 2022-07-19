@@ -91,9 +91,9 @@ class Viewport {
 
     drawPlayer(level, player, gameFrame) {
 
-        const animationLength = player.metadata.animations[player.state.action].length;
-        const animationFrame = gameFrame % animationLength;
-        const u = player.metadata.animations[player.state.action][animationFrame];
+        const animationLength = player.metadata.animations[player.state.actionSprite].length;
+        const animationFrame = gameFrame % animationLength; // frame within sprite animation
+        const u = player.metadata.animations[player.state.actionSprite][animationFrame];
         const v = 0; // TODO: Don't use hardcoded value!!
 
         // Get player y position from it's map position
@@ -129,7 +129,7 @@ class Viewport {
 
         context.drawImage(
             // Use the correct PNG file, depending on direction facing
-            (player.state.direction == "right") ? player.metadata.faceRightSheet : player.metadata.faceLeftSheet,
+            (player.state.isFacingRight) ? player.metadata.faceRightSheet : player.metadata.faceLeftSheet,
             // Crop the PNG file
             u, v, player.metadata.spriteWidth, player.metadata.spriteHeight,
             // Sprite position on canvas

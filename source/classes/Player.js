@@ -11,6 +11,16 @@ class Player {
             animations: getAnimations(spriteInfo),
             sound: true,
             hitBoxOffset: 32,
+            actionSprites: {
+                idle: "idle",
+                walk: "walk",
+                run: "run",
+                jump: "jump",
+            },
+            directionSprites: {
+                right: "right",
+                left: "left",
+            },
         };
 
         this.state = {
@@ -22,35 +32,20 @@ class Player {
             isJumping: undefined,
             isFalling: undefined,
             isGrounded : undefined,
-            isFacingRight: undefined,
-            isFacingLeft: undefined,
+            isFacingRight: true,
+            isFacingLeft: false,
 
-            // Position (left and top)
-            x: 10, // TODO Get from config file
-            y:10, // TODO Get from config file
-            // Velocity
             velocityX: 0,
             velocityY: 0,
-            // Center X and Center Y
-            cX: undefined,
-            cY: undefined,
-            // Previous y position
-            //      So we know if it's falling!
-            previousY : undefined,
 
+            // Modifiers
             jumpForce: -30,
             movementSpeed: 0.3,
             runSpeedMultiplier: 2,
 
-
-            jumping: false,
-            falling: undefined,
-            running: false,
-            walking: false,
-
             // animation properties
-            action: "idle",
-            direction: "right",
+            directionSprite: this.metadata.directionSprites.right,
+            actionSprite: this.metadata.actionSprites.idle,
 
             // usefull data for debugger
             leftTile: undefined,
@@ -59,24 +54,15 @@ class Player {
 
         };
 
-        this.position = {
-            // Left and top
-            x: 10,
-            y: 10,
-            // Center X and Center Y
-            cX: undefined,
-            cY: undefined,
-            groundLevel: undefined,            
-        }
-
         this.mapPosition = {
-            // Center X and Center Y
-            cX: undefined,
-            cY: undefined,
             // Left and top
             x: 10,
             y: 10,
+            // Center X and Center Y
+            cX: undefined,
+            cY: undefined,
             groundLevel: undefined,
+            previousY: undefined,
         };
 
     }
@@ -133,12 +119,12 @@ class Player {
         this.state.isJumping = !this.state.isGrounded ? true : false;
 
         // Falling State
-        if (this.mapPosition.y > this.state.previousY && !this.state.isGrounded) {
+        if (this.mapPosition.y > this.mapPosition.previousY && !this.state.isGrounded) {
             this.state.isFalling = true;
         } else {
             this.state.isFalling = false;            
         }
-        this.state.previousY = this.mapPosition.y;
+        this.mapPosition.previousY = this.mapPosition.y;
         
         // ! I'm not convinced about this way of evaluating the isGrounded state!!
         // Grounded State 
@@ -167,13 +153,14 @@ class Player {
         
         this.getGroundLevel(level);
 
-        this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
-        this.updateVelocityY(ArrowUp);
+        // this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
+        this.updateVelocityX(input);
+        this.updateVelocityY(input);
         this.horizontalMovement(level);
         this.verticalMovement();
-        this.applyGrativy(forces.gravity);
-        this.horizontalFriction(forces.friction.horizontal);
-        this.verticalFriction(forces.friction.vertical);
+        this.applyGrativy(level);
+        this.horizontalFriction(level);
+        this.verticalFriction(level);
         this.applyFloorLimit();
     }
 
@@ -196,7 +183,8 @@ class Player {
         this.mapPosition.groundLevel = level.getGroundHeight(this.mapPosition.cX);
     }
 
-    updateVelocityX(ArrowRight, ArrowLeft, Shift) {
+    updateVelocityX(input) {
+        const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Shift, v } = input.keysDict;
 
         // Walking velocity
         if (!Shift) {
@@ -209,19 +197,17 @@ class Player {
             ArrowRight && (this.state.velocityX += this.state.movementSpeed*this.state.runSpeedMultiplier);
             ArrowLeft && (this.state.velocityX -= this.state.movementSpeed*this.state.runSpeedMultiplier);
         }
-
     }
 
+    updateVelocityY(input) {
+        const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Shift, v } = input.keysDict;
 
-    updateVelocityY(ArrowUp) {
         if (ArrowUp && this.state.isGrounded) {
             this.state.velocityY = this.state.jumpForce;
-            this.state.velocityX *= this.state.runSpeedMultiplier; // TODO Use another multiplier
-            // this.state.isJumping = true;
-            this.metadata.sound && jumpStart.play(); // TODO Create Sound Player Class
+            this.state.velocityX *= this.state.runSpeedMultiplier; // ! Beware, reusing multiplier for different purpose
+            this.metadata.sound && jumpStart.play();
         }
     }
-
 
     horizontalMovement(level) {
         if (this.mapPosition.x < level.borderBarrier) {
@@ -237,9 +223,9 @@ class Player {
         this.mapPosition.y += this.state.velocityY;
     }
 
-    applyGrativy(gForce) {
+    applyGrativy(level) {
         if (!this.state.isGrounded) {
-            this.state.velocityY += gForce;
+            this.state.velocityY += level.gravity;
         } 
         // else {
             // this.mapPosition.y = this.mapPosition.groundLevel - this.metadata.spriteHeight;
@@ -247,16 +233,16 @@ class Player {
         // }
     }
 
-    horizontalFriction(hfForce) {
-        if (Math.abs(this.state.velocityX) > 0.05) {
-            this.state.velocityX *= hfForce;
+    horizontalFriction(level) {
+        if (Math.abs(this.state.velocityX) > 0.05) { // So it won't keep multiplying forever
+            this.state.velocityX *= level.horizontalFriction;
         } else {
             this.state.velocityX = 0;
         }
     }
 
-    verticalFriction(vfForce) {
-        this.state.velocityY *= vfForce;
+    verticalFriction(level) {
+        this.state.velocityY *= level.verticalFriction;
     }
 
     applyFloorLimit() {
@@ -268,82 +254,54 @@ class Player {
                 this.metadata.sound && jumpLand.play();
             }
 
-            this.state.jumping = false;
-            this.state.velocityY = 0; // ! Should Down Force be always present?
+            this.state.velocityY = 0;
         }
     }
 
 
-
-
-
-    /*  
-    ╭━━━╮╱╱╱╱╱╭╮╱╱╱╱╭━━━┳╮╱╱╱╱╱╱╱╭╮
-    ┃╭━╮┃╱╱╱╱╭╯╰╮╱╱╱┃╭━╮┃┃╱╱╱╱╱╱╭╯╰╮
-    ┃╰━━┳━━┳━╋╮╭╋━━╮┃╰━━┫╰━┳━━┳━┻╮╭╯
-    ╰━━╮┃╭╮┃╭╋┫┃┃┃━┫╰━━╮┃╭╮┃┃━┫┃━┫┃
-    ┃╰━╯┃╰╯┃┃┃┃╰┫┃━┫┃╰━╯┃┃┃┃┃━┫┃━┫╰╮
-    ╰━━━┫╭━┻╯╰┻━┻━━╯╰━━━┻╯╰┻━━┻━━┻━╯
+    /*
+    ╭━━━╮╱╱╱╱╱╭╮╱╱╱╱╭━━━╮╱╱╱╱╱╱╱╱╱╭╮
+    ┃╭━╮┃╱╱╱╱╭╯╰╮╱╱╱┃╭━╮┃╱╱╱╱╱╱╱╱╭╯╰╮
+    ┃╰━━┳━━┳━╋╮╭╋━━╮┃┃╱┃┣━╮╭┳╮╭┳━┻╮╭╋┳━━┳━╮
+    ╰━━╮┃╭╮┃╭╋┫┃┃┃━┫┃╰━╯┃╭╮╋┫╰╯┃╭╮┃┃┣┫╭╮┃╭╮╮
+    ┃╰━╯┃╰╯┃┃┃┃╰┫┃━┫┃╭━╮┃┃┃┃┃┃┃┃╭╮┃╰┫┃╰╯┃┃┃┃
+    ╰━━━┫╭━┻╯╰┻━┻━━╯╰╯╱╰┻╯╰┻┻┻┻┻╯╰┻━┻┻━━┻╯╰╯
     ╱╱╱╱┃┃
     ╱╱╱╱╰╯
-    ---------------------------
-    UDDATE THE SPRITE ANIMATION
-    --------------------------- */
+    -------------------------------
+    Update Sprite Animation
+    Use State Info, don't use Input
+    ------------------------------- */
 
 
-    updateAnimation(input) {
+    updateAnimation() {
 
-        const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArorwDown, Shift, v } = input.keysDict;
-
+        // Direction of sprite
+        this.state.isFacingRight && this.setDirectionSprite(this.metadata.directionSprites.right);
+        this.state.isFacingLeft && this.setDirectionSprite(this.metadata.directionSprites.left);
+ 
         // Idle Sprite
-        if (!ArrowLeft && !ArrowRight && !ArrowUp) this.set.action.idle();
+        this.state.isIdle && this.setActionSprite(this.metadata.actionSprites.idle);
 
         // Running Sprite
-        if (Shift && ArrowLeft && !this.state.jumping) {
-            this.set.action.run();
-            this.set.direction.left();
-        }
-        if (Shift && ArrowRight && !this.state.jumping) {
-            this.set.action.run();
-            this.set.direction.right();
-        }
-        
-        // Running state, not using for anything but display
-        this.state.running = (this.state.action === "run") ? true : false;
+        this.state.isRunning && this.setActionSprite(this.metadata.actionSprites.run);
 
         // Walking Sprite
-        if (KeyQty === 1 && !this.state.jumping) {
-            if (Shift) this.set.action.idle();
-            if (ArrowRight) {
-                this.set.action.walk();
-                this.set.direction.right();
-            }       
-            if (ArrowLeft) {
-                this.set.action.walk();
-                this.set.direction.left();
-            }
-        }
+        this.state.isWalking && this.setActionSprite(this.metadata.actionSprites.walk);
 
         // Jumping Sprite
-        if (!this.state.isGrounded) {
-            this.set.action.jump();
-        }
+        !this.state.isGrounded && this.setActionSprite(this.metadata.actionSprites.jump);
+
     }
 
-
-
-    set = {
-        action: {
-            idle: () => this.state.action = "idle",
-            walk: () => this.state.action = "walk",
-            run: () => this.state.action = "run",
-            jump: () => this.state.action = "jump",
-        },
-        direction: {
-            right: () => this.state.direction = "right",
-            left: () => this.state.direction = "left",
-        },
+    setDirectionSprite(directionSprite) {
+        this.state.directionSprite = directionSprite;
     }
+
+    setActionSprite(actionSprite) {
+        this.state.actionSprite = actionSprite;
+    }
+
 
     
     /*
@@ -356,23 +314,23 @@ class Player {
     -----------------------
     SPRITE CANVAS ANIMATION
     ----------------------- */
+    // TODO I'm not sure if this method should be here or in Viewport 🤔
 
+    // draw(gameFrame) {
 
-    draw(gameFrame) {
+    //     const animationLength = this.metadata.animations[this.state.actionSprite].length;
+    //     const animationFrame = gameFrame % animationLength;
+    //     const frameU = this.metadata.animations[this.state.actionSprite][animationFrame];
+    //     const frameV = 0; // TODO: Don't use hardcoded value!!
 
-        const animationLength = this.metadata.animations[this.state.action].length;
-        const animationFrame = gameFrame % animationLength;
-        const frameU = this.metadata.animations[this.state.action][animationFrame];
-        const frameV = 0; // TODO: Don't use hardcoded value!!
-
-        context.drawImage(
-            // Use the correct PNG file, depending on direction facing
-            (this.state.direction == "right") ? this.metadata.faceRightSheet : this.metadata.faceLeftSheet,
-            // Crop the PNG file
-            frameU, frameV, this.metadata.spriteWidth, this.metadata.spriteHeight,
-            // Sprite position on canvas
-            this.state.x, this.state.y, this.metadata.spriteWidth, this.metadata.spriteHeight
-        );
-    }
+    //     context.drawImage(
+    //         // Use the correct PNG file, depending on direction facing
+    //         (this.state.isFacingRight) ? this.metadata.faceRightSheet : this.metadata.faceLeftSheet,
+    //         // Crop the PNG file
+    //         frameU, frameV, this.metadata.spriteWidth, this.metadata.spriteHeight,
+    //         // Sprite position on canvas
+    //         this.state.x, this.state.y, this.metadata.spriteWidth, this.metadata.spriteHeight
+    //     );
+    // }
 
 } // ! Player Class definition ends here !!

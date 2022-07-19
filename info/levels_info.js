@@ -30,6 +30,10 @@ const LEVEL_01_INFO = {
         tileWidth: 64,
         tileHeight: 256,
         levelHeight: 480,
+        gravity: 1,
+        horizontalFriction: 0.9,
+        verticalFriction: 0.94,
+        borderBarrier: 5,
     },
 
     tileTypes: {

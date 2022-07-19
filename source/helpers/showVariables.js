@@ -30,9 +30,9 @@ const showingVariables = {
 function showVariables() {
 
     // Showing values below the character
-    const animationLength = URU.metadata.animations[URU.state.action].length;
+    const animationLength = URU.metadata.animations[URU.state.actionSprite].length;
     const animationFrame = gameState.gameFrame % animationLength;
-    const frameU = URU.metadata.animations[URU.state.action][animationFrame];
+    const frameU = URU.metadata.animations[URU.state.actionSprite][animationFrame];
 
     document.querySelector("#showAction").innerText = URU.state.action;
     document.querySelector("#showDirection").innerText = URU.state.direction;

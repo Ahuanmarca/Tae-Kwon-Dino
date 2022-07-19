@@ -17,10 +17,12 @@ class Level {
         this.tiles = createTiles(levelInfo.tilesInfo);
         this.tileMap = getTileMap(levelInfo);
         this.background = createBackground(levelInfo.backgroundInfo);
-        // TODO rename variable, gets confused with length property of some objects
         this.length = Object.keys(this.tileMap).length * levelInfo.metadata.tileWidth;
 
-        this.borderBarrier = 5;
+        this.gravity = levelInfo.metadata.gravity;
+        this.horizontalFriction = levelInfo.metadata.horizontalFriction;
+        this.verticalFriction = levelInfo.metadata.verticalFriction;
+        this.borderBarrier = levelInfo.metadata.borderBarrier;
 
     }
 
