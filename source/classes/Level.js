@@ -137,7 +137,7 @@ class Layer {
     }
 
     // Draws the image two times so they can stitch together when scrolling
-    draw() {
+    draw(context) {
         context.drawImage(
             // Image file
             this.image, 

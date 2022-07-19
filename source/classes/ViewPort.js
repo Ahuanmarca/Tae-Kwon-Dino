@@ -27,8 +27,8 @@ class Viewport {
         this.updateAnchor(currentPlayer, currentLevel);
         this.getTiles(currentLevel);
         this.drawBackground(currentPlayer, currentLevel, context);
-        this.drawTiles(currentLevel);
-        this.drawPlayer(currentLevel, currentPlayer, gameState.gameFrame)
+        this.drawTiles(currentLevel, context);
+        this.drawPlayer(currentLevel, currentPlayer, gameState.gameFrame, context)
     }
 
     updateAnchor(player, level) {
@@ -83,7 +83,8 @@ class Viewport {
     }
 
 
-    drawTiles(level) {
+    drawTiles(level, context) {
+
         for (let key in this.tiles) {
             
             const x = this.tiles[key].x - this.anchor; // x position on viewport needs offset by anchor
@@ -106,7 +107,7 @@ class Viewport {
     }
 
 
-    drawPlayer(level, player, gameFrame) {
+    drawPlayer(level, player, gameFrame, context) {
 
         const animationLength = player.metadata.animations[player.state.actionSprite].length;
         const animationFrame = gameFrame % animationLength; // frame within sprite animation

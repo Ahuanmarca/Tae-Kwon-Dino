@@ -33,46 +33,47 @@ class MiniMap {
 
     update(currentLevel, currentPlayer, miniContext) {
         miniContext.clearRect(0, 0, this.width, this.height);
-        this.drawSurface(currentLevel);
-        this.drawPlayer(currentPlayer);
+        this.drawSurface(currentLevel, miniContext);
+        this.drawPlayer(currentPlayer, miniContext);
     }
 
-    drawSurface() {
+    drawSurface(currentLevel, miniContext) {
 
-        for (let key in this.miniMap.tileMap) {
+        for (let key in currentLevel.tileMap) {
 
             const scale = this.scale;
-            const tile = this.miniMap.tileMap[key];
-            const { height, width, platform, slope, wall } = this.miniMap.tiles[tile.type];
+            const tile = currentLevel.tileMap[key];
+            const { height, width, platform, slope, wall } = currentLevel.tiles[tile.type];
 
             const x = tile.x * scale;
             const y = tile.y * scale;
-            const bottom = this.miniMap.levelHeight * scale;
+            const bottom = this.height;
 
-            // Slope start and slope end
+            // Slope start and end
+            //      Represents Y position, modifies the platform
             //      If there's no slope, just starts and ends at 0
-            const sB = slope[0] * scale; // Slope Begins
-            const sE = slope[1] * scale; // Slope Ends
+            const slopeStart = slope[0] * scale; // Slope Start
+            const slopeEnd = slope[1] * scale; // Slope End
 
             // Platform start and end
-            //      So each platforms draws from it's start to it's end, instead of using tile width
-            const pS = platform[1][0] * scale;
-            const pE = platform[1][1] * scale;
+            //      each platforms draws from it's start to it's end
+            const platformStart = platform[1][0] * scale;
+            const platformEnd = platform[1][1] * scale;
 
             miniContext.beginPath();
             miniContext.strokeStyle = miniMapConfig.surfaceColor;
             miniContext.lineWidth = miniMapConfig.surfaceWidth;
 
             // Draw platforms
-            miniContext.moveTo(x+pS, y+sB);
-            miniContext.lineTo(x+pE, y+sE);
+            miniContext.moveTo(x+platformStart, y+slopeStart);
+            miniContext.lineTo(x+platformEnd, y+slopeEnd);
 
             // Draw walls
-            wall && miniContext.moveTo((x+pE)-pS, y);
-            wall && miniContext.lineTo((x+pE)-pS, bottom);
+            wall && miniContext.moveTo((x+platformEnd)-platformStart, y);
+            wall && miniContext.lineTo((x+platformEnd)-platformStart, bottom);
         
             // Perform the stroke, unless the tile is a "Hole"
-            tile.type != this.miniMap.tileTypes.hole && miniContext.stroke();
+            tile.type != currentLevel.tileTypes.hole && miniContext.stroke();
         }
     }
 
