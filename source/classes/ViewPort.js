@@ -23,6 +23,13 @@ class Viewport {
         this.rightmostAnchor = level.length - this.vpWidth;
     }
 
+    update(currentPlayer, currentLevel, gameState, context) {
+        this.updateAnchor(currentPlayer, currentLevel);
+        this.getTiles(currentLevel);
+        this.drawBackground(currentPlayer, currentLevel, context);
+        this.drawTiles(currentLevel);
+        this.drawPlayer(currentLevel, currentPlayer, gameState.gameFrame)
+    }
 
     updateAnchor(player, level) {
 
@@ -131,8 +138,8 @@ class Viewport {
     }
 
 
-    drawBackground(player, level) {
-        level.background.updateLayers(this.anchor);
+    drawBackground(player, level, context) {
+        level.background.updateLayers(this.anchor, context);
     }
 
 

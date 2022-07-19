@@ -1,73 +1,75 @@
-// Game Objects
-const currentLevel = new Level(LEVEL_01_INFO);
-const player = new Player({x: CANVAS_WIDTH / 4, y: 353}, spriteInfo);
-const input = new InputHandler();
-const MINI_MAP = new MiniMap(currentLevel, player, 0.25);
-const viewPort = new Viewport(player, currentLevel);
 
-// Main Canvas (game screen)
-const canvas = document.querySelector("#canvas1")
-const context = canvas.getContext("2d");
-canvas.width = CANVAS_WIDTH;
-canvas.height = CANVAS_HEIGHT;
+// runGame();
 
-// Secondary canvas for minimap
-const canvas2 = document.querySelector("#canvas2")
-const minCtx = canvas2.getContext("2d");
-canvas2.width = currentLevel.length / 4;
-canvas2.height = 480 / 4;
+// function runGame() {
 
-const gameState = {
-    gameFrame:0,
-    loopFrame: 0,
-    staggerFrames: 10,  
-}
+    // Some variables that I still don't know where to put
+    const CANVAS_WIDTH = 640;
+    const CANVAS_HEIGHT = 480;
+    const miniMapScale = 0.25;
 
-// Select sounds from html document
-const jumpStart = document.querySelector("#SNDjumpStart");
-const jumpLand = document.querySelector("#SNDjumpLand");
+    const gameState = {
+        gameFrame:0,
+        loopFrame: 0,
+        staggerFrames: 10,  
+    }
+
+    // Game Objects
+    const currentLevel = new Level(LEVEL_01_INFO);
+    const currentPlayer = new Player("foo", spriteInfo); // TODO Fix that!!
+    const input = new InputHandler();
+    const currentMiniMap = new MiniMap(currentLevel, currentPlayer, miniMapScale);
+    const viewPort = new Viewport(currentPlayer, currentLevel);
+
+    // Main Canvas (game screen)
+    const canvas = document.querySelector("#canvas1")
+    const context = canvas.getContext("2d");
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+
+    // Secondary canvas for minimap
+    const canvas2 = document.querySelector("#canvas2")
+    const miniContext = canvas2.getContext("2d");
+    canvas2.width = currentLevel.length * miniMapScale;
+    canvas2.height = CANVAS_HEIGHT * miniMapScale;
+
+    // Select sounds from html document
+    const jumpStart = document.querySelector("#SNDjumpStart");
+    const jumpLand = document.querySelector("#SNDjumpLand");
 
 
-function animate() {
+    function animate() {
 
-    context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+        context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
-    player.updateState(input);
+        // Player: updates state, position, movement
+        currentPlayer.update(input, currentLevel);
 
-    // Update sprite animation
-    player.updateAnimation();
+        // Viewport: renders tiles, player and background drawings
+        viewPort.update(currentPlayer, currentLevel, gameState, context);
 
-    // Update player's position on the map
-    player.updatePosition(input, currentLevel);
+        // Minimap
+        currentMiniMap.update(currentLevel, currentPlayer, miniContext);
 
-    // Viewport: renders tiles, player and background drawings
-    viewPort.updateAnchor(player, currentLevel);
-    viewPort.getTiles(currentLevel);
-    viewPort.drawBackground(player, currentLevel);
-    viewPort.drawTiles(currentLevel);
-    viewPort.drawPlayer(currentLevel, player, gameState.gameFrame)
+        // Debugger
+        showVariables(currentLevel, currentPlayer, input, viewPort);
 
-    // Minimap
-    minCtx.clearRect(0, 0, currentLevel.length/4, 480/4);
-    MINI_MAP.drawSurface(currentLevel);
-    MINI_MAP.drawPlayer(player);
+        (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
+        gameState.loopFrame++;
+        requestAnimationFrame(animate);
 
-    // Show variables below the canvas
-    showVariables(currentLevel, player, input, viewPort);
+    }
 
-    (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
-    gameState.loopFrame++;
-    requestAnimationFrame(animate);
+    animate();
 
-}
+    console.log("currentLevel");
+    console.log(currentLevel);
+    console.log("currentPlayer");
+    console.log(currentPlayer);
+    console.log('viewPort');
+    console.log(viewPort);
+    console.log('currentMiniMap');
+    console.log(currentMiniMap);
 
-animate();
+// }
 
-console.log("currentLevel");
-console.log(currentLevel);
-console.log("player");
-console.log(player);
-console.log('viewPort');
-console.log(viewPort);
-console.log('MINI_MAP');
-console.log(MINI_MAP);

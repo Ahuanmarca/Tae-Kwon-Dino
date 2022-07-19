@@ -2,7 +2,6 @@ miniMapConfig = {
     surfaceColor: "brown",
     surfaceWidth: 1,
     playerBoxLineWidth: 1,
-
 }
 
 
@@ -11,6 +10,8 @@ class MiniMap {
     constructor(level, player, scale) {
 
         this.scale = scale;
+        this.height = level.levelHeight * this.scale;
+        this.width = level.length * this.scale;
 
         this.player = {
             width: player.metadata.spriteWidth*scale,
@@ -28,6 +29,12 @@ class MiniMap {
             tiles: level.tiles,
             levelName: level.name,
         }
+    }
+
+    update(currentLevel, currentPlayer, miniContext) {
+        miniContext.clearRect(0, 0, this.width, this.height);
+        this.drawSurface(currentLevel);
+        this.drawPlayer(currentPlayer);
     }
 
     drawSurface() {
@@ -52,20 +59,20 @@ class MiniMap {
             const pS = platform[1][0] * scale;
             const pE = platform[1][1] * scale;
 
-            minCtx.beginPath();
-            minCtx.strokeStyle = miniMapConfig.surfaceColor;
-            minCtx.lineWidth = miniMapConfig.surfaceWidth;
+            miniContext.beginPath();
+            miniContext.strokeStyle = miniMapConfig.surfaceColor;
+            miniContext.lineWidth = miniMapConfig.surfaceWidth;
 
             // Draw platforms
-            minCtx.moveTo(x+pS, y+sB);
-            minCtx.lineTo(x+pE, y+sE);
+            miniContext.moveTo(x+pS, y+sB);
+            miniContext.lineTo(x+pE, y+sE);
 
             // Draw walls
-            wall && minCtx.moveTo((x+pE)-pS, y);
-            wall && minCtx.lineTo((x+pE)-pS, bottom);
+            wall && miniContext.moveTo((x+pE)-pS, y);
+            wall && miniContext.lineTo((x+pE)-pS, bottom);
         
             // Perform the stroke, unless the tile is a "Hole"
-            tile.type != this.miniMap.tileTypes.hole && minCtx.stroke();
+            tile.type != this.miniMap.tileTypes.hole && miniContext.stroke();
         }
     }
 
@@ -76,16 +83,16 @@ class MiniMap {
         const w = player.metadata.spriteWidth*this.scale;
         const h = player.metadata.spriteHeight*this.scale;
 
-        minCtx.beginPath();
-        minCtx.strokeStyle = "#4d92bc";
-        minCtx.lineWidth = miniMapConfig.playerBoxLineWidth;
+        miniContext.beginPath();
+        miniContext.strokeStyle = "#4d92bc";
+        miniContext.lineWidth = miniMapConfig.playerBoxLineWidth;
 
-        minCtx.moveTo(x,y);
-        minCtx.lineTo(x+w,y);
-        minCtx.lineTo(x+w,y+h);
-        minCtx.lineTo(x,y+h);
-        minCtx.lineTo(x,y)
-        minCtx.stroke();
+        miniContext.moveTo(x,y);
+        miniContext.lineTo(x+w,y);
+        miniContext.lineTo(x+w,y+h);
+        miniContext.lineTo(x,y+h);
+        miniContext.lineTo(x,y)
+        miniContext.stroke();
     }
 
 }

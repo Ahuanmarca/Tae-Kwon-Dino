@@ -166,11 +166,10 @@ class Background {
         
     }
 
-    updateLayers(anchor) {
+    updateLayers(anchor, context) {
         this.layers.forEach(layer => {
-            // layer.updateSpeed(spriteSpeed);
             layer.updatePosition(anchor);
-            layer.draw();
+            layer.draw(context);
         });
     }
 }

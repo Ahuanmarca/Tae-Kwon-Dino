@@ -1,3 +1,3 @@
-# Bugs
-- The player sticks to the right-most part of the level.
-- When reloading on broser, I get error messages (sometimes).
+# Tae Kwon Dino
+
+Side scrolling game created with vanilla JavaScript and the HTML5 Canvas API.

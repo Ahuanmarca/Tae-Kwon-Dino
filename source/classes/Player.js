@@ -67,6 +67,11 @@ class Player {
 
     }
 
+    update(input, currentLevel) {
+        this.updateState(input);
+        this.updatePosition(input, currentLevel);
+        this.updateAnimation();
+    }
 
     /*
     ╭━━━╮╭╮╱╱╱╭╮╱╱╱╱╭╮╱╭╮╱╱╱╱╭╮╱╱╭╮
