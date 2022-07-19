@@ -33,10 +33,6 @@ function runGame() {
     canvas2.width = currentLevel.length * miniMapScale;
     canvas2.height = CANVAS_HEIGHT * miniMapScale;
 
-    // Select sounds from html document
-    const jumpStart = document.querySelector("#SNDjumpStart");
-    const jumpLand = document.querySelector("#SNDjumpLand");
-
 
     function animate() {
 
