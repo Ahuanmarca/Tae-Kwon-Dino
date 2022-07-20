@@ -19,7 +19,7 @@ function runGame() {
     const currentPlayer = new Player("foo", spriteInfo); // TODO Fix that!!
     const input = new InputHandler();
     const currentMiniMap = new MiniMap(currentLevel, currentPlayer, miniMapScale);
-    const viewPort = new Viewport(currentPlayer, currentLevel);
+    const currentViewPort = new Viewport(currentPlayer, currentLevel);
 
     // Main Canvas (game screen)
     const canvas = document.querySelector("#canvas1")
@@ -42,13 +42,14 @@ function runGame() {
         currentPlayer.update(input, currentLevel);
 
         // Viewport: renders tiles, player and background drawings
-        viewPort.update(currentPlayer, currentLevel, gameState, context);
+        currentViewPort.update(currentPlayer, currentLevel, gameState, context);
 
         // Minimap
         currentMiniMap.update(currentLevel, currentPlayer, miniContext);
 
         // Debugger
-        showVariables("Player State", gameState, currentPlayer);
+        showVariables("currentPlayer.state", gameState, currentPlayer.state);
+        showVariables("currentViewPort", gameState, currentViewPort);
 
         (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
         gameState.loopFrame++;
@@ -62,8 +63,8 @@ function runGame() {
     console.log(currentLevel);
     console.log("currentPlayer");
     console.log(currentPlayer);
-    console.log('viewPort');
-    console.log(viewPort);
+    console.log('currentViewPort');
+    console.log(currentViewPort);
     console.log('currentMiniMap');
     console.log(currentMiniMap);
 

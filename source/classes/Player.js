@@ -41,6 +41,14 @@ class Player {
 
             velocityX: 0,
             velocityY: 0,
+            // Left and top
+            x: 10,
+            y: 10,
+            // Center X and Center Y
+            cX: undefined,
+            cY: undefined,
+            groundLevel: undefined,
+            previousY: undefined,
 
             // Modifiers
             jumpForce: -30,
@@ -57,18 +65,6 @@ class Player {
             centerTile: undefined,
 
         };
-
-        this.mapPosition = {
-            // Left and top
-            x: 10,
-            y: 10,
-            // Center X and Center Y
-            cX: undefined,
-            cY: undefined,
-            groundLevel: undefined,
-            previousY: undefined,
-        };
-
     }
 
     update(input, currentLevel) {
@@ -128,16 +124,16 @@ class Player {
         this.state.isJumping = !this.state.isGrounded ? true : false;
 
         // Falling State
-        if (this.mapPosition.y > this.mapPosition.previousY && !this.state.isGrounded) {
+        if (this.state.y > this.state.previousY && !this.state.isGrounded) {
             this.state.isFalling = true;
         } else {
             this.state.isFalling = false;            
         }
-        this.mapPosition.previousY = this.mapPosition.y;
+        this.state.previousY = this.state.y;
         
         // ! I'm not convinced about this way of evaluating the isGrounded state!!
         // Grounded State 
-        const difference = (this.mapPosition.groundLevel - this.metadata.spriteHeight) - this.mapPosition.y;
+        const difference = (this.state.groundLevel - this.metadata.spriteHeight) - this.state.y;
         this.state.isGrounded = difference <= 6.5;
 
     }
@@ -174,12 +170,12 @@ class Player {
     }
 
     updateCenterX() {
-        this.mapPosition.cX = this.mapPosition.x + this.metadata.spriteWidth / 2;
+        this.state.cX = this.state.x + this.metadata.spriteWidth / 2;
     }
 
     getGroundLevel(level) {
     
-        const x = this.mapPosition.x;
+        const x = this.state.x;
         const w = this.metadata.spriteWidth;
 
         const hitX = x + this.metadata.hitBoxOffset;
@@ -187,9 +183,9 @@ class Player {
         
         this.state.leftTile = level.getTileInfo(hitX);
         this.state.rightTile = level.getTileInfo(hitW + x);
-        this.state.centerTile = level.getTileInfo(this.mapPosition.cX);
+        this.state.centerTile = level.getTileInfo(this.state.cX);
         
-        this.mapPosition.groundLevel = level.getGroundHeight(this.mapPosition.cX);
+        this.state.groundLevel = level.getGroundHeight(this.state.cX);
     }
 
     updateVelocityX(input) {
@@ -219,17 +215,17 @@ class Player {
     }
 
     horizontalMovement(level) {
-        if (this.mapPosition.x < level.borderBarrier) {
-            this.mapPosition.x = level.borderBarrier;
-        } else if (this.mapPosition.x > (level.length - this.metadata.spriteWidth) - level.borderBarrier) {
-            this.mapPosition.x = (level.length - this.metadata.spriteWidth) - level.borderBarrier;
+        if (this.state.x < level.borderBarrier) {
+            this.state.x = level.borderBarrier;
+        } else if (this.state.x > (level.length - this.metadata.spriteWidth) - level.borderBarrier) {
+            this.state.x = (level.length - this.metadata.spriteWidth) - level.borderBarrier;
         } else {
-            this.mapPosition.x += this.state.velocityX;
+            this.state.x += this.state.velocityX;
         }
     }
 
     verticalMovement() {
-        this.mapPosition.y += this.state.velocityY;
+        this.state.y += this.state.velocityY;
     }
 
     applyGrativy(level) {
@@ -237,7 +233,7 @@ class Player {
             this.state.velocityY += level.gravity;
         } 
         // else {
-            // this.mapPosition.y = this.mapPosition.groundLevel - this.metadata.spriteHeight;
+            // this.state.y = this.state.groundLevel - this.metadata.spriteHeight;
             // TODO the magnet effect to fix the choppy animation on the down ramp, but is causing a super jump
         // }
     }
@@ -255,9 +251,9 @@ class Player {
     }
 
     applyFloorLimit() {
-        if (this.mapPosition.y > this.mapPosition.groundLevel - this.metadata.spriteHeight) {
+        if (this.state.y > this.state.groundLevel - this.metadata.spriteHeight) {
             
-            this.mapPosition.y = this.mapPosition.groundLevel - this.metadata.spriteHeight;
+            this.state.y = this.state.groundLevel - this.metadata.spriteHeight;
 
             if (this.state.isJumping === true) {
                 this.metadata.sound && this.metadata.soundFX.jumpLand.play();

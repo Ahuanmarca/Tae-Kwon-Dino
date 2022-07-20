@@ -30,7 +30,6 @@ function showVariables(objectName, gameState, gameObject) {
             variableValue.innerText = gameObject[key];
             variableValue.onselectstart = function() { return false; }
 
-
             newRow.appendChild(variableName);
             newRow.appendChild(variableValue);
             rows.push(newRow);

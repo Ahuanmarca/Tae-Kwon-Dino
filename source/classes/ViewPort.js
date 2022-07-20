@@ -31,31 +31,31 @@ class Viewport {
         this.drawPlayer(currentLevel, currentPlayer, gameState.gameFrame, context)
     }
 
-    
+
     updateAnchor(player, level) {
 
         // Updates anchor and offset depending on player position
         // ... and to which side is it facing
         
-        if (player.mapPosition.x < this.faceRightOffset || 
-            (player.mapPosition.x < this.faceLeftOffset && player.state.isFacingLeft)
+        if (player.state.x < this.faceRightOffset || 
+            (player.state.x < this.faceLeftOffset && player.state.isFacingLeft)
             ) {
             this.anchor = this.leftmostAnchor;
 
-        } else if (player.mapPosition.x > level.length - (this.vpWidth - this.faceRightOffset)) {
+        } else if (player.state.x > level.length - (this.vpWidth - this.faceRightOffset)) {
             this.anchor = this.rightmostAnchor;
 
         } else if (player.state.isFacingRight) {
             if (this.currentOffset > this.faceRightOffset) {
                 this.currentOffset -= this.offsetStep;
             }
-            this.anchor = Math.floor(player.mapPosition.x) - this.currentOffset;
+            this.anchor = Math.floor(player.state.x) - this.currentOffset;
 
         } else {
             if (this.currentOffset < this.faceLeftOffset) {
                 this.currentOffset += this.offsetStep;
             }
-            this.anchor = Math.floor(player.mapPosition.x) - this.currentOffset;
+            this.anchor = Math.floor(player.state.x) - this.currentOffset;
         }
 
     }
@@ -116,14 +116,14 @@ class Viewport {
         const v = 0; // TODO: Don't use hardcoded value!!
 
         // Get player Y position from it's map position
-        const y = player.mapPosition.y + 16; // si it's not at the border of the tile
+        const y = player.state.y + 16; // si it's not at the border of the tile
 
         let x = undefined;
 
         if (this.anchor === this.leftmostAnchor) {
-            x = player.mapPosition.x;
+            x = player.state.x;
         } else if (this.anchor === this.rightmostAnchor) {
-            x = this.vpWidth - (level.length - player.mapPosition.x);
+            x = this.vpWidth - (level.length - player.state.x);
         } else {
             x = this.currentOffset;
         }

@@ -79,8 +79,8 @@ class MiniMap {
 
     drawPlayerBox(player, miniContext) {
 
-        const x = player.mapPosition.x*this.scale;
-        const y = player.mapPosition.y*this.scale;
+        const x = player.state.x*this.scale;
+        const y = player.state.y*this.scale;
         const w = player.metadata.spriteWidth*this.scale;
         const h = player.metadata.spriteHeight*this.scale;
 
