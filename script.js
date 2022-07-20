@@ -5,20 +5,17 @@ async function fetchJson(url) {
 }
 
 (async () => {
-    // const levelResponse = await fetch("./info/level_01_info.json");
-    // const spriteResponse = await fetch("./info/sprites_info.json");
-    // let level = JSON.parse(await levelResponse.text());
-    // let sprite = JSON.parse(await spriteResponse.text());
     
-    const [level, sprite] = await Promise.all([
-        fetchJson("./info/level_02_info.json"),
-        fetchJson("./info/sprites_info.json"),
+    const [level, sprite, monster01Info] = await Promise.all([
+        fetchJson("./info/level_01_info.json"),
+        fetchJson("./info/player_info.json"),
+        fetchJson("./info/monster_info.json"),
     ])
 
-    runGame(level, sprite);
+    runGame(level, sprite, monster01Info);
 })()
 
-function runGame(levelInfo, spriteInfo) {
+function runGame(levelInfo, spriteInfo, monster01Info) {
 
     // Some variables that I still don't know where to put
     const CANVAS_WIDTH = 640;
@@ -33,7 +30,9 @@ function runGame(levelInfo, spriteInfo) {
 
     // Game Objects
     const currentLevel = new Level(levelInfo);
-    const currentPlayer = new Player("foo", spriteInfo); // TODO Fix that!!
+    const currentPlayer = new Player({x: 10, y: 10}, spriteInfo);
+    const monster01 = new Monster({x: 300, y: 10}, monster01Info);
+    console.log(currentPlayer)
     const input = new InputHandler();
     const currentMiniMap = new MiniMap(currentLevel, currentPlayer, miniMapScale);
     const currentViewPort = new Viewport(currentPlayer, currentLevel);
@@ -50,16 +49,17 @@ function runGame(levelInfo, spriteInfo) {
     canvas2.width = currentLevel.length * miniMapScale;
     canvas2.height = CANVAS_HEIGHT * miniMapScale;
 
-
     function animate() {
 
         context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
         // Player: updates state, position, movement
         currentPlayer.update(input, currentLevel);
+        const monsterInput = monster01.generateInput(currentLevel, currentPlayer);
+        monster01.update(monsterInput, currentLevel);
 
         // Viewport: renders tiles, player and background drawings
-        currentViewPort.update(currentPlayer, currentLevel, gameState, context);
+        currentViewPort.update(currentLevel, currentPlayer, [monster01], gameState, context);
 
         // Minimap
         currentMiniMap.update(currentLevel, currentPlayer, miniContext);

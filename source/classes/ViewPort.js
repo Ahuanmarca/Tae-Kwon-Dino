@@ -23,16 +23,17 @@ class Viewport {
         this.rightmostAnchor = level.length - this.vpWidth;
     }
 
-    update(currentPlayer, currentLevel, gameState, context) {
-        this.updateAnchor(currentPlayer, currentLevel);
+    update(currentLevel, currentPlayer, monsters, gameState, context) {
+        this.updateAnchor(currentLevel, currentPlayer);
         this.getTiles(currentLevel);
-        this.drawBackground(currentPlayer, currentLevel, context);
+        this.drawBackground(currentLevel, context);
         this.drawTiles(currentLevel, context);
-        this.drawPlayer(currentLevel, currentPlayer, gameState.gameFrame, context)
+        this.drawCharacter(currentLevel, currentPlayer, gameState.gameFrame, context)
+        monsters.forEach(monster => {this.drawCharacter(currentLevel, monster, gameState.gameFrame, context)})
     }
 
 
-    updateAnchor(player, level) {
+    updateAnchor(level, player) {
 
         // Updates anchor and offset depending on player position
         // ... and to which side is it facing
@@ -108,15 +109,8 @@ class Viewport {
     }
 
 
-    drawPlayer(level, player, gameFrame, context) {
 
-        const animationLength = player.metadata.animations[player.state.actionSprite].length;
-        const animationFrame = gameFrame % animationLength; // frame within sprite animation
-        const u = player.metadata.animations[player.state.actionSprite][animationFrame];
-        const v = 0; // TODO: Don't use hardcoded value!!
-
-        // Get player Y position from it's map position
-        const y = player.state.y + 16; // si it's not at the border of the tile
+    drawCharacter(level, player, gameFrame, context) {
 
         let x = undefined;
 
@@ -128,19 +122,12 @@ class Viewport {
             x = this.currentOffset;
         }
 
-        context.drawImage(
-            // Use the correct PNG file, depending on direction facing
-            (player.state.isFacingRight) ? player.metadata.faceRightSheet : player.metadata.faceLeftSheet,
-            // Crop the PNG file
-            u, v, player.metadata.spriteWidth, player.metadata.spriteHeight,
-            // Sprite position on canvas
-            x, y, player.metadata.spriteWidth, player.metadata.spriteHeight
-        );
+        player.draw(level, gameFrame, context, x);
 
     }
 
 
-    drawBackground(player, level, context) {
+    drawBackground(level, context) {
         level.background.updateLayers(this.anchor, context);
     }
 

@@ -39,7 +39,7 @@
           0,
           0
         ],
-        "file": "assets/sprites/tileset-simple.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       },
       {
         "code": "P",
@@ -60,7 +60,7 @@
           0,
           0
         ],
-        "file": "assets/sprites/tileset-simple.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       },
       {
         "code": "E",
@@ -81,7 +81,7 @@
           0,
           0
         ],
-        "file": "assets/sprites/tileset-simple.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       },
       {
         "code": "U",
@@ -102,7 +102,7 @@
           64,
           0
         ],
-        "file": "assets/sprites/tileset-simple.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       },
       {
         "code": "D",
@@ -123,7 +123,7 @@
           0,
           64
         ],
-        "file": "assets/sprites/tileset-simple.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       },
       {
         "code": "H",
@@ -144,7 +144,7 @@
           0,
           0
         ],
-        "file": "assets/sprites/tileset-simple.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       }
     ],
     "backgroundInfo": {
@@ -154,15 +154,15 @@
       },
       "files": [
         {
-          "url": "assets/sprites/back.png",
+          "url": "assets/levels/01/background/back.png",
           "depth": 10
         },
         {
-          "url": "assets/sprites/middle.png",
+          "url": "assets/levels/01/background/middle.png",
           "depth": 3.5
         },
         {
-          "url": "assets/sprites/near.png",
+          "url": "assets/levels/01/background/near.png",
           "depth": 1.5
         }
       ]

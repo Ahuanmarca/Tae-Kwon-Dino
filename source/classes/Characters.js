@@ -1,5 +1,5 @@
 
-class Player {
+class Character {
     constructor(position, spriteInfo) {
         
         this.metadata = {
@@ -42,8 +42,8 @@ class Player {
             velocityX: 0,
             velocityY: 0,
             // Left and top
-            x: 10,
-            y: 10,
+            x: position.x,
+            y: position.y,
             // Center X and Center Y
             cX: undefined,
             cY: undefined,
@@ -52,7 +52,7 @@ class Player {
 
             // Modifiers
             jumpForce: -30,
-            movementSpeed: 0.3,
+            movementSpeed: spriteInfo.metadata.movementSpeed,
             runSpeedMultiplier: 2,
 
             // animation properties
@@ -152,7 +152,6 @@ class Player {
     ------------------------------ */
 
     updatePosition(input, level) {
-        const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Shift, v } = input.keysDict;
 
         this.updateCenterX();
         
@@ -319,23 +318,66 @@ class Player {
     -----------------------
     SPRITE CANVAS ANIMATION
     ----------------------- */
-    // TODO I'm not sure if this method should be here or in Viewport🤔
 
-    // draw(gameFrame) {
+    draw(level, gameFrame, context, x) {
 
-    //     const animationLength = this.metadata.animations[this.state.actionSprite].length;
-    //     const animationFrame = gameFrame % animationLength;
-    //     const frameU = this.metadata.animations[this.state.actionSprite][animationFrame];
-    //     const frameV = 0; // TODO: Don't use hardcoded value!!
+        const animationLength = this.metadata.animations[this.state.actionSprite].length;
+        const animationFrame = gameFrame % animationLength;
+        const frameU = this.metadata.animations[this.state.actionSprite][animationFrame];
+        const frameV = 0; // TODO: Don't use hardcoded value!!
 
-    //     context.drawImage(
-    //         // Use the correct PNG file, depending on direction facing
-    //         (this.state.isFacingRight) ? this.metadata.faceRightSheet : this.metadata.faceLeftSheet,
-    //         // Crop the PNG file
-    //         frameU, frameV, this.metadata.spriteWidth, this.metadata.spriteHeight,
-    //         // Sprite position on canvas
-    //         this.state.x, this.state.y, this.metadata.spriteWidth, this.metadata.spriteHeight
-    //     );
-    // }
+        const y = this.state.y + 16; // so it's not at the border of the tile
 
-} // ! Player Class definition ends here !!
+        context.drawImage(
+            // Use the correct PNG file, depending on direction facing
+            (this.state.isFacingRight) ? this.metadata.faceRightSheet : this.metadata.faceLeftSheet,
+            // Crop the PNG file
+            frameU, frameV, this.metadata.spriteWidth, this.metadata.spriteHeight,
+            // Sprite position on canvas
+            x, y, this.metadata.spriteWidth, this.metadata.spriteHeight
+        );
+    }
+
+} // ! Character Class definition ends here !!
+
+
+class Player extends Character {
+
+}
+
+
+class Monster extends Character {
+
+    // need to pass the level and the player
+    generateInput(level, player) {
+        if (player.state.x < this.state.x) {
+            const toReturn = {
+                keysDict: {
+                    KeyQty: 0,
+                    ArrowDown: false,
+                    ArrowUp: false,
+                    ArrowLeft: true,
+                    ArrowRight: false,
+                    Shift: false,
+                    v: false,
+                }
+            }
+            return toReturn;
+        } else {
+            const toReturn = {
+                keysDict: {
+                    KeyQty: 0,
+                    ArrowDown: false,
+                    ArrowUp: false,
+                    ArrowLeft: false,
+                    ArrowRight: true,
+                    Shift: false,
+                    v: false,
+                }
+            }
+            return toReturn;
+        }
+    }
+
+}
+

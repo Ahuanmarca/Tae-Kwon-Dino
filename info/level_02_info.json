@@ -154,15 +154,15 @@
     },
     "files": [
       {
-        "url": "assets/sprites/level_02/back.png",
+        "url": "assets/levels/02/back.png",
         "depth": 10
       },
       {
-        "url": "assets/sprites/level_02/middle.png",
+        "url": "assets/levels/02/middle.png",
         "depth": 3.5
       },
       {
-        "url": "assets/sprites/level_02/near.png",
+        "url": "assets/levels/02/near.png",
         "depth": 1.5
       }
     ]

@@ -1,10 +1,11 @@
 {
     "metadata": {
-      "fileRight": "assets/sprites/dino-right.png",
-      "fileLeft": "assets/sprites/dino-left.png",
+      "fileRight": "assets/sprites/player/dino-right.png",
+      "fileLeft": "assets/sprites/player/dino-left.png",
       "spriteWidth": 96,
       "spriteHeight": 72,
-      "singleRow": true
+      "singleRow": true,
+      "movementSpeed": 0.3
     },
     "animationsStates": [
       {
