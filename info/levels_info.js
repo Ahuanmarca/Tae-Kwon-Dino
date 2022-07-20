@@ -15,11 +15,6 @@
         2: high
         3: very high
 
-    const stringMap = `
-        PPPDDPEWPPUUPPE
-        222210011123333
-    `
-
 */
 
 const LEVEL_01_INFO = {
@@ -45,15 +40,15 @@ const LEVEL_01_INFO = {
         hole: "H",
     },
 
-    // tileMapString: `
-    //     PPPPDDPPPPEHWPPPPUUPPPPEHWPPDPPPPUPPUPPP
-    //     2222210000001111123333330222211112223333
-    // `,
-
     tileMapString: `
-        PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
-        1111111111111111111111111111111111111111
+        PPPPDDPPPPEHWPPPPUUPPPPEHWPPDPPPPUPPUPPP
+        2222210000001111123333330222211112223333
     `,
+
+    // tileMapString: `
+    //     PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+    //     1111111111111111111111111111111111111111
+    // `,
 
     // Array with tile properties
 
@@ -170,4 +165,154 @@ const LEVEL_01_INFO = {
         ],
     },
 
+}
+
+
+const LEVEL_02_INFO = {
+
+    metadata: {
+        level: 2,
+        name: "Not the Moab ;-)",
+        tileWidth: 64,
+        tileHeight: 256,
+        levelHeight: 480,
+        gravity: 1,
+        horizontalFriction: 0.9,
+        verticalFriction: 0.94,
+        borderBarrier: 5,
+    },
+
+    tileTypes: {
+        platform: "P",
+        westWall: "W",
+        eastWall: "E",
+        upHill: "U",
+        downHill: "D",
+        hole: "H",
+    },
+
+    tileMapString: `
+        PPPPDDPPPPEHWPPPPUUPPPPEHWPPDPPPPUPPUPPP
+        2222210000001111123333330222211112223333
+    `,
+
+    // tileMapString: `
+    //     PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+    //     1111111111111111111111111111111111111111
+    // `,
+
+    // Array with tile properties
+
+    tilesInfo: [
+        
+        /* Y POSITIONS	
+        low: 		CANVAS_HEIGHT - 64
+        normal: 	CANVAS_HEIGHT - 128
+        high: 		CANVAS_HEIGHT - 192
+        very high: 	CANVAS_HEIGHT - 256 */
+
+        {
+            code: "W", 
+            name: "west-wall",
+            u: 26, // texture location
+            v: 32, // texture location
+            width: 64,
+            height: 256,
+            platform: [true, [32, 64]],
+            wall: true,
+            slope: [0, 0], // change of y height from x to x + width
+            file: "assets/sprites/tileset-simple.png"
+        },
+    
+        {
+            code: "P",
+            name: "platform",
+            u: 96,
+            v: 32,
+            width: 64,
+            height: 256,
+            platform: [true, [0, 64]],
+            wall: false,
+            slope: [0, 0],
+            file: "assets/sprites/tileset-simple.png"
+        },
+    
+        {
+            code: "E",
+            name: "east-wall",
+            u: 192,
+            v: 32,
+            width: 64,
+            height: 256,
+            platform: [true, [0, 32]],
+            wall: true,
+            slope: [0, 0],
+            file: "assets/sprites/tileset-simple.png"
+        },
+    
+        {
+            code: "U",
+            name: "up-hill",
+            u: 256,
+            v: 32,
+            width: 64,
+            height: 256,
+            platform: [true, [0, 64]],
+            wall: false,
+            slope: [64, 0],
+            file: "assets/sprites/tileset-simple.png"
+        },
+    
+        {
+            code: "D",
+            name: "down-hill",
+            u: 352,
+            v: 32,
+            width: 64,
+            height: 256,
+            platform: [true, [0, 64]],
+            wall: false,
+            slope: [0, 64],
+            file: "assets/sprites/tileset-simple.png"
+        },
+
+        {
+            code: "H",
+            name: "hole",
+            u: 416,
+            v: 32,
+            width: 64,
+            height: 256,
+            platform: [false, [0, 64]],
+            wall: false,
+            slope: [0, 0],
+            file: "assets/sprites/tileset-simple.png"
+        },
+
+
+    ],
+
+
+    backgroundInfo: {
+    
+        metadata: {
+            width: 1024,
+            height: 480,
+        },
+    
+        files: [
+            {
+                url: "assets/sprites/level_02/back.png",
+                depth: 10,
+            },
+            {
+                url: "assets/sprites/level_02/middle.png",
+                depth: 3.5,
+            },
+            {
+                url: "assets/sprites/level_02/near.png",
+                depth: 1.5,
+            },
+        ],
+    },
 }

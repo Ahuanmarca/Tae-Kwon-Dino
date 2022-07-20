@@ -1,7 +1,24 @@
+async function fetchJson(url) {
+    const response = await fetch(url);
+    const toReturn = JSON.parse(await response.text());
+    return toReturn;
+}
 
-runGame();
+(async () => {
+    // const levelResponse = await fetch("./info/level_01_info.json");
+    // const spriteResponse = await fetch("./info/sprites_info.json");
+    // let level = JSON.parse(await levelResponse.text());
+    // let sprite = JSON.parse(await spriteResponse.text());
+    
+    const [level, sprite] = await Promise.all([
+        fetchJson("./info/level_02_info.json"),
+        fetchJson("./info/sprites_info.json"),
+    ])
 
-function runGame() {
+    runGame(level, sprite);
+})()
+
+function runGame(levelInfo, spriteInfo) {
 
     // Some variables that I still don't know where to put
     const CANVAS_WIDTH = 640;
@@ -15,7 +32,7 @@ function runGame() {
     }
 
     // Game Objects
-    const currentLevel = new Level(LEVEL_01_INFO);
+    const currentLevel = new Level(levelInfo);
     const currentPlayer = new Player("foo", spriteInfo); // TODO Fix that!!
     const input = new InputHandler();
     const currentMiniMap = new MiniMap(currentLevel, currentPlayer, miniMapScale);
