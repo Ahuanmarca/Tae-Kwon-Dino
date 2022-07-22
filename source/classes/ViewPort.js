@@ -32,7 +32,6 @@ class Viewport {
         monsters.forEach(monster => {this.drawCharacter(currentLevel, monster, gameState.gameFrame, context)})
     }
 
-
     updateAnchor(level, player) {
 
         // Updates anchor and offset depending on player position
@@ -73,7 +72,6 @@ class Viewport {
     Get the tiles, draw the tiles
     ----------------------------- */
 
-
     getTiles(level) {
         for (let key in level.tileMap) {
             if (level.tileMap[key].x >= this.anchor - level.tileWidth && level.tileMap[key].x <= this.anchor + this.vpWidth) {
@@ -83,7 +81,6 @@ class Viewport {
             }
         }
     }
-
 
     drawTiles(level, context) {
 
@@ -108,8 +105,6 @@ class Viewport {
         }
     }
 
-
-
     drawCharacter(level, player, gameFrame, context) {
 
         let x = undefined;
@@ -119,18 +114,17 @@ class Viewport {
         } else if (this.anchor === this.rightmostAnchor) {
             x = this.vpWidth - (level.length - player.state.x);
         } else {
-            x = this.currentOffset;
+            // x = this.currentOffset;
+            x = player.state.x - this.anchor;
         }
 
         player.draw(level, gameFrame, context, x);
 
     }
 
-
     drawBackground(level, context) {
         level.background.updateLayers(this.anchor, context);
     }
-
 
 }
 

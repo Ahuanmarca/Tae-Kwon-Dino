@@ -45,8 +45,17 @@ class Level {
         // Offset is:
         // Distance from tileX to cX, in percentage of the tile
         const offset = (x - info.x) / tileWidth;
+        // console.log(offset);
 
-        return y1*(1-offset) + y2*offset;
+        if (offset < 0.5 && info.type === "W") {
+            return this.levelHeight*2;
+        } else if (offset > 0.5 && info.type === "E") {
+            return this.levelHeight*2;
+        } else if (info.type === "H") {
+            return this.levelHeight*2;
+        } else {
+            return y1*(1-offset) + y2*offset;
+        }
 
     }
 }

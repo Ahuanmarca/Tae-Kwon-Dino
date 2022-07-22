@@ -158,7 +158,7 @@ class Character {
         this.getGroundLevel(level);
 
         // this.updateVelocityX(ArrowRight, ArrowLeft, Shift);
-        this.updateVelocityX(input);
+        this.updateVelocityX(input, level);
         this.updateVelocityY(input);
         this.horizontalMovement(level);
         this.verticalMovement();
@@ -187,20 +187,48 @@ class Character {
         this.state.groundLevel = level.getGroundHeight(this.state.cX);
     }
 
-    updateVelocityX(input) {
+    updateVelocityX(input, level) {
         const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Shift, v } = input.keysDict;
 
-        // Walking velocity
-        if (!Shift) {
-            ArrowRight && (this.state.velocityX += this.state.movementSpeed);
-            ArrowLeft && (this.state.velocityX -= this.state.movementSpeed);
+        const x = this.state.x;
+        const w = this.metadata.spriteWidth;
+
+        const hitX = x + this.metadata.hitBoxOffset;
+        const hitW = w - this.metadata.hitBoxOffset;
+
+        this.state.leftTile = level.getTileInfo(hitX);
+        this.state.rightTile = level.getTileInfo(hitW + x);
+        this.state.centerTile = level.getTileInfo(this.state.cX);
+        
+        const previousGroundLevel = level.getGroundHeight(hitX);
+        const nextGroundLevel = level.getGroundHeight((hitW + x));
+
+        // console.log(nextGroundLevel);
+        // console.log(this.state.groundLevel);
+        // console.log(this.state.rightTile.type === "P");
+
+
+        if (nextGroundLevel < this.state.y + this.metadata.spriteHeight && this.state.rightTile.type === "P" && this.state.isFacingRight) {
+            this.state.velocityX = 0;
+            this.state.x -= 5;
+        } else if (previousGroundLevel < this.state.y + this.metadata.spriteHeight && this.state.leftTile.type === "P" && this.state.isFacingLeft) {
+            this.state.velocityX = 0;
+            this.state.x += 5;
+        } else {
+            // Walking velocity
+            if (!Shift) {
+                ArrowRight && (this.state.velocityX += this.state.movementSpeed);
+                ArrowLeft && (this.state.velocityX -= this.state.movementSpeed);
+            }
+    
+            // Running velocity
+            if (Shift) {
+                ArrowRight && (this.state.velocityX += this.state.movementSpeed*this.state.runSpeedMultiplier);
+                ArrowLeft && (this.state.velocityX -= this.state.movementSpeed*this.state.runSpeedMultiplier);
+            }
+
         }
 
-        // Running velocity
-        if (Shift) {
-            ArrowRight && (this.state.velocityX += this.state.movementSpeed*this.state.runSpeedMultiplier);
-            ArrowLeft && (this.state.velocityX -= this.state.movementSpeed*this.state.runSpeedMultiplier);
-        }
     }
 
     updateVelocityY(input) {

@@ -30,8 +30,8 @@ function runGame(levelInfo, spriteInfo, monster01Info) {
 
     // Game Objects
     const currentLevel = new Level(levelInfo);
-    const currentPlayer = new Player({x: 10, y: 10}, spriteInfo);
-    const monster01 = new Monster({x: 300, y: 10}, monster01Info);
+    const currentPlayer = new Player({x: 10, y: 100}, spriteInfo);
+    const monster01 = new Monster({x: 500, y: 250}, monster01Info);
     console.log(currentPlayer)
     const input = new InputHandler();
     const currentMiniMap = new MiniMap(currentLevel, currentPlayer, miniMapScale);
@@ -59,7 +59,8 @@ function runGame(levelInfo, spriteInfo, monster01Info) {
         monster01.update(monsterInput, currentLevel);
 
         // Viewport: renders tiles, player and background drawings
-        currentViewPort.update(currentLevel, currentPlayer, [monster01], gameState, context);
+        // currentViewPort.update(currentLevel, currentPlayer, [monster01], gameState, context);
+        currentViewPort.update(currentLevel, currentPlayer, [], gameState, context);
 
         // Minimap
         currentMiniMap.update(currentLevel, currentPlayer, miniContext);
@@ -67,6 +68,7 @@ function runGame(levelInfo, spriteInfo, monster01Info) {
         // Debugger
         showVariables("currentPlayer.state", gameState, currentPlayer.state);
         showVariables("currentViewPort", gameState, currentViewPort);
+        // showVariables("monster01", gameState, monster01.state);
 
         (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
         gameState.loopFrame++;

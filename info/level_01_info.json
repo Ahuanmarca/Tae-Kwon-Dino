@@ -18,7 +18,7 @@
       "downHill": "D",
       "hole": "H"
     },
-    "tileMapString": "PPPPDDPPPPEHWPPPPUUPPPPEHWPPDPPPPUPPUPPP\n2222210000001111123333330222211112223333",
+    "tileMapString": "PPPPPPPPPPPPPPPPPPDDPPPPEHWPPPPUUPPP\n000000001112223333210000001111123333",
     "tilesInfo": [
       {
         "code": "W",
@@ -55,7 +55,7 @@
             64
           ]
         ],
-        "wall": false,
+        "wall": true,
         "slope": [
           0,
           0
