@@ -16,6 +16,7 @@ class Character {
                 walk: "walk",
                 run: "run",
                 jump: "jump",
+                hurt: "hurt",
             },
             directionSprites: {
                 right: "right",
@@ -38,6 +39,7 @@ class Character {
             isGrounded : undefined,
             isFacingRight: true,
             isFacingLeft: false,
+            isTakingDamage: false,
 
             velocityX: 0,
             velocityY: 0,
@@ -207,13 +209,19 @@ class Character {
         // console.log(this.state.groundLevel);
         // console.log(this.state.rightTile.type === "P");
 
-
-        if (nextGroundLevel < this.state.y + this.metadata.spriteHeight && this.state.rightTile.type === "P" && this.state.isFacingRight) {
+        if (
+                nextGroundLevel + 30 < (this.state.y + this.metadata.spriteHeight) && // TODO Fix hardcoded value on tolerance
+                level.tiles[this.state.rightTile.type].wall && this.state.isFacingRight
+                ) {
             this.state.velocityX = 0;
-            this.state.x -= 5;
-        } else if (previousGroundLevel < this.state.y + this.metadata.spriteHeight && this.state.leftTile.type === "P" && this.state.isFacingLeft) {
+            // Bounce
+            // this.state.x -= 5; // TODO Why Dino doesn't stick without bounce?
+        } else if (
+                previousGroundLevel + 30 < this.state.y + this.metadata.spriteHeight && 
+                level.tiles[this.state.leftTile.type].wall && this.state.isFacingLeft
+                ) {
             this.state.velocityX = 0;
-            this.state.x += 5;
+            // this.state.x += 5;
         } else {
             // Walking velocity
             if (!Shift) {
@@ -324,6 +332,8 @@ class Character {
         // Jumping Sprite
         !this.state.isGrounded && this.setActionSprite(this.metadata.actionSprites.jump);
 
+        // Taking Damage
+        this.state.isTakingDamage && this.setActionSprite(this.metadata.actionSprites.hurt);
     }
 
     setDirectionSprite(directionSprite) {
@@ -378,7 +388,7 @@ class Monster extends Character {
 
     // need to pass the level and the player
     generateInput(level, player) {
-        if (player.state.x < this.state.x) {
+        if (player.state.x + player.metadata.spriteWidth - 36 < this.state.x) {
             const toReturn = {
                 keysDict: {
                     KeyQty: 0,
@@ -391,7 +401,7 @@ class Monster extends Character {
                 }
             }
             return toReturn;
-        } else {
+        } else if (player.state.x > this.state.x + this.metadata.spriteWidth - 36) {
             const toReturn = {
                 keysDict: {
                     KeyQty: 0,
@@ -401,6 +411,19 @@ class Monster extends Character {
                     ArrowRight: true,
                     Shift: false,
                     v: false,
+                }
+            }
+            return toReturn;
+        } else {
+            const toReturn = {
+                keysDict: {
+                    KeyQty: 0,
+                    ArrowDown: false,
+                    ArrowUp: false,
+                    ArrowLeft: false,
+                    ArrowRight: false,
+                    Shift: false,
+                    v: true,
                 }
             }
             return toReturn;

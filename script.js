@@ -59,16 +59,34 @@ function runGame(levelInfo, spriteInfo, monster01Info) {
         monster01.update(monsterInput, currentLevel);
 
         // Viewport: renders tiles, player and background drawings
-        // currentViewPort.update(currentLevel, currentPlayer, [monster01], gameState, context);
-        currentViewPort.update(currentLevel, currentPlayer, [], gameState, context);
+        currentViewPort.update(currentLevel, currentPlayer, [monster01], gameState, context);
+        // currentViewPort.update(currentLevel, currentPlayer, [], gameState, context);
 
         // Minimap
         currentMiniMap.update(currentLevel, currentPlayer, miniContext);
 
         // Debugger
-        showVariables("currentPlayer.state", gameState, currentPlayer.state);
-        showVariables("currentViewPort", gameState, currentViewPort);
-        // showVariables("monster01", gameState, monster01.state);
+        // showVariables("currentPlayer.state", gameState, currentPlayer.state);
+        // showVariables("currentViewPort", gameState, currentViewPort);
+        showVariables("monster01", gameState, monster01.state);
+
+
+        // Enemy bites player!
+        if ((Math.floor(currentPlayer.state.x + (96-32)) >= Math.floor(monster01.state.x)) &&
+            (Math.floor(currentPlayer.state.x) <= Math.floor(monster01.state.x + (96-32)))) {
+            currentPlayer.state.isTakingDamage = true;
+            console.log("BITE FROM RIGHT!!!");
+        } else {
+            currentPlayer.state.isTakingDamage = false;
+        }
+
+
+            
+
+
+
+
+
 
         (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
         gameState.loopFrame++;
@@ -82,6 +100,8 @@ function runGame(levelInfo, spriteInfo, monster01Info) {
     console.log(currentLevel);
     console.log("currentPlayer");
     console.log(currentPlayer);
+    console.log("monster01");
+    console.log(monster01);
     console.log('currentViewPort');
     console.log(currentViewPort);
     console.log('currentMiniMap');

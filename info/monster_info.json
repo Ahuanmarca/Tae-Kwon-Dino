@@ -5,7 +5,7 @@
       "spriteWidth": 96,
       "spriteHeight": 72,
       "singleRow": true,
-      "movementSpeed": 0.2
+      "movementSpeed": 0.1
     },
     "animationsStates": [
       {
