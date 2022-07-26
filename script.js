@@ -95,15 +95,19 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
         // showVariables("first monster", gameState, currentMonsters[0].state);
 
         // Enemy bites player!
-        if ((Math.floor(currentPlayer.state.x + (96-32)) >= Math.floor(currentMonsters[0].state.x)) &&
-            (Math.floor(currentPlayer.state.x) <= Math.floor(currentMonsters[0].state.x + (96-32)))) {
-            currentPlayer.state.isTakingDamage = true;
-            console.log("BITE!!!");
-        } else {
-            currentPlayer.state.isTakingDamage = false;
-        }
+        // if ((Math.floor(currentPlayer.state.x + (96-32)) >= Math.floor(currentMonsters[0].state.x)) &&
+        //     (Math.floor(currentPlayer.state.x) <= Math.floor(currentMonsters[0].state.x + (96-32)))) {
+        //     currentPlayer.state.isTakingDamage = true;
+        // } else {
+        //     currentPlayer.state.isTakingDamage = false;
+        // }
 
-        
+        console.log(currentPlayer.testCollition(currentMonsters[0]));
+
+        // if (currentPlayer.testCollition(currentMonsters[0])) {
+        //     console.log("Bite!!");
+        // }
+
         (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
         gameState.loopFrame++;
         requestAnimationFrame(animate);

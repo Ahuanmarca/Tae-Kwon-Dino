@@ -140,6 +140,39 @@ class Character {
 
     }
 
+    boundingBox() { // Corners are top left and bottom right
+        const tlX = this.state.x + 32; // 32 is offset to inside of the sprite for contact
+        const tlY = this.state.y;
+        const brX = this.state.x + this.state.spriteWidth - 32;
+        const brY = this.state.y + this.state.spriteHeight;
+        return [[tlX, tlY], [brX, brY]];
+    }
+
+    testCollition(gameObject) {
+        const [tl, br] = this.boundingBox();
+        const [_tl, _br] = gameObject.boundingBox();
+
+        // collition happens if any of the two corners of gameObject is within our two corner
+        if (tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1] ) {
+            return true;
+        } else if (tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1] )  {
+            return true;
+        } else if (_tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1] ) {
+            return true;
+        } else if (_tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1] )  {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+//     if ((Math.floor(currentPlayer.state.x + (96-32)) >= Math.floor(currentMonsters[0].state.x)) &&
+//     (Math.floor(currentPlayer.state.x) <= Math.floor(currentMonsters[0].state.x + (96-32)))) {
+//     currentPlayer.state.isTakingDamage = true;
+// } else {
+//     currentPlayer.state.isTakingDamage = false;
+// }
+
 
     /*  
     ╭━╮╭━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╮
