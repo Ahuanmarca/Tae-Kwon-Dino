@@ -19,30 +19,17 @@ async function fetchJson(url) {
 
     // monstersInfo is array of objects with
     //      monster name
-    //      object literal with monster properties
-    //      monster initial position
+    //      object with properties
+    //      object with x y initial position
 
     // Get array with monster's information
     const monsters_info = await fetchJson(startGame.monsters);
     const monstersInfo = monsters_info.monsters_info;
-
-    // console.log(monstersInfo);
-
     for (let i = 0; i < monstersInfo.length; i++) {
-        console.log(monstersInfo[i])
-        
-
-        // monstersInfo[i][info] = await fetchJson(monsters_info[i].url);
+        monstersInfo[i].info = await fetchJson(monstersInfo[i].url);
     }
 
-    // const monstersURLs = monsters_info.monsters_urls;
-    // for (let i = 0; i < monstersURLs.length; i++) {
-        // const url = monstersURLs[i];
-        // const newMonster = await fetchJson(url);
-        // monstersInfo.push(newMonster);
-    // }
-
-    // runGame(levelInfo, playerInfo, monstersInfo);
+    runGame(levelInfo, playerInfo, monstersInfo);
 })()
 
 function runGame(levelInfo, spriteInfo, monstersInfo) {
@@ -64,12 +51,11 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
 
     const currentMonsters = [];
     monstersInfo.forEach(monster => {
-        currentMonsters.push(monster);
+        const tmp = new Monster(monster.position, monster.info)
+        currentMonsters.push(tmp);
     })
-    const monster01 = new Monster({x: 500, y: 250}, monstersInfo);
-
-    // const currentMonsters = [];
-    // monstersInfo.forEach();
+    
+    // const monster01 = new Monster({x: 500, y: 250}, monstersInfo);
 
     console.log(currentPlayer)
     const input = new InputHandler();
@@ -94,11 +80,11 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
 
         // Player: updates state, position, movement
         currentPlayer.update(input, currentLevel);
-        const monsterInput = monster01.generateInput(currentLevel, currentPlayer);
-        monster01.update(monsterInput, currentLevel);
+        const monsterInput = currentMonsters[0].generateInput(currentLevel, currentPlayer);
+        currentMonsters[0].update(monsterInput, currentLevel);
 
         // Viewport: renders tiles, player and background drawings
-        currentViewPort.update(currentLevel, currentPlayer, [monster01], gameState, context);
+        currentViewPort.update(currentLevel, currentPlayer, [currentMonsters[0]], gameState, context);
 
         // Minimap
         currentMiniMap.update(currentLevel, currentPlayer, miniContext);
@@ -106,21 +92,18 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
         // Debugger
         // showVariables("currentPlayer.state", gameState, currentPlayer.state);
         // showVariables("currentViewPort", gameState, currentViewPort);
-        showVariables("monster01", gameState, monster01.state);
-
+        // showVariables("first monster", gameState, currentMonsters[0].state);
 
         // Enemy bites player!
-        if ((Math.floor(currentPlayer.state.x + (96-32)) >= Math.floor(monster01.state.x)) &&
-            (Math.floor(currentPlayer.state.x) <= Math.floor(monster01.state.x + (96-32)))) {
+        if ((Math.floor(currentPlayer.state.x + (96-32)) >= Math.floor(currentMonsters[0].state.x)) &&
+            (Math.floor(currentPlayer.state.x) <= Math.floor(currentMonsters[0].state.x + (96-32)))) {
             currentPlayer.state.isTakingDamage = true;
             console.log("BITE!!!");
         } else {
             currentPlayer.state.isTakingDamage = false;
         }
 
-
-
-
+        
         (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
         gameState.loopFrame++;
         requestAnimationFrame(animate);
@@ -133,8 +116,8 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
     console.log(currentLevel);
     console.log("currentPlayer");
     console.log(currentPlayer);
-    console.log("monster01");
-    console.log(monster01);
+    console.log("currentMonsters");
+    console.log(currentMonsters);
     console.log('currentViewPort');
     console.log(currentViewPort);
     console.log('currentMiniMap');
