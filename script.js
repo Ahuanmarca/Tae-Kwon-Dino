@@ -102,7 +102,13 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
         //     currentPlayer.state.isTakingDamage = false;
         // }
 
-        console.log(currentPlayer.testCollition(currentMonsters[0]));
+        // console.log(currentPlayer.testCollition(currentMonsters[0]));
+        if (currentPlayer.testCollition(currentMonsters[0])) {
+            currentPlayer.state.isTakingDamage = true;
+        } else {
+            currentPlayer.state.isTakingDamage = false;
+        }
+
 
         // if (currentPlayer.testCollition(currentMonsters[0])) {
         //     console.log("Bite!!");
