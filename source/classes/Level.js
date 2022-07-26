@@ -97,10 +97,13 @@ function createTiles(tilesInfo) {
 
 function getTileMap(levelInfo) {
 
-    // tileMapString parse will change
-    //      Need to parse the string as two arrays, one for each line
-    //      because the string will come from json file, can't do multi line strings
-    const tileMapString = levelInfo.tileMapString.replaceAll("\n","").replaceAll(" ","");
+    let tileMapString = "";
+    levelInfo.tileMapString.forEach(line => {
+        for (char of line) {
+            tileMapString = tileMapString + char;
+        }
+    });
+
 
     const levelLength = tileMapString.length / 2; // TODO Don't use hard coded value
     const tileWidth = levelInfo.metadata.tileWidth;
