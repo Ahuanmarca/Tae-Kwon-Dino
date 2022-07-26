@@ -1,6 +1,14 @@
 {
-    "monsters_urls": [
-        "./info/monster_info.json",
-        "./info/monster_info.json"
+    "monsters_info": [
+        {
+            "name": "evilDino",
+            "url": "./info/monster_01_info.json",
+            "position": {"x": 500, "y": 250}
+        },
+        {
+            "name": "guiltyPig",
+            "url": "./info/monster_02_info.json",
+            "position": {"x": 1000, "y": 450}
+        }
     ]
 }

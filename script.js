@@ -11,24 +11,38 @@ async function fetchJson(url) {
 }
 
 (async () => {
-    
-    // monstersInfo needs to be an array of objects
-    const monsters_info = await fetchJson(startGame.monsters);
-    const monstersURLs = monsters_info.monsters_urls; // This gets the url list
-    const monstersInfo = [];
-    for (let i = 0; i < monstersURLs.length; i++) {
-        const url = monstersURLs[i];
-        const newMonster = await fetchJson(url);
-        monstersInfo.push(newMonster);
-    }
-    
+
     const [levelInfo, playerInfo] = await Promise.all([
         fetchJson(startGame.level),
         fetchJson(startGame.player),
-        fetchJson(startGame.monsters),
     ])
 
-    runGame(levelInfo, playerInfo, monstersInfo);
+    // monstersInfo is array of objects with
+    //      monster name
+    //      object literal with monster properties
+    //      monster initial position
+
+    // Get array with monster's information
+    const monsters_info = await fetchJson(startGame.monsters);
+    const monstersInfo = monsters_info.monsters_info;
+
+    // console.log(monstersInfo);
+
+    for (let i = 0; i < monstersInfo.length; i++) {
+        console.log(monstersInfo[i])
+        
+
+        // monstersInfo[i][info] = await fetchJson(monsters_info[i].url);
+    }
+
+    // const monstersURLs = monsters_info.monsters_urls;
+    // for (let i = 0; i < monstersURLs.length; i++) {
+        // const url = monstersURLs[i];
+        // const newMonster = await fetchJson(url);
+        // monstersInfo.push(newMonster);
+    // }
+
+    // runGame(levelInfo, playerInfo, monstersInfo);
 })()
 
 function runGame(levelInfo, spriteInfo, monstersInfo) {
@@ -47,7 +61,11 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
     // Game Objects
     const currentLevel = new Level(levelInfo);
     const currentPlayer = new Player({x: 10, y: 100}, spriteInfo);
-    
+
+    const currentMonsters = [];
+    monstersInfo.forEach(monster => {
+        currentMonsters.push(monster);
+    })
     const monster01 = new Monster({x: 500, y: 250}, monstersInfo);
 
     // const currentMonsters = [];
