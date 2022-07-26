@@ -1,21 +1,37 @@
+const startGame = {
+    level: "./info/level_01_info.json",
+    player: "./info/player_info.json",
+    monsters: "./info/monsters_info.json",
+}
+
 async function fetchJson(url) {
     const response = await fetch(url);
-    const toReturn = JSON.parse(await response.text());
-    return toReturn;
+    const result = JSON.parse(await response.text());
+    return result;
 }
 
 (async () => {
     
-    const [level, sprite, monster01Info] = await Promise.all([
-        fetchJson("./info/level_01_info.json"),
-        fetchJson("./info/player_info.json"),
-        fetchJson("./info/monster_info.json"),
+    // monstersInfo needs to be an array of objects
+    const monsters_info = await fetchJson(startGame.monsters);
+    const monstersURLs = monsters_info.monsters_urls; // This gets the url list
+    const monstersInfo = [];
+    for (let i = 0; i < monstersURLs.length; i++) {
+        const url = monstersURLs[i];
+        const newMonster = await fetchJson(url);
+        monstersInfo.push(newMonster);
+    }
+    
+    const [levelInfo, playerInfo] = await Promise.all([
+        fetchJson(startGame.level),
+        fetchJson(startGame.player),
+        fetchJson(startGame.monsters),
     ])
 
-    runGame(level, sprite, monster01Info);
+    runGame(levelInfo, playerInfo, monstersInfo);
 })()
 
-function runGame(levelInfo, spriteInfo, monster01Info) {
+function runGame(levelInfo, spriteInfo, monstersInfo) {
 
     // Some variables that I still don't know where to put
     const CANVAS_WIDTH = 640;
@@ -31,7 +47,12 @@ function runGame(levelInfo, spriteInfo, monster01Info) {
     // Game Objects
     const currentLevel = new Level(levelInfo);
     const currentPlayer = new Player({x: 10, y: 100}, spriteInfo);
-    const monster01 = new Monster({x: 500, y: 250}, monster01Info);
+    
+    const monster01 = new Monster({x: 500, y: 250}, monstersInfo);
+
+    // const currentMonsters = [];
+    // monstersInfo.forEach();
+
     console.log(currentPlayer)
     const input = new InputHandler();
     const currentMiniMap = new MiniMap(currentLevel, currentPlayer, miniMapScale);
@@ -60,7 +81,6 @@ function runGame(levelInfo, spriteInfo, monster01Info) {
 
         // Viewport: renders tiles, player and background drawings
         currentViewPort.update(currentLevel, currentPlayer, [monster01], gameState, context);
-        // currentViewPort.update(currentLevel, currentPlayer, [], gameState, context);
 
         // Minimap
         currentMiniMap.update(currentLevel, currentPlayer, miniContext);
@@ -75,15 +95,10 @@ function runGame(levelInfo, spriteInfo, monster01Info) {
         if ((Math.floor(currentPlayer.state.x + (96-32)) >= Math.floor(monster01.state.x)) &&
             (Math.floor(currentPlayer.state.x) <= Math.floor(monster01.state.x + (96-32)))) {
             currentPlayer.state.isTakingDamage = true;
-            console.log("BITE FROM RIGHT!!!");
+            console.log("BITE!!!");
         } else {
             currentPlayer.state.isTakingDamage = false;
         }
-
-
-            
-
-
 
 
 

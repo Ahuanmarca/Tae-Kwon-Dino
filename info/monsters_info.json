@@ -1,0 +1,6 @@
+{
+    "monsters_urls": [
+        "./info/monster_info.json",
+        "./info/monster_info.json"
+    ]
+}
