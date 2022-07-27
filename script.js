@@ -1,4 +1,5 @@
 const startGame = {
+    // level: "./info/level_01_info.json",
     level: "./info/level_01_info.json",
     player: "./info/player_info.json",
     monsters: "./info/monsters_info.json",
@@ -17,12 +18,7 @@ async function fetchJson(url) {
         fetchJson(startGame.player),
     ])
 
-    // monstersInfo is array of objects with
-    //      monster name
-    //      object with properties
-    //      object with x y initial position
-
-    // Get array with monster's information
+    // monstersInfo is array of objects with name, properties and position
     const monsters_info = await fetchJson(startGame.monsters);
     const monstersInfo = monsters_info.monsters_info;
     for (let i = 0; i < monstersInfo.length; i++) {
