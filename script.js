@@ -36,6 +36,7 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
     const miniMapScale = 0.25;
 
     const gameState = {
+        isRunning: true,
         gameFrame: 0,
         loopFrame: 0,
         staggerFrames: 10,
@@ -51,9 +52,6 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
         currentMonsters.push(tmp);
     })
     
-    // const monster01 = new Monster({x: 500, y: 250}, monstersInfo);
-
-    console.log(currentPlayer)
     const input = new InputHandler();
     const currentMiniMap = new MiniMap(currentLevel, currentPlayer, miniMapScale);
     const currentViewPort = new Viewport(currentPlayer, currentLevel);
@@ -74,40 +72,49 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
 
         context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
-        // Player: updates state, position, movement
-        currentPlayer.update(input, currentLevel);
-        const monsterInput = currentMonsters[0].generateInput(currentLevel, currentPlayer);
-        currentMonsters[0].update(monsterInput, currentLevel);
+        if (gameState.isRunning) {
+    
+            // Player: updates state, position, movement
+            currentPlayer.update(input, currentLevel);
+            const monsterInput = currentMonsters[0].generateInput(currentLevel, currentPlayer);
+            currentMonsters[0].update(monsterInput, currentLevel);
+    
+            // Viewport: renders tiles, player and background drawings
+            currentViewPort.update(currentLevel, currentPlayer, [currentMonsters[0]], gameState, context);
+    
+            // Minimap
+            currentMiniMap.update(currentLevel, currentPlayer, miniContext);
+    
+            // Debugger
+            showVariables("currentPlayer.state", gameState, currentPlayer.state);
+            // showVariables("currentViewPort", gameState, currentViewPort);
+            // showVariables("first monster", gameState, currentMonsters[0].state);
+    
+            currentPlayer.state.isTakingDamage = false;
+    
+            for (let i = 0; i < currentMonsters.length; i++) {
+                if (currentPlayer.testCollition(currentMonsters[i])) {
+                    currentPlayer.state.isTakingDamage = true;
+                    currentPlayer.state.currentHealth -= 1;
+                }            
+            }
+    
+            if (currentPlayer.state.currentHealth <= 0) {
+                gameState.isRunning = false;
+            }
+            
+            (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
+            gameState.loopFrame++;
 
-        // Viewport: renders tiles, player and background drawings
-        currentViewPort.update(currentLevel, currentPlayer, [currentMonsters[0]], gameState, context);
-
-        // Minimap
-        currentMiniMap.update(currentLevel, currentPlayer, miniContext);
-
-        // Debugger
-        showVariables("currentPlayer.state", gameState, currentPlayer.state);
-        // showVariables("currentViewPort", gameState, currentViewPort);
-        // showVariables("first monster", gameState, currentMonsters[0].state);
-
-        currentPlayer.state.isTakingDamage = false;
-
-        for (let i = 0; i < currentMonsters.length; i++) {
-            if (currentPlayer.testCollition(currentMonsters[i])) {
-                currentPlayer.state.isTakingDamage = true;
-                currentPlayer.state.currentHealth -= 1;
-            }            
         }
 
-        if (currentPlayer.state.currentHealth <= 0) {
+        if (!gameState.isRunning) {
             context.drawImage(
                 importImage("./assets/other/game_over.png"),
                 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT
-            )
+            );
         }
         
-        (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
-        gameState.loopFrame++;
         requestAnimationFrame(animate);
     }
 

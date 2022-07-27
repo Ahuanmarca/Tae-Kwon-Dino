@@ -75,7 +75,14 @@ class Character {
     update(input, currentLevel) {
         this.updateState(input);
         this.updatePosition(input, currentLevel);
+        if (this.state.y > currentLevel.levelHeight) {
+            this.fallDamage();
+        }
         this.updateAnimation();
+    }
+
+    fallDamage() {
+        this.state.currentHealth = 0;
     }
 
     /*
