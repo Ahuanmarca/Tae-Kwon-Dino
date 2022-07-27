@@ -38,7 +38,7 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
     const gameState = {
         gameFrame: 0,
         loopFrame: 0,
-        staggerFrames: 10,  
+        staggerFrames: 10,
     }
 
     // Game Objects
@@ -86,34 +86,29 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
         currentMiniMap.update(currentLevel, currentPlayer, miniContext);
 
         // Debugger
-        // showVariables("currentPlayer.state", gameState, currentPlayer.state);
+        showVariables("currentPlayer.state", gameState, currentPlayer.state);
         // showVariables("currentViewPort", gameState, currentViewPort);
         // showVariables("first monster", gameState, currentMonsters[0].state);
 
-        // Enemy bites player!
-        // if ((Math.floor(currentPlayer.state.x + (96-32)) >= Math.floor(currentMonsters[0].state.x)) &&
-        //     (Math.floor(currentPlayer.state.x) <= Math.floor(currentMonsters[0].state.x + (96-32)))) {
-        //     currentPlayer.state.isTakingDamage = true;
-        // } else {
-        //     currentPlayer.state.isTakingDamage = false;
-        // }
+        currentPlayer.state.isTakingDamage = false;
 
-        // console.log(currentPlayer.testCollition(currentMonsters[0]));
-        if (currentPlayer.testCollition(currentMonsters[0])) {
-            currentPlayer.state.isTakingDamage = true;
-        } else {
-            currentPlayer.state.isTakingDamage = false;
+        for (let i = 0; i < currentMonsters.length; i++) {
+            if (currentPlayer.testCollition(currentMonsters[i])) {
+                currentPlayer.state.isTakingDamage = true;
+                currentPlayer.state.currentHealth -= 1;
+            }            
         }
 
-
-        // if (currentPlayer.testCollition(currentMonsters[0])) {
-        //     console.log("Bite!!");
-        // }
-
+        if (currentPlayer.state.currentHealth <= 0) {
+            context.drawImage(
+                importImage("./assets/other/game_over.png"),
+                0, 0, CANVAS_WIDTH, CANVAS_HEIGHT
+            )
+        }
+        
         (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
         gameState.loopFrame++;
         requestAnimationFrame(animate);
-
     }
 
     animate();

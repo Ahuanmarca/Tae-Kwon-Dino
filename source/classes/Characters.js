@@ -11,6 +11,7 @@ class Character {
             animations: getAnimations(spriteInfo),
             sound: false,
             hitBoxOffset: 32,
+            startingHealth: spriteInfo.metadata.hp,
             actionSprites: {
                 idle: "idle",
                 walk: "walk",
@@ -40,6 +41,8 @@ class Character {
             isFacingRight: true,
             isFacingLeft: false,
             isTakingDamage: false,
+
+            currentHealth: this.metadata.startingHealth,
 
             velocityX: 0,
             velocityY: 0,
