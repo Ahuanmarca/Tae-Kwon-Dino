@@ -208,15 +208,9 @@ class Character {
     }
 
     getGroundLevel(level) {
-    
-        const x = this.state.x;
-        const w = this.metadata.spriteWidth;
 
-        const hitX = x + this.metadata.hitBoxOffset;
-        const hitW = w - this.metadata.hitBoxOffset;
-        
-        this.state.leftTile = level.getTileInfo(hitX);
-        this.state.rightTile = level.getTileInfo(hitW + x);
+
+
         this.state.centerTile = level.getTileInfo(this.state.cX);
         
         this.state.groundLevel = level.getGroundHeight(this.state.cX);
@@ -231,16 +225,16 @@ class Character {
         const hitX = x + this.metadata.hitBoxOffset;
         const hitW = w - this.metadata.hitBoxOffset;
 
-        this.state.leftTile = level.getTileInfo(hitX);
-        this.state.rightTile = level.getTileInfo(hitW + x);
+        // this.state.leftTile = level.getTileInfo(hitX);
+        // this.state.rightTile = level.getTileInfo(hitW + x);
+
+        this.state.leftTile = this.getNeighbors(level)["leftTile"];
+        this.state.rightTile = this.getNeighbors(level)["rightTile"];
+
         this.state.centerTile = level.getTileInfo(this.state.cX);
         
         const previousGroundLevel = level.getGroundHeight(hitX);
         const nextGroundLevel = level.getGroundHeight((hitW + x));
-
-        // console.log(nextGroundLevel);
-        // console.log(this.state.groundLevel);
-        // console.log(this.state.rightTile.type === "P");
 
         if (
                 nextGroundLevel + 30 < (this.state.y + this.metadata.spriteHeight) && // TODO Fix hardcoded value on tolerance
@@ -248,7 +242,7 @@ class Character {
                 ) {
             this.state.velocityX = 0;
             // Bounce
-            // this.state.x -= 5; // TODO Why Dino doesn't stick without bounce?
+            this.state.x -= 5; // TODO Decide bounce or not bounce?
         } else if (
                 previousGroundLevel + 30 < this.state.y + this.metadata.spriteHeight && 
                 level.tiles[this.state.leftTile.type].wall && this.state.isFacingLeft
@@ -409,6 +403,27 @@ class Character {
         );
     }
 
+    getNeighbors(level) {
+    
+        const x = this.state.x;
+        const w = this.metadata.spriteWidth;
+    
+        const hitX = x + this.metadata.hitBoxOffset;
+        const hitW = w - this.metadata.hitBoxOffset;
+    
+        return {
+            centerTile: level.getTileInfo(this.state.cX),
+            leftTile: level.getTileInfo(hitX),
+            rightTile: level.getTileInfo(hitW + x),
+        }
+
+        const toReturn = {}
+        toReturn["leftTile"] = level.getTileInfo(hitX);
+        toReturn["rightTile"] = level.getTileInfo(hitW + x);
+    
+        return toReturn;
+    }
+
 } // ! Character Class definition ends here !!
 
 
@@ -421,20 +436,20 @@ class Monster extends Character {
 
     // need to pass the level and the player
     generateInput(level, player) {
-        if (player.state.x + player.metadata.spriteWidth - 36 < this.state.x) {
-            const toReturn = {
-                keysDict: {
-                    KeyQty: 0,
-                    ArrowDown: false,
-                    ArrowUp: false,
-                    ArrowLeft: true,
-                    ArrowRight: false,
-                    Shift: false,
-                    v: false,
-                }
-            }
-            return toReturn;
-        } else if (player.state.x > this.state.x + this.metadata.spriteWidth - 36) {
+
+        const {leftTile, rightTile} = this.getNeighbors(level);
+
+        if (rightTile.type != "_") {
+            this.state.isFacingRight = false;
+            this.state.isFacingLeft = true;
+        }
+
+        if (leftTile.type != "_") {
+            this.state.isFacingRight = true;
+            this.state.isFacingLeft = false;
+        }
+
+        if (this.state.isFacingRight) {
             const toReturn = {
                 keysDict: {
                     KeyQty: 0,
@@ -453,15 +468,82 @@ class Monster extends Character {
                     KeyQty: 0,
                     ArrowDown: false,
                     ArrowUp: false,
-                    ArrowLeft: false,
+                    ArrowLeft: true,
                     ArrowRight: false,
                     Shift: false,
-                    v: true,
+                    v: false,
                 }
             }
             return toReturn;
         }
     }
 
+
+
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //     if (player.state.x + player.metadata.spriteWidth - 36 < this.state.x) {
+    //         const toReturn = {
+    //             keysDict: {
+    //                 KeyQty: 0,
+    //                 ArrowDown: false,
+    //                 ArrowUp: false,
+    //                 ArrowLeft: true,
+    //                 ArrowRight: false,
+    //                 Shift: false,
+    //                 v: false,
+    //             }
+    //         }
+    //         return toReturn;
+    //     } else if (player.state.x > this.state.x + this.metadata.spriteWidth - 36) {
+    //         const toReturn = {
+    //             keysDict: {
+    //                 KeyQty: 0,
+    //                 ArrowDown: false,
+    //                 ArrowUp: false,
+    //                 ArrowLeft: false,
+    //                 ArrowRight: true,
+    //                 Shift: false,
+    //                 v: false,
+    //             }
+    //         }
+    //         return toReturn;
+    //     } else {
+    //         const toReturn = {
+    //             keysDict: {
+    //                 KeyQty: 0,
+    //                 ArrowDown: false,
+    //                 ArrowUp: false,
+    //                 ArrowLeft: false,
+    //                 ArrowRight: false,
+    //                 Shift: false,
+    //                 v: true,
+    //             }
+    //         }
+    //         return toReturn;
+    //     }

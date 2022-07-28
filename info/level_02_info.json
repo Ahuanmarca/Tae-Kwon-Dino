@@ -11,20 +11,20 @@
     "borderBarrier": 5
   },
   "tileTypes": {
-    "platform": "P",
-    "westWall": "W",
-    "eastWall": "E",
+    "platform": "_",
+    "westWall": "[",
+    "eastWall": "]",
     "upHill": "U",
     "downHill": "D",
     "hole": "H"
   },
   "tileMapString": [
-    "PPDDEWPPUPPEHWUPPEHHWEHWEWEHHWEHHWPPPPPP",
+    "__DD][__U__]H[U__]HH[]H[][]HH[]HH[______",
     "2221000011110122220022011000022002222222"
   ],
   "tilesInfo": [
     {
-      "code": "W",
+      "code": "[",
       "name": "west-wall",
       "u": 26,
       "v": 32,
@@ -45,7 +45,7 @@
       "file": "assets/levels/02/tileset/tileset-simple.png"
     },
     {
-      "code": "P",
+      "code": "_",
       "name": "platform",
       "u": 96,
       "v": 32,
@@ -66,7 +66,7 @@
       "file": "assets/levels/02/tileset/tileset-simple.png"
     },
     {
-      "code": "E",
+      "code": "]",
       "name": "east-wall",
       "u": 192,
       "v": 32,
