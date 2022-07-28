@@ -3,6 +3,7 @@ class Character {
     constructor(position, spriteInfo) {
         
         this.metadata = {
+            name: spriteInfo.metadata.name,
             faceRightSheet: importImage(spriteInfo.metadata.fileRight),
             faceLeftSheet: importImage(spriteInfo.metadata.fileLeft),
             spriteWidth: spriteInfo.metadata.spriteWidth,

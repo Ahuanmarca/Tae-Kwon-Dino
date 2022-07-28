@@ -1,5 +1,4 @@
 const startGame = {
-    // level: "./info/level_01_info.json",
     level: "./info/level_01_info.json",
     player: "./info/player_info.json",
     monsters: "./info/monsters_info.json",

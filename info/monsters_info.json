@@ -3,7 +3,8 @@
         {
             "name": "evilDino",
             "url": "./info/monster_01_info.json",
-            "position": {"x": 500, "y": 250}
+            "position": {"x": 500, "y": 250},
+            "comment": "//name should go inside the file"
         },
         {
             "name": "guiltyPig",

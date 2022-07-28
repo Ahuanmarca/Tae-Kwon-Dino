@@ -1,5 +1,6 @@
 {
     "metadata": {
+      "name": "evilDino",
       "fileRight": "assets/sprites/monster/evilDino-right.png",
       "fileLeft": "assets/sprites/monster/evilDino-left.png",
       "spriteWidth": 96,
