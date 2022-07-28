@@ -45,18 +45,16 @@ class Level {
         // Offset is:
         // Distance from tileX to cX, in percentage of the tile
         const offset = (x - info.x) / tileWidth;
-        // console.log(offset);
 
-        if (offset < 0.5 && info.type === "W") {
+        if (offset < 0.5 && info.type === "[") {
             return this.levelHeight*2;
-        } else if (offset > 0.5 && info.type === "E") {
+        } else if (offset > 0.5 && info.type === "]") {
             return this.levelHeight*2;
-        } else if (info.type === "H") {
+        } else if (!platform[0]) { // platform is array, first item is boolean
             return this.levelHeight*2;
         } else {
             return y1*(1-offset) + y2*offset;
         }
-
     }
 }
 
@@ -100,7 +98,9 @@ function getTileMap(levelInfo) {
     let tileMapString = "";
     levelInfo.tileMapString.forEach(line => {
         for (char of line) {
-            tileMapString = tileMapString + char;
+            if (char != " ") {
+                tileMapString = tileMapString + char;
+            }
         }
     });
 

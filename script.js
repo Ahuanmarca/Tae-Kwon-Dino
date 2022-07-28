@@ -1,5 +1,10 @@
+const levelPaths = {
+    _01: "./info/level_01_info.json",
+    _02: "./info/level_02_info.json"
+}
+
 const startGame = {
-    level: "./info/level_01_info.json",
+    level: levelPaths._01,
     player: "./info/player_info.json",
     monsters: "./info/monsters_info.json",
 }
@@ -17,6 +22,11 @@ async function fetchJson(url) {
         fetchJson(startGame.player),
     ])
 
+    const levelsInfo = [];
+    levelsInfo.push(await fetchJson(levelPaths._01));
+    levelsInfo.push(await fetchJson(levelPaths._02));
+    console.log(levelsInfo);
+
     // monstersInfo is array of objects with name, properties and position
     const monsters_info = await fetchJson(startGame.monsters);
     const monstersInfo = monsters_info.monsters_info;
@@ -24,17 +34,21 @@ async function fetchJson(url) {
         monstersInfo[i].info = await fetchJson(monstersInfo[i].url);
     }
 
-    runGame(levelInfo, playerInfo, monstersInfo);
+    runGame(levelsInfo, playerInfo, monstersInfo);
 })()
 
-function runGame(levelInfo, spriteInfo, monstersInfo) {
+function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
     // Some variables that I still don't know where to put
     const CANVAS_WIDTH = 640;
     const CANVAS_HEIGHT = 480;
     const miniMapScale = 0.25;
 
+    const level01 = new Level(levelsInfo[0]);
+    const level02 = new Level(levelsInfo[1]);
+
     const gameState = {
+        loadedLevel: level01,
         isRunning: true,
         gameFrame: 0,
         loopFrame: 0,
@@ -42,8 +56,8 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
     }
 
     // Game Objects
-    const currentLevel = new Level(levelInfo);
-    const currentPlayer = new Player({x: 10, y: 100}, spriteInfo);
+    let currentLevel = gameState.loadedLevel;
+    const currentPlayer = new Player({x: 40, y: 100}, spriteInfo);
 
     const currentMonsters = [];
     monstersInfo.forEach(monster => {
@@ -114,21 +128,23 @@ function runGame(levelInfo, spriteInfo, monstersInfo) {
             );
         }
         
+        if (currentPlayer.state.x >= currentLevel.length - currentPlayer.metadata.spriteWidth - 16) { // TODO clean hardcoded value
+            currentLevel = level02;
+            currentPlayer.state.x = 40;
+            currentMonsters[0].state.x = 400;
+            // TODO Unwrap the level data. Level data structured to an initialized state.
+        }
+
         requestAnimationFrame(animate);
     }
 
     animate();
 
-    console.log("currentLevel");
-    console.log(currentLevel);
-    console.log("currentPlayer");
-    console.log(currentPlayer);
-    console.log("currentMonsters");
-    console.log(currentMonsters);
-    console.log('currentViewPort');
-    console.log(currentViewPort);
-    console.log('currentMiniMap');
-    console.log(currentMiniMap);
+    console.log("currentLevel", currentLevel);
+    console.log("currentPlayer", currentPlayer);
+    console.log("currentMonsters", currentMonsters);
+    console.log('currentViewPort', currentViewPort);
+    console.log('currentMiniMap', currentMiniMap);
 
 
 }

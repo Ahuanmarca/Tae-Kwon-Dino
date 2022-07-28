@@ -1,5 +1,6 @@
 {
     "metadata": {
+      "name": "Uru",
       "fileRight": "assets/sprites/player/dino-right.png",
       "fileLeft": "assets/sprites/player/dino-left.png",
       "spriteWidth": 96,

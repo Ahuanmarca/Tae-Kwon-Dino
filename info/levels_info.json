@@ -11,30 +11,23 @@
       "borderBarrier": 5
     },
     "tileTypes": {
-      "platform": "_",
-      "westWall": "[",
-      "eastWall": "]",
-      "upHill": "<",
-      "downHill": ">",
-      "hole": ".",
-      "leftLedge": "(",
-      "rightLedge": ")",
-      "barrier": "^"
+      "platform": "P",
+      "westWall": "W",
+      "eastWall": "E",
+      "upHill": "U",
+      "downHill": "D",
+      "hole": "H"
     },
     "tileMapString": [
-      "___>>____]..[___<<___]..[___(__(__^_",
-      "222210000000000012222200000011122232"
-    ],
-    "tileMapString2": [
-      "___].[____", 
-      "0000000000"
+      "PPPPDDPPPPEHHWPPPPUUPPPPEHHHWPPPPPPPPPPP",
+      "2222210000000000001222222000000000011112"
     ],
     "tilesInfo": [
       {
-        "code": "[",
+        "code": "W",
         "name": "west-wall",
-        "u": 0,
-        "v": 0,
+        "u": 26,
+        "v": 32,
         "width": 64,
         "height": 256,
         "platform": [
@@ -49,13 +42,13 @@
           0,
           0
         ],
-        "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       },
       {
-        "code": "_",
+        "code": "P",
         "name": "platform",
-        "u": 100,
-        "v": 0,
+        "u": 96,
+        "v": 32,
         "width": 64,
         "height": 256,
         "platform": [
@@ -70,13 +63,13 @@
           0,
           0
         ],
-        "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       },
       {
-        "code": "]",
+        "code": "E",
         "name": "east-wall",
-        "u": 200,
-        "v": 0,
+        "u": 192,
+        "v": 32,
         "width": 64,
         "height": 256,
         "platform": [
@@ -91,13 +84,13 @@
           0,
           0
         ],
-        "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       },
       {
-        "code": "<",
+        "code": "U",
         "name": "up-hill",
-        "u": 300,
-        "v": 0,
+        "u": 256,
+        "v": 32,
         "width": 64,
         "height": 256,
         "platform": [
@@ -112,13 +105,13 @@
           64,
           0
         ],
-        "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       },
       {
-        "code": ">",
+        "code": "D",
         "name": "down-hill",
-        "u": 400,
-        "v": 0,
+        "u": 352,
+        "v": 32,
         "width": 64,
         "height": 256,
         "platform": [
@@ -133,82 +126,13 @@
           0,
           64
         ],
-        "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       },
-
-
-
       {
-        "code": "(",
-        "name": "left-ledge",
-        "u": 500,
-        "v": 0,
-        "width": 64,
-        "height": 256,
-        "platform": [
-          true,
-          [
-            0,
-            64
-          ]
-        ],
-        "wall": true,
-        "slope": [
-          0,
-          0
-        ],
-        "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
-      },
-
-      {
-        "code": ")",
-        "name": "right-ledge",
-        "u": 600,
-        "v": 0,
-        "width": 64,
-        "height": 256,
-        "platform": [
-          true,
-          [
-            0,
-            64
-          ]
-        ],
-        "wall": true,
-        "slope": [
-          0,
-          0
-        ],
-        "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
-      },
-
-      {
-        "code": "^",
-        "name": "barrier",
-        "u": 700,
-        "v": 0,
-        "width": 64,
-        "height": 256,
-        "platform": [
-          true,
-          [
-            0,
-            64
-          ]
-        ],
-        "wall": true,
-        "slope": [
-          0,
-          0
-        ],
-        "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
-      },
-
-      {
-        "code": ".",
+        "code": "H",
         "name": "hole",
-        "u": 790,
-        "v": 0,
+        "u": 416,
+        "v": 32,
         "width": 64,
         "height": 256,
         "platform": [
@@ -223,7 +147,7 @@
           0,
           0
         ],
-        "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+        "file": "assets/levels/01/tileset/tileset-simple.png"
       }
     ],
     "backgroundInfo": {
