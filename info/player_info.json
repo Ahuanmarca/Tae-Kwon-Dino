@@ -7,7 +7,7 @@
       "spriteHeight": 72,
       "singleRow": true,
       "movementSpeed": 0.3,
-      "hp": 5000000
+      "hp": 100
     },
     "animationsStates": [
       {

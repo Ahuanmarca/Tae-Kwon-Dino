@@ -24,6 +24,13 @@ class Level {
         this.verticalFriction = levelInfo.metadata.verticalFriction;
         this.borderBarrier = levelInfo.metadata.borderBarrier;
 
+        this.music = {
+            level_01: importAudio("assets/music/exploration_level_01.ogg"),
+            level_02: importAudio("assets/music/Going Up_level_02.ogg"),
+            level_03: importAudio("assets/music/fantasy Dragon_level_03.ogg"),
+            start_game: importAudio("assets/music/synthwave-palms_start_game.ogg"),
+        };
+
     }
 
     getTileInfo(x) {
@@ -47,11 +54,11 @@ class Level {
         const offset = (x - info.x) / tileWidth;
 
         if (offset < 0.5 && info.type === "[") {
-            return this.levelHeight*2;
+            return this.levelHeight*4;
         } else if (offset > 0.5 && info.type === "]") {
-            return this.levelHeight*2;
+            return this.levelHeight*4;
         } else if (!platform[0]) { // platform is array, first item is boolean
-            return this.levelHeight*2;
+            return this.levelHeight*4;
         } else {
             return y1*(1-offset) + y2*offset;
         }

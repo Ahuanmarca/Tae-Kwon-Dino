@@ -135,13 +135,16 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     
             currentPlayer.state.isTakingDamage = false;
     
+            // Damage from monsters
             for (let i = 0; i < currentMonsters.length; i++) {
                 if (currentPlayer.testCollition(currentMonsters[i])) {
                     currentPlayer.state.isTakingDamage = true;
                     currentPlayer.state.currentHealth -= 1;
+                    currentMonsters[i].metadata.soundFX.bite.play();
                 }            
             }
     
+            // Trigger game over screen
             if (currentPlayer.state.currentHealth <= 0) {
                 gameState.startScreen = false;
                 gameState.isRunning = false;
@@ -149,6 +152,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 gameState.youWin = false;
             }
 
+            // Go to next level
             if (currentPlayer.state.x >= levels[gameState.currentLevel].length - currentPlayer.metadata.spriteWidth - 16) { // TODO clean hardcoded value
 
                 if (gameState.currentLevel < 2) {
@@ -156,6 +160,25 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                     currentPlayer.state.x = 40; // TODO Refactor
                     currentMonsters[0].state.x = 400; // TODO Refactor
                     // TODO Unwrap the level data. Level data structured to an initialized state.
+
+                    if (gameState.currentLevel === 1) {
+                        setTimeout(() => {
+                            levels[0].music.start_game.pause();
+                            levels[0].music.level_01.pause();
+                            levels[0].music.level_02.play();
+                            levels[0].music.level_03.pause();
+                        }, 100);
+                    }
+
+                    if (gameState.currentLevel === 2) {
+                        setTimeout(() => {
+                            levels[0].music.start_game.pause();
+                            levels[0].music.level_01.pause();
+                            levels[0].music.level_02.pause();
+                            levels[0].music.level_03.play();
+                        }, 100);
+                    }
+
                 } else {
                     gameState.startScreen = false;
                     gameState.isRunning = false;
@@ -172,11 +195,17 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
         // TODO Create a gameState Class, with methods that update the state
         // TODO Need some function to restore the initial state of the levels
 
+
+        // Start Screen
         if (gameState.startScreen) {
             context.drawImage(
                 importImage("./assets/other/start_game.png"),
                 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT
             );
+            
+            // setTimeout(() => {
+            //     levels[gameState.currentLevel].music.start_game.play();
+            // }, 100)
 
             if (input.keysDict.KeyQty > 0) {
                 gameState.startScreen = false;
@@ -184,9 +213,18 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 gameState.gameOver = false;
                 gameState.youWin = false;
 
+                setTimeout(() => {
+                    levels[0].music.start_game.pause();
+                    levels[0].music.level_01.play();
+                    levels[0].music.level_02.pause();
+                    levels[0].music.level_03.pause();
+                }, 500)
+
             }
         }
 
+
+        // Game Over Screen
         if (gameState.gameOver) {
             context.drawImage(
                 importImage("./assets/other/game_over.png"),
@@ -203,6 +241,8 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
             }
         }
         
+
+        // Game Ending Screen
         if (gameState.youWin) {
             context.drawImage(
                 importImage("./assets/other/game_ending.png"),

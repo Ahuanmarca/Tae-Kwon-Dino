@@ -37,8 +37,10 @@ class Character {
                 left: "left",
             },
             soundFX: {
-                jumpStart: document.querySelector("#SNDjumpStart"),
-                jumpLand: document.querySelector("#SNDjumpLand"),
+                jumpStart: importAudio("assets/sounds/Jump-2.wav"),
+                jumpLand: importAudio("assets/sounds/jumpland.wav"),
+                bite: importAudio("assets/sounds/random2.wav"),
+                attack: importAudio("assets/sounds/tube-plastic-whoosh-01.wav"),
             },
         };
 
@@ -88,7 +90,8 @@ class Character {
     update(input, currentLevel) {
         this.updateState(input, currentLevel);
         this.updatePosition(input, currentLevel);
-        if (this.state.y > currentLevel.levelHeight) {
+        if (this.state.y > currentLevel.levelHeight*2) {
+            this.metadata.soundFX.attack.play();
             this.fallDamage();
         }
         this.updateAnimation();
