@@ -1,13 +1,17 @@
 {
     "metadata": {
-      "name": "evilDino",
-      "fileRight": "assets/sprites/monster/evilDino-right.png",
-      "fileLeft": "assets/sprites/monster/evilDino-left.png",
+      "name": "redDino",
+      "fileRight": "assets/sprites/monster/greenDino-right.png",
+      "fileLeft": "assets/sprites/monster/greenDino-left.png",
       "spriteWidth": 96,
       "spriteHeight": 72,
       "singleRow": true,
       "movementSpeed": 0.1,
-      "hp": 1
+      "hp": 1,
+      "primaryAction": "patrol",
+      "secondaryAction": "patrol",
+      "fallsLedge": false,
+      "jumpsBarrier": false
     },
     "animationsStates": [
       {
