@@ -17,13 +17,11 @@ class Character {
             secondaryAction: spriteInfo.metadata.secondaryAction,
             fallsLedge: spriteInfo.metadata.fallsLedge,
             jumpsBarrier: spriteInfo.metadata.jumpsBarrier,
+            // currentAction: this.metadata.primaryAction,
 
-            // Currently using boundingBox to hit enemies and tiles.
-            // I'm not sure if tiles should have a different inner box...
-            // hitTileOffset: 32,
-            
             boundingBoxOffset: 20, // ? Should this offset come from the info file?
             startingHealth: spriteInfo.metadata.hp,
+
             actionSprites: {
                 idle: "idle",
                 walk: "walk",
@@ -32,10 +30,12 @@ class Character {
                 hurt: "hurt",
                 bite: "bite",
             },
+
             directionSprites: {
                 right: "right",
                 left: "left",
             },
+
             soundFX: {
                 jumpStart: importAudio("assets/sounds/Jump-2.wav"),
                 jumpLand: importAudio("assets/sounds/jumpland.wav"),
@@ -214,7 +214,6 @@ class Character {
         }
     }
 
-
     // ! I think this is too complicated for just finding a barrier
     // TODO Can I use the boundingBox() function instead of all this?
 
@@ -237,6 +236,13 @@ class Character {
         } else {
             return false;
         }
+    }
+
+    onCliffBorder(currentLevel) {
+        const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[0][0]);
+        const nextGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[1][0]);
+
+        return [previousGroundLevel > currentLevel.levelHeight, nextGroundLevel > currentLevel.levelHeight]
     }
 
     /*  
@@ -444,9 +450,14 @@ class Monster extends Character {
         if (this.metadata.primaryAction === "patrol") {
             return this.patrolPlatform();
         }
-
+        
         if (this.metadata.primaryAction === "follow") {
-            return this.followPlayer(currentLevel, currentPlayer);
+            
+            if (Math.abs(this.state.x - currentPlayer.state.x) < 300) {
+                return this.followPlayer(currentLevel, currentPlayer);
+            } else {
+                return this.patrolPlatform();
+            }
         }
     }
 
@@ -484,18 +495,25 @@ class Monster extends Character {
 
         if (this.state.rightTile) {
 
-            if (currentPlayer.state.x + currentPlayer.metadata.spriteWidth - 36 < this.state.x) {
+            if (currentPlayer.state.x + currentPlayer.metadata.spriteWidth - 36 < this.state.x && !this.onCliffBorder(currentLevel)[0]) {
+
                 if (this.touchingBarrier(currentLevel)) {
                     return fakeKeypress(["ArrowLeft", "Shift", "ArrowUp"]);
                 } else {
-                    return fakeKeypress(["ArrowLeft"]);
+                    return fakeKeypress(["ArrowLeft", "Shift"]);
                 }
-            } else if (currentPlayer.state.x > this.state.x + this.metadata.spriteWidth - 36) {
+
+
+            } else if (currentPlayer.state.x > this.state.x + this.metadata.spriteWidth - 36 && !this.onCliffBorder(currentLevel)[1]) {
+
+
                 if (this.touchingBarrier(currentLevel)) {
                     return fakeKeypress(["ArrowRight", "Shift", "ArrowUp"]);
                 } else {
                     return fakeKeypress(["ArrowRight", "Shift"]);
                 }
+
+
             } else {
                 return fakeKeypress([]);
             }
