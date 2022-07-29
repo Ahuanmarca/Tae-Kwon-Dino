@@ -118,8 +118,9 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
             // Player: updates state, position, movement
             currentPlayer.update(input, levels[gameState.currentLevel]);
 
+            // Monsters behaviours
             currentMonsters.forEach(currentMonster => {
-                currentMonster.update(currentMonster.patrolPlatform(), levels[gameState.currentLevel]);
+                currentMonster.update(currentMonster.generateInput(levels[gameState.currentLevel], currentPlayer), levels[gameState.currentLevel]);
             });
 
             // Viewport: renders tiles, player and background drawings

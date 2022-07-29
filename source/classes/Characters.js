@@ -10,7 +10,13 @@ class Character {
             spriteHeight: spriteInfo.metadata.spriteHeight,
             singleRow: spriteInfo.metadata.singleRow,
             animations: getAnimations(spriteInfo),
-            sound: false,
+            sound: true,
+
+            // Behaviors, just used for monsters. // TODO: Refactor to monsters subclass
+            primaryAction: spriteInfo.metadata.primaryAction,
+            secondaryAction: spriteInfo.metadata.secondaryAction,
+            fallsLedge: spriteInfo.metadata.fallsLedge,
+            jumpsBarrier: spriteInfo.metadata.jumpsBarrier,
 
             // Currently using boundingBox to hit enemies and tiles.
             // I'm not sure if tiles should have a different inner box...
@@ -431,9 +437,20 @@ class Monster extends Character {
     // Some mosnters need the level and character information
     // i.e. the monster that follows the player needs player and level info
 
-    generateInput(level, player) {
-        
-        // TODO Fix this! 
+    generateInput(currentLevel, currentPlayer) {
+        if (this.metadata.primaryAction === "patrol") {
+            return this.patrolPlatform();
+        }
+
+        if (this.metadata.primaryAction === "follow") {
+            return this.followPlayer(currentLevel, currentPlayer);
+        }
+    }
+
+    patrolPlatform() {
+
+        // TODO: FIX THIS !!
+        // ! Problem will show on other behaviors 
         // Currently checking this.state.righTile for undefined because
         // it begins as undefined and only updates on the next loop...
         // State should always be defined by the time I need it!!
@@ -460,41 +477,31 @@ class Monster extends Character {
         }
     }
 
-    patrolPlatform() {
-        if (this.state.rightTile) {
-            
-            if (this.state.rightTile.type != "_") {
-                this.state.isFacingRight = false;
-                this.state.isFacingLeft = true;
-            }
-            
-            if (this.state.leftTile.type != "_") {
-                this.state.isFacingRight = true;
-                this.state.isFacingLeft = false;
-            }
-            
-            if (this.state.isFacingRight) {
-                return fakeKeypress(["ArrowRight"]);
-            } else {
-                return fakeKeypress(["ArrowLeft"]);
-            }
-        } else {
-            return fakeKeypress(["ArrowLeft"]);
-        }
-    }
+    followPlayer(currentLevel, currentPlayer) {
 
-    followPlayer(player) {
-        if (player.state.x + player.metadata.spriteWidth - 36 < this.state.x) {
-            return fakeKeypress("ArrowLeft");
-        } else if (player.state.x > this.state.x + this.metadata.spriteWidth - 36) {
-            return fakeKeypress("ArrowRight");
+        if (this.state.rightTile) {
+
+            if (currentPlayer.state.x + currentPlayer.metadata.spriteWidth - 36 < this.state.x) {
+                if (this.touchingBarrier(currentLevel)) {
+                    return fakeKeypress(["ArrowLeft", "Shift", "ArrowUp"]);
+                } else {
+                    return fakeKeypress(["ArrowLeft"]);
+                }
+            } else if (currentPlayer.state.x > this.state.x + this.metadata.spriteWidth - 36) {
+                if (this.touchingBarrier(currentLevel)) {
+                    return fakeKeypress(["ArrowRight", "Shift", "ArrowUp"]);
+                } else {
+                    return fakeKeypress(["ArrowRight", "Shift"]);
+                }
+            } else {
+                return fakeKeypress([]);
+            }
+
         } else {
-            return fakeKeypress("v");
+            return fakeKeypress([]);
         }
+
+
     }
 
 }
-
-
-
-
