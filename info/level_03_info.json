@@ -1,7 +1,7 @@
 {
   "metadata": {
     "level": 2,
-    "name": "Not the Moab ;-)",
+    "name": "Forest",
     "tileWidth": 64,
     "tileHeight": 256,
     "levelHeight": 480,
@@ -11,23 +11,32 @@
     "borderBarrier": 5
   },
   "tileTypes": {
-    "platform": "P",
-    "westWall": "W",
-    "eastWall": "E",
-    "upHill": "U",
-    "downHill": "D",
-    "hole": "H"
+    "platform": "_",
+    "westWall": "[",
+    "eastWall": "]",
+    "upHill": "<",
+    "downHill": ">",
+    "hole": ".",
+    "leftLedge": "(",
+    "rightLedge": ")",
+    "barrier": "^"
   },
-  "tileMapString": [
-    "PPDDEWPPUPPEHWUPPEHHWEHWEWEHHWEHHWPPPPPP",
-    "2221000011110122220022011000022002222222"
+  "tileMapString0": [
+    "____(____)___]..[____<<<_____].....[____________",
+    "000011111100000000000123333333000000000000000000"
   ],
+
+  "tileMapString": [
+    "____)________(________", 
+    "1111100000000111111111"
+  ],
+
   "tilesInfo": [
     {
-      "code": "W",
+      "code": "[",
       "name": "west-wall",
-      "u": 26,
-      "v": 32,
+      "u": 0,
+      "v": 600,
       "width": 64,
       "height": 256,
       "platform": [
@@ -42,13 +51,13 @@
         0,
         0
       ],
-      "file": "assets/levels/03/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     },
     {
-      "code": "P",
+      "code": "_",
       "name": "platform",
-      "u": 96,
-      "v": 32,
+      "u": 100,
+      "v": 600,
       "width": 64,
       "height": 256,
       "platform": [
@@ -58,18 +67,18 @@
           64
         ]
       ],
-      "wall": false,
+      "wall": true,
       "slope": [
         0,
         0
       ],
-      "file": "assets/levels/03/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     },
     {
-      "code": "E",
+      "code": "]",
       "name": "east-wall",
-      "u": 192,
-      "v": 32,
+      "u": 200,
+      "v": 600,
       "width": 64,
       "height": 256,
       "platform": [
@@ -84,13 +93,13 @@
         0,
         0
       ],
-      "file": "assets/levels/03/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     },
     {
-      "code": "U",
+      "code": "<",
       "name": "up-hill",
-      "u": 256,
-      "v": 32,
+      "u": 300,
+      "v": 600,
       "width": 64,
       "height": 256,
       "platform": [
@@ -105,13 +114,13 @@
         64,
         0
       ],
-      "file": "assets/levels/03/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     },
     {
-      "code": "D",
+      "code": ">",
       "name": "down-hill",
-      "u": 352,
-      "v": 32,
+      "u": 400,
+      "v": 600,
       "width": 64,
       "height": 256,
       "platform": [
@@ -126,13 +135,82 @@
         0,
         64
       ],
-      "file": "assets/levels/03/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     },
+
+
+
     {
-      "code": "H",
+      "code": "(",
+      "name": "left-ledge",
+      "u": 500,
+      "v": 600,
+      "width": 64,
+      "height": 256,
+      "platform": [
+        true,
+        [
+          0,
+          64
+        ]
+      ],
+      "wall": true,
+      "slope": [
+        0,
+        0
+      ],
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+    },
+
+    {
+      "code": ")",
+      "name": "right-ledge",
+      "u": 600,
+      "v": 600,
+      "width": 64,
+      "height": 256,
+      "platform": [
+        true,
+        [
+          0,
+          64
+        ]
+      ],
+      "wall": true,
+      "slope": [
+        0,
+        0
+      ],
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+    },
+
+    {
+      "code": "^",
+      "name": "barrier",
+      "u": 700,
+      "v": 600,
+      "width": 64,
+      "height": 256,
+      "platform": [
+        true,
+        [
+          0,
+          64
+        ]
+      ],
+      "wall": true,
+      "slope": [
+        0,
+        0
+      ],
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+    },
+
+    {
+      "code": ".",
       "name": "hole",
-      "u": 416,
-      "v": 32,
+      "u": 790,
+      "v": 600,
       "width": 64,
       "height": 256,
       "platform": [
@@ -147,9 +225,10 @@
         0,
         0
       ],
-      "file": "assets/levels/03/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     }
   ],
+
   "backgroundInfo": {
     "metadata": {
       "width": 1024,
@@ -157,13 +236,54 @@
     },
     "files": [
       {
-        "url": "assets/levels/03/background/back.png",
+        "url": "assets/levels/03/background/layer_01.png",
         "depth": 10
       },
       {
-        "url": "assets/levels/03/background/middle.png",
-        "depth": 3.5
+        "url": "assets/levels/03/background/layer_02.png",
+        "depth": 9
+      },
+      {
+        "url": "assets/levels/03/background/layer_03.png",
+        "depth": 8
+      },
+      {
+        "url": "assets/levels/03/background/layer_04.png",
+        "depth": 7
+      },
+      {
+        "url": "assets/levels/03/background/layer_05.png",
+        "depth": 6
+      },
+      {
+        "url": "assets/levels/03/background/layer_06.png",
+        "depth": 5
+      },
+      {
+        "url": "assets/levels/03/background/layer_07.png",
+        "depth": 4
+      },
+      {
+        "url": "assets/levels/03/background/layer_08.png",
+        "depth": 3
+      },
+      {
+        "url": "assets/levels/03/background/layer_09.png",
+        "depth": 2
+      },
+      {
+        "url": "assets/levels/03/background/layer_10.png",
+        "depth": 1
+      },
+      {
+        "url": "assets/levels/03/background/layer_11.png",
+        "depth": 1
+      },
+      {
+        "url": "assets/levels/03/background/layer_12.png",
+        "depth": 1
       }
+
     ]
   }
 }

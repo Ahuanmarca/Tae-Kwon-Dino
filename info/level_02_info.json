@@ -14,20 +14,28 @@
     "platform": "_",
     "westWall": "[",
     "eastWall": "]",
-    "upHill": "U",
-    "downHill": "D",
-    "hole": "H"
+    "upHill": "<",
+    "downHill": ">",
+    "hole": ".",
+    "leftLedge": "(",
+    "rightLedge": ")",
+    "barrier": "^"
   },
-  "tileMapString": [
-    "__DD][__U__]H[U__]HH[]H[][]HH[]HH[______",
+  "tileMapString0": [
+    "__>>][__<__].[<__]..[].[][]..[]..[______",
     "2221000011110122220022011000022002222222"
   ],
+  "tileMapString": [
+    "____)________(________", 
+    "1111100000000111111111"
+  ],
+
   "tilesInfo": [
     {
       "code": "[",
       "name": "west-wall",
-      "u": 26,
-      "v": 32,
+      "u": 0,
+      "v": 300,
       "width": 64,
       "height": 256,
       "platform": [
@@ -42,13 +50,13 @@
         0,
         0
       ],
-      "file": "assets/levels/02/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     },
     {
       "code": "_",
       "name": "platform",
-      "u": 96,
-      "v": 32,
+      "u": 100,
+      "v": 300,
       "width": 64,
       "height": 256,
       "platform": [
@@ -58,18 +66,18 @@
           64
         ]
       ],
-      "wall": false,
+      "wall": true,
       "slope": [
         0,
         0
       ],
-      "file": "assets/levels/02/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     },
     {
       "code": "]",
       "name": "east-wall",
-      "u": 192,
-      "v": 32,
+      "u": 200,
+      "v": 300,
       "width": 64,
       "height": 256,
       "platform": [
@@ -84,13 +92,13 @@
         0,
         0
       ],
-      "file": "assets/levels/02/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     },
     {
-      "code": "U",
+      "code": "<",
       "name": "up-hill",
-      "u": 256,
-      "v": 32,
+      "u": 300,
+      "v": 300,
       "width": 64,
       "height": 256,
       "platform": [
@@ -105,13 +113,13 @@
         64,
         0
       ],
-      "file": "assets/levels/02/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     },
     {
-      "code": "D",
+      "code": ">",
       "name": "down-hill",
-      "u": 352,
-      "v": 32,
+      "u": 400,
+      "v": 300,
       "width": 64,
       "height": 256,
       "platform": [
@@ -126,13 +134,82 @@
         0,
         64
       ],
-      "file": "assets/levels/02/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     },
+
+
+
     {
-      "code": "H",
+      "code": "(",
+      "name": "left-ledge",
+      "u": 500,
+      "v": 300,
+      "width": 64,
+      "height": 256,
+      "platform": [
+        true,
+        [
+          0,
+          64
+        ]
+      ],
+      "wall": true,
+      "slope": [
+        0,
+        0
+      ],
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+    },
+
+    {
+      "code": ")",
+      "name": "right-ledge",
+      "u": 600,
+      "v": 300,
+      "width": 64,
+      "height": 256,
+      "platform": [
+        true,
+        [
+          0,
+          64
+        ]
+      ],
+      "wall": true,
+      "slope": [
+        0,
+        0
+      ],
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+    },
+
+    {
+      "code": "^",
+      "name": "barrier",
+      "u": 700,
+      "v": 300,
+      "width": 64,
+      "height": 256,
+      "platform": [
+        true,
+        [
+          0,
+          64
+        ]
+      ],
+      "wall": true,
+      "slope": [
+        0,
+        0
+      ],
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
+    },
+
+    {
+      "code": ".",
       "name": "hole",
-      "u": 416,
-      "v": 32,
+      "u": 790,
+      "v": 300,
       "width": 64,
       "height": 256,
       "platform": [
@@ -147,9 +224,10 @@
         0,
         0
       ],
-      "file": "assets/levels/02/tileset/tileset-simple.png"
+      "file": "assets/levels/01/tileset/tileset-simple - Copy.png"
     }
   ],
+
   "backgroundInfo": {
     "metadata": {
       "width": 1024,

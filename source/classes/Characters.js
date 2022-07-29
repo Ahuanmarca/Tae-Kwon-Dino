@@ -208,9 +208,8 @@ class Character {
 
     // ! I think this is too complicated for just finding a barrier
     // TODO Can I use the boundingBox() function instead of all this?
-    // TODO The tiles would need to return a bounding box themselves... must decide...
 
-    isBarrier(currentLevel) {
+    touchingBarrier(currentLevel) {
 
         const tolerance = 30;
         const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[0][0]);
@@ -243,35 +242,23 @@ class Character {
     Should not use kbrd input
     ------------------------------ */
 
-    updatePosition(input, level) {
-        // this.updateCenterX(); // TODO Decide if this updates here or inside state updates
-        // this.getGroundLevel(level); // TODO Decide if this updates here or inside state updates
-    
-        this.updateVelocityX(input, level);
+
+    updatePosition(input, currentLevel) {
+        this.updateVelocityX(input, currentLevel);
         this.updateVelocityY(input);
-        this.horizontalMovement(level);
+        this.horizontalMovement(currentLevel);
         this.verticalMovement();
-        this.applyGrativy(level);
-        this.horizontalFriction(level);
-        this.verticalFriction(level);
+        this.applyGrativy(currentLevel);
+        this.horizontalFriction(currentLevel);
+        this.verticalFriction(currentLevel);
         this.applyFloorLimit();
     }
 
-    // TODO Decide if this updates here or inside state updates
-    // updateCenterX() {
-    //     this.state.cX = this.state.x + this.metadata.spriteWidth / 2;
-    // }
 
-    // TODO Decide if this updates here or inside state updates
-    // getGroundLevel(level) {
-    //     this.state.groundLevel = level.getGroundHeight(this.state.cX);
-    // }
-
-    
-    updateVelocityX(input, level) {
+    updateVelocityX(input, currentLevel) {
         const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Shift, v } = input.keysDict;
 
-        if (this.isBarrier(level)) {
+        if (this.touchingBarrier(currentLevel)) {
             this.state.velocityX = 0;
         } else {
             // Walking velocity
