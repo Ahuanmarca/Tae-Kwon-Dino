@@ -206,6 +206,31 @@ class Character {
     }
 
 
+    // ! I think this is too complicated for just finding a barrier
+    // TODO Can I use the boundingBox() function instead of all this?
+    // TODO The tiles would need to return a bounding box themselves... must decide...
+
+    isBarrier(currentLevel) {
+
+        const tolerance = 30;
+        const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[0][0]);
+        const nextGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[1][0]);
+
+        const nextGroundLevelIsHigher = nextGroundLevel + tolerance < (this.state.y + this.metadata.spriteHeight);
+        const previousGroundLevelIsHigher = previousGroundLevel + tolerance < this.state.y + this.metadata.spriteHeight
+
+        const rightTileIsWall = currentLevel.tiles[this.state.rightTile.type].wall;
+        const leftTileIsWall = currentLevel.tiles[this.state.leftTile.type].wall;
+
+        if (nextGroundLevelIsHigher && rightTileIsWall && this.state.isFacingRight) {
+            return true;
+        } else if (previousGroundLevelIsHigher && leftTileIsWall && this.state.isFacingLeft) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /*  
     ╭━╮╭━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╮
     ┃┃╰╯┃┃╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╯╰╮
@@ -242,29 +267,12 @@ class Character {
     //     this.state.groundLevel = level.getGroundHeight(this.state.cX);
     // }
 
+    
     updateVelocityX(input, level) {
         const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Shift, v } = input.keysDict;
-        
-        // ! Changed hitX for boundingBox. Now Dino wont' overlap so much with walls... Good or bad?
-        // const hitX = this.state.x + this.metadata.hitTileOffset;
-        // const hitW = this.state.x + (this.metadata.spriteWidth - this.metadata.hitTileOffset);
-        // const previousGroundLevel = level.getGroundHeight(hitX);
-        // const nextGroundLevel = level.getGroundHeight(hitW);
-        const previousGroundLevel = level.getGroundHeight(this.boundingBox()[0][0]);
-        const nextGroundLevel = level.getGroundHeight(this.boundingBox()[1][0]);
 
-        if (
-                nextGroundLevel + 30 < (this.state.y + this.metadata.spriteHeight) && // TODO Fix hardcoded value on tolerance
-                level.tiles[this.state.rightTile.type].wall && this.state.isFacingRight
-                ) {
+        if (this.isBarrier(level)) {
             this.state.velocityX = 0;
-            // this.state.x -= 5; // TODO Decide bounce or not bounce?
-        } else if (
-                previousGroundLevel + 30 < this.state.y + this.metadata.spriteHeight && 
-                level.tiles[this.state.leftTile.type].wall && this.state.isFacingLeft
-                ) {
-            this.state.velocityX = 0;
-            // this.state.x += 5; // TODO Decide bounce or not bounce?
         } else {
             // Walking velocity
             if (!Shift) {
@@ -277,10 +285,9 @@ class Character {
                 ArrowRight && (this.state.velocityX += this.state.movementSpeed*this.state.runSpeedMultiplier);
                 ArrowLeft && (this.state.velocityX -= this.state.movementSpeed*this.state.runSpeedMultiplier);
             }
-
         }
-
     }
+
 
     updateVelocityY(input) {
         const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Shift, v } = input.keysDict;
