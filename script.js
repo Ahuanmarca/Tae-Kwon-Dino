@@ -45,28 +45,36 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     const CANVAS_HEIGHT = 480;
     const miniMapScale = 0.25;
 
-    const level01 = new Level(levelsInfo[0]);
-    const level02 = new Level(levelsInfo[1]);
-    const level03 = new Level(levelsInfo[2]);
+    const levels = [];
+    levelsInfo.forEach(levelInfo => {
+        levels.push(new Level(levelInfo));
+    })
 
-    const levels = [level01, level02, level03];
-    let currentLevel = 0;
 
+    /*
+    █▀▀ ▄▀█ █▀▄▀█ █▀▀   █▀ ▀█▀ ▄▀█ ▀█▀ █▀▀
+    █▄█ █▀█ █░▀░█ ██▄   ▄█ ░█░ █▀█ ░█░ ██▄ */
+
+    // TODO Create a gameState class with methods to update
     const gameState = {
-        loadedLevel: levels[currentLevel],
+        currentLevel: 0,
+        isRunning: false,
 
         startScreen: true,
-        isRunning: false,
         gameOver: false,
         youWin: false,
-
+        
         gameFrame: 0,
         loopFrame: 0,
         staggerFrames: 10,
     }
 
+
+    /*
+    █▀▀ ▄▀█ █▀▄▀█ █▀▀   █▀█ █▄▄ ░░█ █▀▀ █▀▀ ▀█▀ █▀
+    █▄█ █▀█ █░▀░█ ██▄   █▄█ █▄█ █▄█ ██▄ █▄▄ ░█░ ▄█ */
+
     // Game Objects
-    // let currentLevel = gameState.loadedLevel;
     const currentPlayer = new Player({x: 40, y: 100}, spriteInfo);
 
     const currentMonsters = [];
@@ -76,8 +84,13 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     })
     
     const input = new InputHandler();
-    const currentMiniMap = new MiniMap(levels[currentLevel], currentPlayer, miniMapScale);
-    const currentViewPort = new Viewport(currentPlayer, levels[currentLevel]);
+    const currentMiniMap = new MiniMap(levels[gameState.currentLevel], currentPlayer, miniMapScale);
+    const currentViewPort = new Viewport(currentPlayer, levels[gameState.currentLevel]);
+
+
+    /*
+    █▀▀ ▄▀█ █▄░█ █░█ ▄▀█ █▀
+    █▄▄ █▀█ █░▀█ ▀▄▀ █▀█ ▄█ */
 
     // Main Canvas (game screen)
     const canvas = document.querySelector("#canvas1")
@@ -88,8 +101,13 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     // Secondary canvas for minimap
     const canvas2 = document.querySelector("#canvas2")
     const miniContext = canvas2.getContext("2d");
-    canvas2.width = levels[currentLevel].length * miniMapScale;
+    canvas2.width = levels[gameState.currentLevel].length * miniMapScale;
     canvas2.height = CANVAS_HEIGHT * miniMapScale;
+
+
+    /*        
+    █▀▀ ▄▀█ █▀▄▀█ █▀▀   █░░ █▀█ █▀█ █▀█
+    █▄█ █▀█ █░▀░█ ██▄   █▄▄ █▄█ █▄█ █▀▀ */
 
     function animate() {
 
@@ -98,21 +116,21 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
         if (gameState.isRunning) {
     
             // Player: updates state, position, movement
-            currentPlayer.update(input, levels[currentLevel]);
+            currentPlayer.update(input, levels[gameState.currentLevel]);
 
-            // currentMonsters[0].update(currentMonsters[0].followPlayer(currentPlayer), levels[currentLevel])
-            currentMonsters[0].update(currentMonsters[0].patrolPlatform(), levels[currentLevel]) // TODO !!!!!!!!!!!!!!!
+            currentMonsters.forEach(currentMonster => {
+                currentMonster.update(currentMonster.patrolPlatform(), levels[gameState.currentLevel]);
+            });
 
             // Viewport: renders tiles, player and background drawings
-            currentViewPort.update(levels[currentLevel], currentPlayer, [currentMonsters[0]], gameState, context);
+            currentViewPort.update(levels[gameState.currentLevel], currentPlayer, currentMonsters, gameState, context);
     
             // Minimap
-            currentMiniMap.update(levels[currentLevel], currentPlayer, miniContext);
+            currentMiniMap.update(levels[gameState.currentLevel], currentPlayer, miniContext);
     
             // Debugger
             showVariables("currentPlayer.state", gameState, currentPlayer.state);
-            // showVariables("currentViewPort", gameState, currentViewPort);
-            // showVariables("first monster", gameState, currentMonsters[0].state);
+            showVariables("currentViewPort", gameState, currentViewPort);
     
             currentPlayer.state.isTakingDamage = false;
     
@@ -130,10 +148,10 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 gameState.youWin = false;
             }
 
-            if (currentPlayer.state.x >= levels[currentLevel].length - currentPlayer.metadata.spriteWidth - 16) { // TODO clean hardcoded value
+            if (currentPlayer.state.x >= levels[gameState.currentLevel].length - currentPlayer.metadata.spriteWidth - 16) { // TODO clean hardcoded value
 
-                if (currentLevel < 2) {
-                    currentLevel += 1;
+                if (gameState.currentLevel < 2) {
+                    gameState.currentLevel += 1;
                     currentPlayer.state.x = 40; // TODO Refactor
                     currentMonsters[0].state.x = 400; // TODO Refactor
                     // TODO Unwrap the level data. Level data structured to an initialized state.
@@ -205,7 +223,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
     animate();
 
-    console.log("currentLevel", currentLevel);
+    console.log("currentLevel", levels[gameState.currentLevel]);
     console.log("currentPlayer", currentPlayer);
     console.log("currentMonsters", currentMonsters);
     console.log('currentViewPort', currentViewPort);

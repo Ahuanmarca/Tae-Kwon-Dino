@@ -9,7 +9,7 @@
         {
             "name": "guiltyPig",
             "url": "./info/monster_02_info.json",
-            "position": {"x": 1000, "y": 450}
+            "position": {"x": 800, "y": 450}
         }
     ]
 }
