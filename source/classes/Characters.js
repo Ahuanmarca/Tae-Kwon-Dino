@@ -11,7 +11,12 @@ class Character {
             singleRow: spriteInfo.metadata.singleRow,
             animations: getAnimations(spriteInfo),
             sound: false,
-            hitBoxOffset: 32,
+
+            // Currently using boundingBox to hit enemies and tiles.
+            // I'm not sure if tiles should have a different inner box...
+            // hitTileOffset: 32,
+            
+            boundingBoxOffset: 20, // ? Should this offset come from the info file?
             startingHealth: spriteInfo.metadata.hp,
             actionSprites: {
                 idle: "idle",
@@ -19,6 +24,7 @@ class Character {
                 run: "run",
                 jump: "jump",
                 hurt: "hurt",
+                bite: "bite",
             },
             directionSprites: {
                 right: "right",
@@ -74,7 +80,7 @@ class Character {
     }
 
     update(input, currentLevel) {
-        this.updateState(input);
+        this.updateState(input, currentLevel);
         this.updatePosition(input, currentLevel);
         if (this.state.y > currentLevel.levelHeight) {
             this.fallDamage();
@@ -103,7 +109,7 @@ class Character {
         - Position
     ------------------------------------------- */
 
-    updateState(input) {
+    updateState(input, currentLevel) {
         const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Shift, v } = input.keysDict;
 
         // Idle State
@@ -144,17 +150,39 @@ class Character {
         }
         this.state.previousY = this.state.y;
         
-        // ! I'm not convinced about this way of evaluating the isGrounded state!!
+        // ! I'm not convinced about this way of evaluating the isGrounded state
         // Grounded State 
         const difference = (this.state.groundLevel - this.metadata.spriteHeight) - this.state.y;
         this.state.isGrounded = difference <= 6.5;
 
+        // Update neighbors
+        this.state.centerTile = currentLevel.getTileInfo(this.state.cX);
+        this.state.leftTile = currentLevel.getTileInfo(this.boundingBox()[0][0]);
+        this.state.rightTile = currentLevel.getTileInfo(this.boundingBox()[1][0]);
+
+        // Update center x
+        this.state.cX = this.state.x + this.metadata.spriteWidth / 2;
+
+        // Update ground level
+        this.state.groundLevel = currentLevel.getGroundHeight(this.state.cX);
     }
 
+    /*
+    ╭╮╱╭╮╭╮╱╭╮╱╭╮
+    ┃┃╱┃┣╯╰╮┃┃╭╯╰╮
+    ┃┃╱┃┣╮╭╋┫┃┣╮╭╋┳━━┳━━╮
+    ┃┃╱┃┃┃┃┣┫┃┣┫┃┣┫┃━┫━━┫
+    ┃╰━╯┃┃╰┫┃╰┫┃╰┫┃┃━╋━━┃
+    ╰━━━╯╰━┻┻━┻┻━┻┻━━┻━━╯
+    𝓤 𝓽 𝓲 𝓵 𝓲 𝓽 𝓲 𝓮 𝓼
+    -------------------------------------------
+    Convenience functions
+    ------------------------------------------- */
+
     boundingBox() { // Corners are top left and bottom right
-        const tlX = this.state.x + 20; // 20 is offset to inside of the sprite for contact
+        const tlX = this.state.x + this.metadata.boundingBoxOffset; // offset to inside of sprite for contact
         const tlY = this.state.y;
-        const brX = this.state.x + this.metadata.spriteWidth - 20;
+        const brX = this.state.x + this.metadata.spriteWidth - this.metadata.boundingBoxOffset;
         const brY = this.state.y + this.metadata.spriteHeight;
         return [[tlX, tlY], [brX, brY]];
     }
@@ -191,8 +219,9 @@ class Character {
     ------------------------------ */
 
     updatePosition(input, level) {
-        this.updateCenterX();
-        this.getGroundLevel(level);
+        // this.updateCenterX(); // TODO Decide if this updates here or inside state updates
+        // this.getGroundLevel(level); // TODO Decide if this updates here or inside state updates
+    
         this.updateVelocityX(input, level);
         this.updateVelocityY(input);
         this.horizontalMovement(level);
@@ -203,52 +232,39 @@ class Character {
         this.applyFloorLimit();
     }
 
-    updateCenterX() {
-        this.state.cX = this.state.x + this.metadata.spriteWidth / 2;
-    }
+    // TODO Decide if this updates here or inside state updates
+    // updateCenterX() {
+    //     this.state.cX = this.state.x + this.metadata.spriteWidth / 2;
+    // }
 
-    getGroundLevel(level) {
-
-
-
-        this.state.centerTile = level.getTileInfo(this.state.cX);
-        
-        this.state.groundLevel = level.getGroundHeight(this.state.cX);
-    }
+    // TODO Decide if this updates here or inside state updates
+    // getGroundLevel(level) {
+    //     this.state.groundLevel = level.getGroundHeight(this.state.cX);
+    // }
 
     updateVelocityX(input, level) {
         const { KeyQty, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Shift, v } = input.keysDict;
-
-        const x = this.state.x;
-        const w = this.metadata.spriteWidth;
-
-        const hitX = x + this.metadata.hitBoxOffset;
-        const hitW = w - this.metadata.hitBoxOffset;
-
-        // this.state.leftTile = level.getTileInfo(hitX);
-        // this.state.rightTile = level.getTileInfo(hitW + x);
-
-        this.state.leftTile = this.getNeighbors(level)["leftTile"];
-        this.state.rightTile = this.getNeighbors(level)["rightTile"];
-
-        this.state.centerTile = level.getTileInfo(this.state.cX);
         
-        const previousGroundLevel = level.getGroundHeight(hitX);
-        const nextGroundLevel = level.getGroundHeight((hitW + x));
+        // ! Changed hitX for boundingBox. Now Dino wont' overlap so much with walls... Good or bad?
+        // const hitX = this.state.x + this.metadata.hitTileOffset;
+        // const hitW = this.state.x + (this.metadata.spriteWidth - this.metadata.hitTileOffset);
+        // const previousGroundLevel = level.getGroundHeight(hitX);
+        // const nextGroundLevel = level.getGroundHeight(hitW);
+        const previousGroundLevel = level.getGroundHeight(this.boundingBox()[0][0]);
+        const nextGroundLevel = level.getGroundHeight(this.boundingBox()[1][0]);
 
         if (
                 nextGroundLevel + 30 < (this.state.y + this.metadata.spriteHeight) && // TODO Fix hardcoded value on tolerance
                 level.tiles[this.state.rightTile.type].wall && this.state.isFacingRight
                 ) {
             this.state.velocityX = 0;
-            // Bounce
-            this.state.x -= 5; // TODO Decide bounce or not bounce?
+            // this.state.x -= 5; // TODO Decide bounce or not bounce?
         } else if (
                 previousGroundLevel + 30 < this.state.y + this.metadata.spriteHeight && 
                 level.tiles[this.state.leftTile.type].wall && this.state.isFacingLeft
                 ) {
             this.state.velocityX = 0;
-            // this.state.x += 5;
+            // this.state.x += 5; // TODO Decide bounce or not bounce?
         } else {
             // Walking velocity
             if (!Shift) {
@@ -403,26 +419,7 @@ class Character {
         );
     }
 
-    getNeighbors(level) {
-    
-        const x = this.state.x;
-        const w = this.metadata.spriteWidth;
-    
-        const hitX = x + this.metadata.hitBoxOffset;
-        const hitW = w - this.metadata.hitBoxOffset;
-    
-        return {
-            centerTile: level.getTileInfo(this.state.cX),
-            leftTile: level.getTileInfo(hitX),
-            rightTile: level.getTileInfo(hitW + x),
-        }
 
-        const toReturn = {}
-        toReturn["leftTile"] = level.getTileInfo(hitX);
-        toReturn["rightTile"] = level.getTileInfo(hitW + x);
-    
-        return toReturn;
-    }
 
 } // ! Character Class definition ends here !!
 
@@ -434,116 +431,76 @@ class Player extends Character {
 
 class Monster extends Character {
 
-    // need to pass the level and the player
+    // TODO Create different AIs for every mosnter
+    // Some code is unactive but will be used later
+    // I want different AIs for every mosnter
+    // Some mosnters need the level and character information
+    // i.e. the monster that follows the player needs player and level info
+
     generateInput(level, player) {
+        
+        // TODO Fix this! 
+        // Currently checking this.state.righTile for undefined because
+        // it begins as undefined and only updates on the next loop...
+        // State should always be defined by the time I need it!!
 
-        const {leftTile, rightTile} = this.getNeighbors(level);
-
-        if (rightTile.type != "_") {
-            this.state.isFacingRight = false;
-            this.state.isFacingLeft = true;
-        }
-
-        if (leftTile.type != "_") {
-            this.state.isFacingRight = true;
-            this.state.isFacingLeft = false;
-        }
-
-        if (this.state.isFacingRight) {
-            const toReturn = {
-                keysDict: {
-                    KeyQty: 0,
-                    ArrowDown: false,
-                    ArrowUp: false,
-                    ArrowLeft: false,
-                    ArrowRight: true,
-                    Shift: false,
-                    v: false,
-                }
+        if (this.state.rightTile) {
+            
+            if (this.state.rightTile.type != "_") {
+                this.state.isFacingRight = false;
+                this.state.isFacingLeft = true;
             }
-            return toReturn;
+            
+            if (this.state.leftTile.type != "_") {
+                this.state.isFacingRight = true;
+                this.state.isFacingLeft = false;
+            }
+            
+            if (this.state.isFacingRight) {
+                return fakeKeypress(["ArrowRight"]);
+            } else {
+                return fakeKeypress(["ArrowLeft"]);
+            }
         } else {
-            const toReturn = {
-                keysDict: {
-                    KeyQty: 0,
-                    ArrowDown: false,
-                    ArrowUp: false,
-                    ArrowLeft: true,
-                    ArrowRight: false,
-                    Shift: false,
-                    v: false,
-                }
-            }
-            return toReturn;
+            return fakeKeypress(["ArrowLeft"]);
         }
     }
 
+    patrolPlatform() {
+        if (this.state.rightTile) {
+            
+            if (this.state.rightTile.type != "_") {
+                this.state.isFacingRight = false;
+                this.state.isFacingLeft = true;
+            }
+            
+            if (this.state.leftTile.type != "_") {
+                this.state.isFacingRight = true;
+                this.state.isFacingLeft = false;
+            }
+            
+            if (this.state.isFacingRight) {
+                return fakeKeypress(["ArrowRight"]);
+            } else {
+                return fakeKeypress(["ArrowLeft"]);
+            }
+        } else {
+            return fakeKeypress(["ArrowLeft"]);
+        }
+    }
 
+    followPlayer(player) {
+        if (player.state.x + player.metadata.spriteWidth - 36 < this.state.x) {
+            return fakeKeypress("ArrowLeft");
+        } else if (player.state.x > this.state.x + this.metadata.spriteWidth - 36) {
+            return fakeKeypress("ArrowRight");
+        } else {
+            return fakeKeypress("v");
+        }
+    }
 
 }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //     if (player.state.x + player.metadata.spriteWidth - 36 < this.state.x) {
-    //         const toReturn = {
-    //             keysDict: {
-    //                 KeyQty: 0,
-    //                 ArrowDown: false,
-    //                 ArrowUp: false,
-    //                 ArrowLeft: true,
-    //                 ArrowRight: false,
-    //                 Shift: false,
-    //                 v: false,
-    //             }
-    //         }
-    //         return toReturn;
-    //     } else if (player.state.x > this.state.x + this.metadata.spriteWidth - 36) {
-    //         const toReturn = {
-    //             keysDict: {
-    //                 KeyQty: 0,
-    //                 ArrowDown: false,
-    //                 ArrowUp: false,
-    //                 ArrowLeft: false,
-    //                 ArrowRight: true,
-    //                 Shift: false,
-    //                 v: false,
-    //             }
-    //         }
-    //         return toReturn;
-    //     } else {
-    //         const toReturn = {
-    //             keysDict: {
-    //                 KeyQty: 0,
-    //                 ArrowDown: false,
-    //                 ArrowUp: false,
-    //                 ArrowLeft: false,
-    //                 ArrowRight: false,
-    //                 Shift: false,
-    //                 v: true,
-    //             }
-    //         }
-    //         return toReturn;
-    //     }
