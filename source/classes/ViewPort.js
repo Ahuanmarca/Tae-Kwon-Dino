@@ -2,7 +2,7 @@
 // TODO Don't use hard coded values !!
 
 class Viewport {
-    constructor(player, level) {
+    constructor(level, player) {
         
         this.vpWidth = 640;
         this.vpHeight = 480;

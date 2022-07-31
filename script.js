@@ -85,7 +85,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     
     const input = new InputHandler();
     const currentMiniMap = new MiniMap(levels[gameState.currentLevel], currentPlayer, miniMapScale);
-    const currentViewPort = new Viewport(currentPlayer, levels[gameState.currentLevel]);
+    const currentViewPort = new Viewport(levels[gameState.currentLevel], currentPlayer);
 
 
     /*
