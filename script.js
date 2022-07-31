@@ -130,8 +130,8 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
             currentMiniMap.update(levels[gameState.currentLevel], currentPlayer, miniContext);
     
             // Debugger
-            showVariables("currentPlayer.state", gameState, currentPlayer.state);
-            showVariables("currentViewPort", gameState, currentViewPort);
+            // showVariables("currentPlayer.state", gameState, currentPlayer.state);
+            // showVariables("currentViewPort", gameState, currentViewPort);
     
             currentPlayer.state.isTakingDamage = false;
     
