@@ -20,16 +20,16 @@ const audioPaths = {
     killMonster: `../../assets/sfx/gfx/Retro-8-bit-damage-571.wav`,
 }
 
-// const audioFiles = {}
-// for (key in audioPaths) {
-//     audioFiles[key] = importAudio(audioPaths[key]);
-// }
+const audioFiles = {}
+for (key in audioPaths) {
+    audioFiles[key] = importAudio(audioPaths[key]);
+}
 
-// class AudioPlayer {
-//     constructor(audioFiles) {
-//         this.audioFiles = audioFiles;
-//     }
+class AudioPlayer {
+    constructor(audioFiles) {
+        this.audioFiles = audioFiles;
+    }
 
 
 
-// }
+}

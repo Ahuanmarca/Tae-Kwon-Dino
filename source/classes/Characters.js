@@ -149,21 +149,29 @@ class Character {
             this.state.isWalking = false;
         }
 
-        // Jumping State
-        this.state.isJumping = !this.state.isGrounded ? true : false;
-
         // Falling State
         if (this.state.y > this.state.previousY && !this.state.isGrounded) {
             this.state.isFalling = true;
+            this.state.isJumping = false;
         } else {
             this.state.isFalling = false;            
         }
         this.state.previousY = this.state.y;
+
+        // Jumping State
+        // this.state.isJumping = !this.state.isGrounded && !this.state.isFalling;
+        // this.state.isJumping = ArrowUp && this.state.isGrounded;
+        if (ArrowUp && this.state.isGrounded) {
+            this.state.isJumping = true;
+        }
+
+
         
         // ! I'm not convinced about this way of evaluating the isGrounded state
         // Grounded State 
         const difference = (this.state.groundLevel - this.metadata.spriteHeight) - this.state.y;
         this.state.isGrounded = difference <= 6.5;
+        // this.state.isGrounded = (this.state.groundLevel - this.metadata.spriteHeight) === this.state.y;
 
         // Update neighbors
         this.state.centerTile = currentLevel.getTileInfo(this.state.cX);
@@ -175,75 +183,6 @@ class Character {
 
         // Update ground level
         this.state.groundLevel = currentLevel.getGroundHeight(this.state.cX);
-    }
-
-    /*
-    ╭╮╱╭╮╭╮╱╭╮╱╭╮
-    ┃┃╱┃┣╯╰╮┃┃╭╯╰╮
-    ┃┃╱┃┣╮╭╋┫┃┣╮╭╋┳━━┳━━╮
-    ┃┃╱┃┃┃┃┣┫┃┣┫┃┣┫┃━┫━━┫
-    ┃╰━╯┃┃╰┫┃╰┫┃╰┫┃┃━╋━━┃
-    ╰━━━╯╰━┻┻━┻┻━┻┻━━┻━━╯
-    𝓤 𝓽 𝓲 𝓵 𝓲 𝓽 𝓲 𝓮 𝓼
-    -------------------------------------------
-    Convenience functions
-    ------------------------------------------- */
-
-    boundingBox() { // Corners are top left and bottom right
-        const tlX = this.state.x + this.metadata.boundingBoxOffset; // offset to inside of sprite for contact
-        const tlY = this.state.y;
-        const brX = this.state.x + this.metadata.spriteWidth - this.metadata.boundingBoxOffset;
-        const brY = this.state.y + this.metadata.spriteHeight;
-        return [[tlX, tlY], [brX, brY]];
-    }
-
-    testCollition(gameObject) {
-        const [tl, br] = this.boundingBox();
-        const [_tl, _br] = gameObject.boundingBox();
-
-        // collition happens if any of the two corners of gameObject is within our two corners
-        if (tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1] ) {
-            return true;
-        } else if (tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1] )  {
-            return true;
-        } else if (_tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1] ) {
-            return true;
-        } else if (_tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1] )  {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    // ! I think this is too complicated for just finding a barrier
-    // TODO Can I use the boundingBox() function instead of all this?
-
-    touchingBarrier(currentLevel) {
-
-        const tolerance = 30;
-        const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[0][0]);
-        const nextGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[1][0]);
-
-        const nextGroundLevelIsHigher = nextGroundLevel + tolerance < (this.state.y + this.metadata.spriteHeight);
-        const previousGroundLevelIsHigher = previousGroundLevel + tolerance < this.state.y + this.metadata.spriteHeight
-
-        const rightTileIsWall = currentLevel.tiles[this.state.rightTile.type].wall;
-        const leftTileIsWall = currentLevel.tiles[this.state.leftTile.type].wall;
-
-        if (nextGroundLevelIsHigher && rightTileIsWall && this.state.isFacingRight) {
-            return true;
-        } else if (previousGroundLevelIsHigher && leftTileIsWall && this.state.isFacingLeft) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    onCliffBorder(currentLevel) {
-        const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[0][0]);
-        const nextGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[1][0]);
-
-        return [previousGroundLevel > currentLevel.levelHeight, nextGroundLevel > currentLevel.levelHeight]
     }
 
     /*  
@@ -399,15 +338,15 @@ class Character {
 
 
     
-    /*
-    ╭━━━╮╱╱╱╱╱╱╱╱╱╭╮
-    ┃╭━╮┃╱╱╱╱╱╱╱╱╭╯╰╮
-    ┃┃╱┃┣━╮╭┳╮╭┳━┻╮╭╋┳━━┳━╮
-    ┃╰━╯┃╭╮╋┫╰╯┃╭╮┃┃┣┫╭╮┃╭╮╮
-    ┃╭━╮┃┃┃┃┃┃┃┃╭╮┃╰┫┃╰╯┃┃┃┃
-    ╰╯╱╰┻╯╰┻┻┻┻┻╯╰┻━┻┻━━┻╯╰╯
+    /*    
+    ╭━━━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭━━━╮
+    ┃╭━╮┃╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╰╮╭╮┃
+    ┃┃╱╰╋━━┳━╮╭╮╭┳━━┳━━╮╱┃┃┃┣━┳━━┳╮╭╮╭╮
+    ┃┃╱╭┫╭╮┃╭╮┫╰╯┃╭╮┃━━┫╱┃┃┃┃╭┫╭╮┃╰╯╰╯┃
+    ┃╰━╯┃╭╮┃┃┃┣╮╭┫╭╮┣━━┃╭╯╰╯┃┃┃╭╮┣╮╭╮╭╯
+    ╰━━━┻╯╰┻╯╰╯╰╯╰╯╰┻━━╯╰━━━┻╯╰╯╰╯╰╯╰╯
     -----------------------
-    SPRITE CANVAS ANIMATION
+    SPRITE CANVAS DRAWING
     ----------------------- */
 
     draw(level, gameFrame, context, x) {
@@ -429,6 +368,75 @@ class Character {
         );
     }
 
+
+    /*
+    ╭╮╱╭╮╭╮╱╭╮╱╭╮
+    ┃┃╱┃┣╯╰╮┃┃╭╯╰╮
+    ┃┃╱┃┣╮╭╋┫┃┣╮╭╋┳━━┳━━╮
+    ┃┃╱┃┃┃┃┣┫┃┣┫┃┣┫┃━┫━━┫
+    ┃╰━╯┃┃╰┫┃╰┫┃╰┫┃┃━╋━━┃
+    ╰━━━╯╰━┻┻━┻┻━┻┻━━┻━━╯
+    𝓤 𝓽 𝓲 𝓵 𝓲 𝓽 𝓲 𝓮 𝓼
+    -------------------------------------------
+    Convenience functions
+    ------------------------------------------- */
+
+    boundingBox() { // Corners are top left and bottom right
+        const tlX = this.state.x + this.metadata.boundingBoxOffset; // offset to inside of sprite for contact
+        const tlY = this.state.y;
+        const brX = this.state.x + this.metadata.spriteWidth - this.metadata.boundingBoxOffset;
+        const brY = this.state.y + this.metadata.spriteHeight;
+        return [[tlX, tlY], [brX, brY]];
+    }
+
+    testCollition(gameObject) {
+        const [tl, br] = this.boundingBox();
+        const [_tl, _br] = gameObject.boundingBox();
+
+        // collition happens if any of the two corners of gameObject is within our two corners
+        if (tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1] ) {
+            return true;
+        } else if (tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1] )  {
+            return true;
+        } else if (_tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1] ) {
+            return true;
+        } else if (_tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1] )  {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // ! I think this is too complicated for just finding a barrier
+    // TODO Can I use the boundingBox() function instead of all this?
+
+    touchingBarrier(currentLevel) {
+
+        const tolerance = 30;
+        const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[0][0]);
+        const nextGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[1][0]);
+
+        const nextGroundLevelIsHigher = nextGroundLevel + tolerance < (this.state.y + this.metadata.spriteHeight);
+        const previousGroundLevelIsHigher = previousGroundLevel + tolerance < this.state.y + this.metadata.spriteHeight
+
+        const rightTileIsWall = currentLevel.tiles[this.state.rightTile.type].wall;
+        const leftTileIsWall = currentLevel.tiles[this.state.leftTile.type].wall;
+
+        if (nextGroundLevelIsHigher && rightTileIsWall && this.state.isFacingRight) {
+            return true;
+        } else if (previousGroundLevelIsHigher && leftTileIsWall && this.state.isFacingLeft) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    onCliffBorder(currentLevel) {
+        const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[0][0]);
+        const nextGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[1][0]);
+
+        return [previousGroundLevel > currentLevel.levelHeight, nextGroundLevel > currentLevel.levelHeight]
+    }
 
 
 } // ! Character Class definition ends here !!
