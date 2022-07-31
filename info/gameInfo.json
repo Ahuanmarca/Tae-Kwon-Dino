@@ -1,0 +1,21 @@
+{
+    "startGame": [
+
+    ],
+    "levelsInfo": [
+        "./",
+        "./",
+        "./"
+    ],
+    "playerInfo": [
+        "./"
+    ],
+    "monstersInfo": [
+        "./",
+        "./",
+        "./"
+    ],
+    "audioInfo": [
+        "./"
+    ]
+}
