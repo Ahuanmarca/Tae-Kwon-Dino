@@ -24,12 +24,13 @@ class Level {
         this.verticalFriction = levelInfo.metadata.verticalFriction;
         this.borderBarrier = levelInfo.metadata.borderBarrier;
 
-        this.music = {
-            level_01: importAudio("assets/music/exploration_level_01.ogg"),
-            level_02: importAudio("assets/music/Going Up_level_02.ogg"),
-            level_03: importAudio("assets/music/fantasy Dragon_level_03.ogg"),
-            start_game: importAudio("assets/music/synthwave-palms_start_game.ogg"),
-        };
+        // ! Trying to pass all this to an AudioPlayer Class
+        // this.music = {
+        //     level_01: importAudio("assets/music/exploration_level_01.ogg"),
+        //     level_02: importAudio("assets/music/Going Up_level_02.ogg"),
+        //     level_03: importAudio("assets/music/fantasy Dragon_level_03.ogg"),
+        //     start_game: importAudio("assets/music/synthwave-palms_start_game.ogg"),
+        // };
 
     }
 

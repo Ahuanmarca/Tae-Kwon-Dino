@@ -36,12 +36,13 @@ class Character {
                 left: "left",
             },
 
-            soundFX: {
-                jumpStart: importAudio("assets/sounds/Jump-2.wav"),
-                jumpLand: importAudio("assets/sounds/jumpland.wav"),
-                bite: importAudio("assets/sounds/random2.wav"),
-                attack: importAudio("assets/sounds/tube-plastic-whoosh-01.wav"),
-            },
+            // ! Trying to pass all this to an AudioPlayer Class !!
+            // soundFX: {
+            //     jumpStart: importAudio("assets/sounds/Jump-2.wav"),
+            //     jumpLand: importAudio("assets/sounds/jumpland.wav"),
+            //     bite: importAudio("assets/sounds/random2.wav"),
+            //     attack: importAudio("assets/sounds/tube-plastic-whoosh-01.wav"),
+            // },
         };
 
         this.state = {
@@ -91,7 +92,7 @@ class Character {
         this.updateState(input, currentLevel);
         this.updatePosition(input, currentLevel);
         if (this.state.y > currentLevel.levelHeight*2) {
-            this.metadata.soundFX.attack.play();
+            // this.metadata.soundFX.attack.play(); // TODO Refactor to AudioPlayer
             this.fallDamage();
         }
         this.updateAnimation();
@@ -297,7 +298,7 @@ class Character {
         if (ArrowUp && this.state.isGrounded) {
             this.state.velocityY = this.state.jumpForce;
             this.state.velocityX *= this.state.runSpeedMultiplier; // ! Beware, reusing multiplier for different purpose
-            this.metadata.sound && this.metadata.soundFX.jumpStart.play();
+            // this.metadata.sound && this.metadata.soundFX.jumpStart.play(); // TODO Refactor to AudioPlayer
         }
     }
 
@@ -343,7 +344,7 @@ class Character {
             this.state.y = this.state.groundLevel - this.metadata.spriteHeight;
 
             if (this.state.isJumping === true) {
-                this.metadata.sound && this.metadata.soundFX.jumpLand.play();
+                // this.metadata.sound && this.metadata.soundFX.jumpLand.play(); // TODO Refactor to AudioPlayer
             }
 
             this.state.velocityY = 0;

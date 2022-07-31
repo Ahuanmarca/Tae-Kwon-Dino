@@ -56,18 +56,18 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     █▄█ █▀█ █░▀░█ ██▄   ▄█ ░█░ █▀█ ░█░ ██▄ */
 
     // TODO Create a gameState class with methods to update
-    const gameState = {
-        currentLevel: 0,
-        isRunning: false,
+    // const gameState = {
+    //     currentLevel: 0,
+    //     isRunning: false,
 
-        startScreen: true,
-        gameOver: false,
-        youWin: false,
+    //     startScreen: true,
+    //     gameOver: false,
+    //     youWin: false,
         
-        gameFrame: 0,
-        loopFrame: 0,
-        staggerFrames: 10,
-    }
+    //     gameFrame: 0,
+    //     loopFrame: 0,
+    //     staggerFrames: 10,
+    // }
 
 
     /*
@@ -75,6 +75,8 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     █▄█ █▀█ █░▀░█ ██▄   █▄█ █▄█ █▄█ ██▄ █▄▄ ░█░ ▄█ */
 
     // Game Objects
+    const gameState = new GameState("Tae Kwon Dino");
+
     const currentPlayer = new Player({x: 40, y: 100}, spriteInfo);
 
     const currentMonsters = [];
@@ -140,55 +142,24 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 if (currentPlayer.testCollition(currentMonsters[i])) {
                     currentPlayer.state.isTakingDamage = true;
                     currentPlayer.state.currentHealth -= 1;
-                    currentMonsters[i].metadata.soundFX.bite.play();
+                    // currentMonsters[i].metadata.soundFX.bite.play(); // TODO Refactor to Audio Player
                 }            
             }
     
             // Trigger game over screen
             if (currentPlayer.state.currentHealth <= 0) {
-                gameState.startScreen = false;
-                gameState.isRunning = false;
-                gameState.gameOver = true;
-                gameState.youWin = false;
+                gameState.setState.onGameOver();
             }
 
             // Go to next level
-            if (currentPlayer.state.x >= levels[gameState.currentLevel].length - currentPlayer.metadata.spriteWidth - 16) { // TODO clean hardcoded value
-
-                if (gameState.currentLevel < 2) {
-                    gameState.currentLevel += 1;
-                    currentPlayer.state.x = 40; // TODO Refactor
-                    currentMonsters[0].state.x = 400; // TODO Refactor
-                    // TODO Unwrap the level data. Level data structured to an initialized state.
-
-                    if (gameState.currentLevel === 1) {
-                        setTimeout(() => {
-                            levels[0].music.start_game.pause();
-                            levels[0].music.level_01.pause();
-                            levels[0].music.level_02.play();
-                            levels[0].music.level_03.pause();
-                        }, 100);
-                    }
-
-                    if (gameState.currentLevel === 2) {
-                        setTimeout(() => {
-                            levels[0].music.start_game.pause();
-                            levels[0].music.level_01.pause();
-                            levels[0].music.level_02.pause();
-                            levels[0].music.level_03.play();
-                        }, 100);
-                    }
-
-                } else {
-                    gameState.startScreen = false;
-                    gameState.isRunning = false;
-                    gameState.gameOver = false;
-                    gameState.youWin = true;
-                }
+            // TODO Clean hardcoded value(s)
+            if (currentPlayer.state.x >= levels[gameState.currentLevel].length - currentPlayer.metadata.spriteWidth - 16) {
+                gameState.increaseLevel();
+                currentPlayer.state.x = 40; // TODO Refactor to game restarter function
+                currentMonsters[0].state.x = 400; // TODO Refactor to game restarted function
             }
 
-            (gameState.loopFrame % gameState.staggerFrames == 0) && gameState.gameFrame++;
-            gameState.loopFrame++;
+            gameState.updateFrames();
 
         }
 
@@ -197,44 +168,27 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
 
         // Start Screen
-        if (gameState.startScreen) {
+        if (gameState.onTitle) {
             context.drawImage(
                 importImage("./assets/other/start_game.png"),
                 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT
             );
-            
-            // setTimeout(() => {
-            //     levels[gameState.currentLevel].music.start_game.play();
-            // }, 100)
 
             if (input.keysDict.KeyQty > 0) {
-                gameState.startScreen = false;
-                gameState.isRunning = true;
-                gameState.gameOver = false;
-                gameState.youWin = false;
-
-                setTimeout(() => {
-                    levels[0].music.start_game.pause();
-                    levels[0].music.level_01.play();
-                    levels[0].music.level_02.pause();
-                    levels[0].music.level_03.pause();
-                }, 500)
-
+                gameState.setState.isRunning();
             }
         }
 
 
         // Game Over Screen
-        if (gameState.gameOver) {
+        if (gameState.onGameOver) {
             context.drawImage(
                 importImage("./assets/other/game_over.png"),
                 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT
             );
+
             if (input.keysDict.KeyQty > 0) {
-                gameState.startScreen = true;
-                gameState.isRunning = false;
-                gameState.gameOver = false;
-                gameState.youWin = false;
+                gameState.setState.onTitle();
                 currentPlayer.state.x = 40; // TODO Refactor
                 currentPlayer.state.currentHealth = 50; // TODO Refactor
                 currentMonsters[0].state.x = 400; // TODO Refactor
@@ -243,20 +197,18 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
         
 
         // Game Ending Screen
-        if (gameState.youWin) {
+        if (gameState.onGameEnding) {
             context.drawImage(
                 importImage("./assets/other/game_ending.png"),
                 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT
             );
-            // if (input.keysDict.KeyQty > 0) {
-            //     gameState.startScreen = true;
-            //     gameState.isRunning = false;
-            //     gameState.gameOver = false;
-            //     gameState.youWin = false;
-            //     currentPlayer.state.x = 40; // TODO Refactor
-            //     currentPlayer.state.currentHealth = 50; // TODO Refactor
-            //     currentMonsters[0].state.x = 400; // TODO Refactor
-            // }
+
+            if (input.keysDict.KeyQty > 0) {
+                gameState.setState.onTitle();
+                currentPlayer.state.x = 40; // TODO Refactor to game restarter
+                currentPlayer.state.currentHealth = 50; // TODO Refactor to game restarter
+                currentMonsters[0].state.x = 400; // TODO Refactor to game restarter
+            }
         }
 
         requestAnimationFrame(animate);
