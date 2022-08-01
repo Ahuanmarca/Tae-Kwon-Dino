@@ -1,5 +1,6 @@
 import { importImage } from '../helpers/importImage.js'
 import { getAnimations } from '../helpers/getAnimations.js'
+import { fakeKeypress } from '../helpers/fakeKeypress.js'
 
 export class Character {
     constructor(position, spriteInfo) {

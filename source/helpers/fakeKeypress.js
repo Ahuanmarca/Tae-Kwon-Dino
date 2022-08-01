@@ -1,4 +1,4 @@
-function fakeKeypress (keys) {
+export function fakeKeypress (keys) {
     const fakedKeys = {
         keysDict: {
             KeyQty: 0,

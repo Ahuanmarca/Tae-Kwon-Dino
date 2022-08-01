@@ -9,6 +9,7 @@ import { AudioPlayer } from './source/classes/AudioPlayer.js'
 import { importImage } from './source/helpers/importImage.js'
 import { getMonsters } from './source/helpers/getMonsters.js'
 import { showVariables } from './source/helpers/showVariables.js'
+import { resetLevel } from './source/helpers/resetLevel.js'
 
 /*
     ╭━━━━╮╱╱╱╱╱╭╮╭━╮╱╱╱╱╱╱╱╱╱╱╭━━━╮
