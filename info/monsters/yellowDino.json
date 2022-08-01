@@ -1,0 +1,42 @@
+{
+    "metadata": {
+      "name": "yellowDino",
+      "fileRight": "assets/sprites/monster/redDino-right.png",
+      "fileLeft": "assets/sprites/monster/redDino-left.png",
+      "spriteWidth": 96,
+      "spriteHeight": 72,
+      "singleRow": true,
+      "movementSpeed": 0.1,
+      "hp": 1,
+      "primaryAction": "follow",
+      "secondaryAction": "patrol",
+      "fallsLedge": false,
+      "jumpsBarrier": false
+    },
+    "animationsStates": [
+      {
+        "name": "idle",
+        "frames": 4
+      },
+      {
+        "name": "walk",
+        "frames": 6
+      },
+      {
+        "name": "kick",
+        "frames": 4
+      },
+      {
+        "name": "hurt",
+        "frames": 3
+      },
+      {
+        "name": "jump",
+        "frames": 1
+      },
+      {
+        "name": "run",
+        "frames": 6
+      }
+    ]
+  }

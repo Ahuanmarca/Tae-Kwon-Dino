@@ -1,14 +1,14 @@
 {
     "metadata": {
-      "name": "guiltyPig",
-      "fileRight": "assets/sprites/monster/redDino-right.png",
-      "fileLeft": "assets/sprites/monster/redDino-left.png",
+      "name": "greenDino",
+      "fileRight": "assets/sprites/monster/greenDino-right.png",
+      "fileLeft": "assets/sprites/monster/greenDino-left.png",
       "spriteWidth": 96,
       "spriteHeight": 72,
       "singleRow": true,
       "movementSpeed": 0.1,
       "hp": 1,
-      "primaryAction": "follow",
+      "primaryAction": "patrol",
       "secondaryAction": "patrol",
       "fallsLedge": false,
       "jumpsBarrier": false

@@ -1,14 +1,10 @@
-const levelPaths = {
-    _01: "./info/level_01_info.json",
-    _02: "./info/level_02_info.json",
-    _03: "./info/level_03_info.json"
-}
-
-const startGame = {
-    level: levelPaths._01,
-    player: "./info/player_info.json",
-    monsters: "./info/monsters_info.json",
-}
+/*
+    ╭━━━━╮╱╱╱╱╱╭╮╭━╮╱╱╱╱╱╱╱╱╱╱╭━━━╮
+    ┃╭╮╭╮┃╱╱╱╱╱┃┃┃╭╯╱╱╱╱╱╱╱╱╱╱╰╮╭╮┃
+    ╰╯┃┃┣┻━┳━━╮┃╰╯╋╮╭╮╭┳━━┳━╮╱╱┃┃┃┣┳━╮╭━━╮
+    ╱╱┃┃┃╭╮┃┃━┫┃╭╮┃╰╯╰╯┃╭╮┃╭╮╮╱┃┃┃┣┫╭╮┫╭╮┃
+    ╱╱┃┃┃╭╮┃┃━┫┃┃┃╰╮╭╮╭┫╰╯┃┃┃┃╭╯╰╯┃┃┃┃┃╰╯┃
+    ╱╱╰╯╰╯╰┻━━╯╰╯╰━┻╯╰╯╰━━┻╯╰╯╰━━━┻┻╯╰┻━━╯*/
 
 async function fetchJson(url) {
     const response = await fetch(url);
@@ -16,23 +12,35 @@ async function fetchJson(url) {
     return result;
 }
 
+async function unpackToArray(arrPack) {
+    const unpaArra = [];
+    for (let i = 0; i < arrPack.length; i++) {
+        unpaArra.push(await fetchJson(arrPack[i]));
+    }
+    return unpaArra;
+}
+
+async function unpackToDict(arrPack) {
+    const unpaDict = {};
+    for (let i = 0; i < arrPack.length; i++) {
+        const dictItem = await fetchJson(arrPack[i]);
+        const dicKey = dictItem.metadata.name;
+        unpaDict[dicKey] = dictItem;
+    }
+    return unpaDict;
+}
+
 (async () => {
+    const gameInfo = await fetchJson("./info/gameInfo.json"); // <<<====== Config file
 
-    const [playerInfo] = await Promise.all([
-        fetchJson(startGame.player),
-    ])
-
-    const levelsInfo = [];
-    levelsInfo.push(await fetchJson(levelPaths._01));
-    levelsInfo.push(await fetchJson(levelPaths._02));
-    levelsInfo.push(await fetchJson(levelPaths._03));
-    console.log(levelsInfo);
-
-    // monstersInfo is array of objects with name, properties and position
-    const monsters_info = await fetchJson(startGame.monsters);
-    const monstersInfo = monsters_info.monsters_info;
-    for (let i = 0; i < monstersInfo.length; i++) {
-        monstersInfo[i].info = await fetchJson(monstersInfo[i].url);
+    const levelsInfo = await unpackToArray(gameInfo.levelsInfo);
+    const playerInfo = await fetchJson(gameInfo.playerInfo);
+    const monstersInfo = await unpackToDict(gameInfo.monstersInfo);
+    const startingStates = await fetchJson(gameInfo.startingStates);
+ 
+    // startingStates go with levelsInfo items
+    for (let i = 0; i < levelsInfo.length; i++) {
+        levelsInfo[i].startingState = startingStates[i];
     }
 
     runGame(levelsInfo, playerInfo, monstersInfo);
@@ -45,45 +53,22 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     const CANVAS_HEIGHT = 480;
     const miniMapScale = 0.25;
 
-    const levels = [];
-    levelsInfo.forEach(levelInfo => {
-        levels.push(new Level(levelInfo));
-    })
-
-
-    /*
-    █▀▀ ▄▀█ █▀▄▀█ █▀▀   █▀ ▀█▀ ▄▀█ ▀█▀ █▀▀
-    █▄█ █▀█ █░▀░█ ██▄   ▄█ ░█░ █▀█ ░█░ ██▄ */
-
-    // TODO Create a gameState class with methods to update
-    // const gameState = {
-    //     currentLevel: 0,
-    //     isRunning: false,
-
-    //     startScreen: true,
-    //     gameOver: false,
-    //     youWin: false,
-        
-    //     gameFrame: 0,
-    //     loopFrame: 0,
-    //     staggerFrames: 10,
-    // }
-
-
     /*
     █▀▀ ▄▀█ █▀▄▀█ █▀▀   █▀█ █▄▄ ░░█ █▀▀ █▀▀ ▀█▀ █▀
     █▄█ █▀█ █░▀░█ ██▄   █▄█ █▄█ █▄█ ██▄ █▄▄ ░█░ ▄█ */
-
     // Game Objects
+
     const gameState = new GameState("Tae Kwon Dino");
 
-    const currentPlayer = new Player({x: 40, y: 100}, spriteInfo);
-
-    const currentMonsters = [];
-    monstersInfo.forEach(monster => {
-        const tmp = new Monster(monster.position, monster.info)
-        currentMonsters.push(tmp);
+    const levels = [];
+    levelsInfo.forEach(levelInfo => {
+        const tmpLev = new Level(levelInfo);
+        tmpLev.monsters = getMonsters(tmpLev.startingState, monstersInfo);
+        levels.push(tmpLev);
     })
+
+    const currentPlayer = new Player({x: 40, y: 100}, spriteInfo);
+    let currentMonsters = levels[gameState.currentLevel].monsters;
     
     const input = new InputHandler();
     const currentMiniMap = new MiniMap(levels[gameState.currentLevel], currentPlayer, miniMapScale);

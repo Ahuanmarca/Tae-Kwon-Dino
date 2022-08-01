@@ -24,6 +24,8 @@ class Level {
         this.verticalFriction = levelInfo.metadata.verticalFriction;
         this.borderBarrier = levelInfo.metadata.borderBarrier;
 
+        this.startingState = levelInfo.startingState;
+
         // ! Trying to pass all this to an AudioPlayer Class
         // this.music = {
         //     level_01: importAudio("assets/music/exploration_level_01.ogg"),

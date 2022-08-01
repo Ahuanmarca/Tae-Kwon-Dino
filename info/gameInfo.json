@@ -1,21 +1,21 @@
 {
-    "startGame": [
-
-    ],
     "levelsInfo": [
-        "./",
-        "./",
-        "./"
+        "./info/levels/level01.json",
+        "./info/levels/level02.json",
+        "./info/levels/level03.json"
     ],
     "playerInfo": [
-        "./"
+        "./info/player/player.json"
     ],
     "monstersInfo": [
-        "./",
-        "./",
-        "./"
+        "./info/monsters/greenDino.json",
+        "./info/monsters/redDino.json",
+        "./info/monsters/yellowDino.json"
     ],
     "audioInfo": [
-        "./"
+        "./info/audio/audio.json"
+    ],
+    "startingStates": [
+        "./info/startingStates/startingStates.json"
     ]
 }
