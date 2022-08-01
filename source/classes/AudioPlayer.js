@@ -1,3 +1,5 @@
+import {importAudio} from "../helpers/importAudio.js"
+
 const audioPaths = {
 
     // Music
@@ -25,7 +27,7 @@ const audioPaths = {
 //     audioFiles[key] = importAudio(audioPaths[key]);
 // }
 
-class AudioPlayer {
+export class AudioPlayer {
     constructor() {
 
         this.isActive = true;

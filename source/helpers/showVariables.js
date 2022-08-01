@@ -6,7 +6,7 @@
 
 // The table is Styled on style.css, need to classList the needed classes
 
-function showVariables(objectName, gameState, gameObject) {
+export function showVariables(objectName, gameState, gameObject) {
 
     if (gameState.loopFrame <= 0) {
         const newTable = document.createElement("table");
@@ -14,7 +14,7 @@ function showVariables(objectName, gameState, gameObject) {
         tableHeader.innerText = objectName;
         newTable.appendChild(tableHeader);
         const rows = [];
-        for (key in gameObject) {
+        for (const key in gameObject) {
 
             const newRow = document.createElement("tr");
 
@@ -43,7 +43,7 @@ function showVariables(objectName, gameState, gameObject) {
         document.querySelector("#variablesDisplayContainer").appendChild(newTable);
     
     } else {
-        for (key in gameObject) {
+        for (const key in gameObject) {
             document.getElementById(key).innerText = gameObject[key];
         }
     }

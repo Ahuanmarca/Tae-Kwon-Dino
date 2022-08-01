@@ -1,4 +1,4 @@
-class GameState {
+export class GameState {
     constructor() {
 
         this.isActive = false; // TODO Chek notes at the end
@@ -46,7 +46,7 @@ class GameState {
         onTransition: () => this.toggleBooleans(this.validStates.onTransition),
         acceptingInput: () => this.toggleBooleans(this.validStates.acceptingInput),
     }
-   
+
     // newState is the key of the property that will become true, the rest will become false
     toggleBooleans(newState) {
         for (let key in this) {

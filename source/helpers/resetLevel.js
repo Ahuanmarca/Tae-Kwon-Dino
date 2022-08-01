@@ -1,4 +1,4 @@
-function resetLevel(currentLevel, currentPlayer) {
+export function resetLevel(currentLevel, currentPlayer) {
     console.log("Restarting Player & Monsters Positions");
 
     const playerPosition = currentLevel.startingState.playerPosition;

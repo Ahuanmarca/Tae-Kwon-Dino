@@ -1,3 +1,16 @@
+import { Player } from './source/classes/Characters.js'
+import { GameState } from './source/classes/GameState.js'
+import { Level } from './source/classes/Level.js'
+import { InputHandler } from './source/classes/InputHandler.js'
+import { MiniMap } from './source/classes/MiniMap.js'
+import { Viewport } from './source/classes/Viewport.js'
+import { AudioPlayer } from './source/classes/AudioPlayer.js'
+
+import { importImage } from './source/helpers/importImage.js'
+import { getMonsters } from './source/helpers/getMonsters.js'
+import { showVariables } from './source/helpers/showVariables.js'
+import { resetLevel } from './source/helpers/resetLevel.js'
+
 /*
     ╭━━━━╮╱╱╱╱╱╭╮╭━╮╱╱╱╱╱╱╱╱╱╱╭━━━╮
     ┃╭╮╭╮┃╱╱╱╱╱┃┃┃╭╯╱╱╱╱╱╱╱╱╱╱╰╮╭╮┃
@@ -35,12 +48,12 @@ async function unpackToDict(arrPack) {
 
     const levelsInfo = await unpackToArray(gameInfo.levelsInfo);
     const playerInfo = await fetchJson(gameInfo.playerInfo);
-    
+
     // TODO This wont' allow to have multiple monsters with the same name!!
     const monstersInfo = await unpackToDict(gameInfo.monstersInfo);
 
     const startingStates = await fetchJson(gameInfo.startingStates);
- 
+
     // startingStates go with levelsInfo items
     for (let i = 0; i < levelsInfo.length; i++) {
         levelsInfo[i].startingState = startingStates[i];
@@ -72,7 +85,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
     const currentPlayer = new Player({x: 40, y: 100}, spriteInfo);
     let currentMonsters = levels[gameState.currentLevel].monsters;
-    
+
     const input = new InputHandler();
     const currentMiniMap = new MiniMap(levels[gameState.currentLevel], currentPlayer, miniMapScale);
     const currentViewPort = new Viewport(levels[gameState.currentLevel], currentPlayer);
@@ -96,7 +109,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     canvas2.height = CANVAS_HEIGHT * miniMapScale;
 
 
-    /*        
+    /*
     █▀▀ ▄▀█ █▀▄▀█ █▀▀   █░░ █▀█ █▀█ █▀█
     █▄█ █▀█ █░▀░█ ██▄   █▄▄ █▄█ █▄█ █▀▀ */
 
@@ -116,21 +129,21 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
             // Viewport: renders tiles, player and background drawings
             currentViewPort.update(levels[gameState.currentLevel], currentPlayer, currentMonsters, gameState, context);
-    
+
             // Minimap
             currentMiniMap.update(levels[gameState.currentLevel], currentPlayer, miniContext);
-    
+
             currentPlayer.state.isTakingDamage = false;
-    
+
             // Damage from monsters
             for (let i = 0; i < currentMonsters.length; i++) {
                 if (currentPlayer.testCollition(currentMonsters[i])) {
                     currentPlayer.state.isTakingDamage = true;
                     currentPlayer.state.currentHealth -= 1;
                     // currentMonsters[i].metadata.soundFX.bite.play(); // TODO Refactor to Audio Player
-                }            
+                }
             }
-    
+
             // Audio Player
             audioPlayer.update(currentPlayer);
 
@@ -183,7 +196,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
         showVariables("gameState", gameState, gameState);
         // showVariables("currentViewPort", gameState, currentViewPort);
         // console.log(gameState.isActive);
-        
+
         gameState.updateFrames();
         requestAnimationFrame(animate);
     }

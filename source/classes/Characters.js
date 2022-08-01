@@ -1,5 +1,8 @@
+import { importImage } from '../helpers/importImage.js'
+import { getAnimations } from '../helpers/getAnimations.js'
+import { fakeKeypress } from '../helpers/fakeKeypress.js'
 
-class Character {
+export class Character {
     constructor(position, spriteInfo) {
         
         this.metadata = {
@@ -437,17 +440,15 @@ class Character {
 
         return [previousGroundLevel > currentLevel.levelHeight, nextGroundLevel > currentLevel.levelHeight]
     }
-
-
 } // ! Character Class definition ends here !!
 
 
-class Player extends Character {
+export class Player extends Character {
 
 }
 
 
-class Monster extends Character {
+export class Monster extends Character {
 
     // TODO Create different AIs for every mosnter
     // Some code is unactive but will be used later
