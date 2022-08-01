@@ -15,7 +15,7 @@ export class GameState {
 
         this.currentMonsters = undefined;
 
-        this.validStates = { // TODO Chek notes at the end
+        this.validStates = {
             isActive: "isActive",
             onTitle: "onTitle",
             onGameOver: "onGameOver",
@@ -38,7 +38,7 @@ export class GameState {
         }
     }
 
-    setState = { // TODO Chek notes at the end
+    setState = {
         onTitle: () => this.toggleBooleans(this.validStates.onTitle),
         isActive: () => this.toggleBooleans(this.validStates.isActive),
         onGameOver: () => this.toggleBooleans(this.validStates.onGameOver),

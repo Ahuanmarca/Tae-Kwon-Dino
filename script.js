@@ -49,7 +49,6 @@ async function unpackToDict(arrPack) {
     const levelsInfo = await unpackToArray(gameInfo.levelsInfo);
     const playerInfo = await fetchJson(gameInfo.playerInfo);
 
-    // TODO This wont' allow to have multiple monsters with the same name!!
     const monstersInfo = await unpackToDict(gameInfo.monstersInfo);
 
     const startingStates = await fetchJson(gameInfo.startingStates);
@@ -140,12 +139,10 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 if (currentPlayer.testCollition(currentMonsters[i])) {
                     currentPlayer.state.isTakingDamage = true;
                     currentPlayer.state.currentHealth -= 1;
-                    // currentMonsters[i].metadata.soundFX.bite.play(); // TODO Refactor to Audio Player
                 }
             }
 
-            // Audio Player
-            audioPlayer.update(currentPlayer);
+
 
             // Trigger game over screen
             if (currentPlayer.state.currentHealth <= 0) {
@@ -153,8 +150,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
             }
 
             // Go to next level
-            // TODO Clean hardcoded value(s)
-            if (currentPlayer.state.x >= levels[gameState.currentLevel].length - currentPlayer.metadata.spriteWidth - 16) {
+            if (currentPlayer.state.x >= levels[gameState.currentLevel].length - currentPlayer.metadata.spriteWidth - 16) { // TODO hardcoded
                 gameState.increaseLevel();
                 resetLevel(levels[gameState.currentLevel], currentPlayer)
             }
@@ -190,6 +186,9 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT
             );
         }
+
+        // Audio Player
+        audioPlayer.update(currentPlayer, gameState);
 
         // Debugger
         showVariables("player state", gameState, currentPlayer.state);

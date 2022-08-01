@@ -39,8 +39,7 @@ export function showVariables(objectName, gameState, gameObject) {
             newTable.appendChild(row);
         }
 
-        // TODO I don't like hardcoding the ID from the DOM
-        document.querySelector("#variablesDisplayContainer").appendChild(newTable);
+        document.querySelector("#variablesDisplayContainer").appendChild(newTable); // id hardcoded from the DOM
     
     } else {
         for (const key in gameObject) {

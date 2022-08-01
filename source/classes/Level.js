@@ -117,7 +117,8 @@ export function getTileMap(levelInfo) {
     });
 
 
-    const levelLength = tileMapString.length / 2; // TODO Don't use hard coded value
+    // TODO next line will cause problem when tileMapString gets more lines, need to refactor hardcoded value
+    const levelLength = tileMapString.length / 2;
     const tileWidth = levelInfo.metadata.tileWidth;
     const levelHeight = levelInfo.metadata.levelHeight;
 

@@ -3,12 +3,12 @@ import {importAudio} from "../helpers/importAudio.js"
 const audioPaths = {
 
     // Music
-    gameStartScreen: `../../assets/music/gameStart_expansion.ogg`,
-    gameOverScreen: `../../assets/music/gameOver_melodicGameOver.wav`,
-    gameEndingScreen: `../../assets/music/gameEnding_joyful.ogg`,
-    level_01: `../../assets/music/level01_exploration.ogg`,
-    level_02: `../../assets/music/level02_GoingUp.ogg`,
-    level_03: `../../assets/music/level03_fantasyDragon.ogg`,
+    onTitle: `../../assets/music/gameStart_expansion.ogg`,
+    onGameOver: `../../assets/music/gameOver_melodicGameOver.wav`,
+    onGameEnding: `../../assets/music/gameEnding_joyful.ogg`,
+    level01: `../../assets/music/level01_exploration.ogg`,
+    level02: `../../assets/music/level02_GoingUp.ogg`,
+    level03: `../../assets/music/level03_fantasyDragon.ogg`,
 
     // Sound FX
     jumpStart: `../../assets/sfx/tinysized/jumpStart.wav`,
@@ -22,10 +22,6 @@ const audioPaths = {
     killMonster: `../../assets/sfx/gfx/Retro-8-bit-damage-571.wav`,
 }
 
-// const audioFiles = {}
-// for (key in audioPaths) {
-//     audioFiles[key] = importAudio(audioPaths[key]);
-// }
 
 export class AudioPlayer {
     constructor() {
@@ -34,21 +30,21 @@ export class AudioPlayer {
 
         this.currentTrack = { // can contain only booleans
             none: true,
-            gameStartScreen: false,
-            gameOverScreen: false,
-            gameEndingScreen: false,
+            onTitle: false,
+            onGameOver: false,
+            onGameEnding: false,
             level01: false,
             level02: false,
             level03: false,
         }
 
         this.music = {
-            gameStartScreen: importAudio(audioPaths.gameStartScreen),
-            gameOverScreen: importAudio(audioPaths.gameOverScreen),
-            gameEndingScreen: importAudio(audioPaths.gameEndingScreen),
-            level_01: importAudio(audioPaths.level_01),
-            level_02: importAudio(audioPaths.level_02),
-            level_03: importAudio(audioPaths.level_03),
+            onTitle: importAudio(audioPaths.onTitle),
+            onGameOver: importAudio(audioPaths.onGameOver),
+            onGameEnding: importAudio(audioPaths.onGameEnding),
+            level01: importAudio(audioPaths.level01),
+            level02: importAudio(audioPaths.level02),
+            level03: importAudio(audioPaths.level03),
         }
 
         this.sfx = {
@@ -74,9 +70,12 @@ export class AudioPlayer {
         }
     }
 
-    update(currentPlayer) {
+    update(currentPlayer, gameState) {
         this.updatePlayerState(currentPlayer);
-        this.isActive && this.playPlayerSounds();
+        this.isActive && this.playPlayerSounds(currentPlayer);
+        this.updateCurrentTrack(gameState);
+        this.playGameMusic();
+        // this.updateGameState(gameState);
     }
 
     updatePlayerState(currentPlayer) {
@@ -99,22 +98,69 @@ export class AudioPlayer {
         return turnedTrue;
     }
 
-    playPlayerSounds() {
+    playPlayerSounds(currentPlayer) {
         const newActions = this.detectBooleanChanges(this.playerState);
 
         // Play the sounds!
+
+        // Sounds played only when the state changes from false to true
         newActions.indexOf("isJumping") != -1 && this.sfx.jumpStart.play();
         newActions.indexOf("isGrounded") != -1 && this.sfx.jumpLand.play();
+
+        // Sounds played when some condition is true
+        currentPlayer.state.isTakingDamage && this.sfx.bite.play();
+
+        // Checking range to avoid looping sound
+        // TODO Find a better way?
+        if (currentPlayer.state.y > 480 && currentPlayer.state.y < 600) {
+            this.sfx.falling.play();
+            setTimeout(() => {
+                this.sfx.fallingHitBottom.play();
+            }, 1000)
+        }
+    }
+
+    // updateGameState(gameState) { // ! Not yet in use
+    //     this.gameState.old = Object.assign({}, this.gameState.new);
+    //     this.gameState.new = Object.assign({}, gameState);
+    // }
+
+
+    updateCurrentTrack(gameState) {
+        gameState.currentLevel === 0 && this.toggleBooleans("level01");
+        gameState.currentLevel === 1 && this.toggleBooleans("level02");
+        gameState.currentLevel === 2 && this.toggleBooleans("level03");
+        gameState.onTitle && this.toggleBooleans("onTitle");
+        gameState.onGameOver && this.toggleBooleans("onGameOver");
+        gameState.onGameEnding && this.toggleBooleans("onGameEnding");
+        gameState.onTransition && this.toggleBooleans("onTransition");
+    }
+
+    playGameMusic() {
+
+        // ! Problem
+        // Music loops. That's ok most of the time, but is wrong for game over.
+        // Maybe consider that music as a sound FX instead?
+        // TODO... fix the problem!
+
+        // TODO
+        // I want the music to have a little delay after starting
+        // Can't use setTimeout here because it will interrupt the loop
+        // I think I need to start playin the music exactly when the state changes,
+        // ...then keep playing it when the state stays the same...
+
+        for (let key in this.currentTrack) {
+
+            if (this.currentTrack[key]) {
+                this.music[key].play();
+            } else {
+                this.music[key] && this.music[key].pause();
+            }
+
+        }
     }
 
 
-
-
-
-    updateGameState(gameState) { // ! Not yet in use
-        this.gameState.old = Object.assign({}, this.gameState.new);
-        this.gameState.new = Object.assign({}, gameState);
-    }
 
     // accepts dictionary that has only booleans
     // toTrue is key of property that will become true, others will become false

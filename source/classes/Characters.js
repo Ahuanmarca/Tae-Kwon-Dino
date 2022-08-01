@@ -95,7 +95,6 @@ export class Character {
         this.updateState(input, currentLevel);
         this.updatePosition(input, currentLevel);
         if (this.state.y > currentLevel.levelHeight*2) {
-            // this.metadata.soundFX.attack.play(); // TODO Refactor to AudioPlayer
             this.fallDamage();
         }
         this.updateAnimation();
@@ -240,7 +239,6 @@ export class Character {
         if (ArrowUp && this.state.isGrounded) {
             this.state.velocityY = this.state.jumpForce;
             this.state.velocityX *= this.state.runSpeedMultiplier; // ! Beware, reusing multiplier for different purpose
-            // this.metadata.sound && this.metadata.soundFX.jumpStart.play(); // TODO Refactor to AudioPlayer
         }
     }
 
@@ -262,10 +260,6 @@ export class Character {
         if (!this.state.isGrounded) {
             this.state.velocityY += level.gravity;
         } 
-        // else {
-            // this.state.y = this.state.groundLevel - this.metadata.spriteHeight;
-            // TODO the magnet effect to fix the choppy animation on the down ramp, but is causing a super jump
-        // }
     }
 
     horizontalFriction(level) {
@@ -282,13 +276,7 @@ export class Character {
 
     applyFloorLimit() {
         if (this.state.y > this.state.groundLevel - this.metadata.spriteHeight) {
-            
             this.state.y = this.state.groundLevel - this.metadata.spriteHeight;
-
-            if (this.state.isJumping === true) {
-                // this.metadata.sound && this.metadata.soundFX.jumpLand.play(); // TODO Refactor to AudioPlayer
-            }
-
             this.state.velocityY = 0;
         }
     }
@@ -410,9 +398,8 @@ export class Character {
         }
     }
 
-    // ! I think this is too complicated for just finding a barrier
+    
     // TODO Can I use the boundingBox() function instead of all this?
-
     touchingBarrier(currentLevel) {
 
         const tolerance = 30;
@@ -450,11 +437,7 @@ export class Player extends Character {
 
 export class Monster extends Character {
 
-    // TODO Create different AIs for every mosnter
     // Some code is unactive but will be used later
-    // I want different AIs for every mosnter
-    // Some mosnters need the level and character information
-    // i.e. the monster that follows the player needs player and level info
 
     generateInput(currentLevel, currentPlayer) {
         if (this.metadata.primaryAction === "patrol") {
@@ -473,11 +456,9 @@ export class Monster extends Character {
 
     patrolPlatform() {
 
-        // TODO: FIX THIS !!
-        // ! Problem will show on other behaviors 
-        // Currently checking this.state.righTile for undefined because
-        // it begins as undefined and only updates on the next loop...
-        // State should always be defined by the time I need it!!
+        // !Problem: Need to ckeck if rightTime is null because it's indexed before it's defined
+        // TODO: Try to fix it, so I can avoid the nesting
+        // Problem is also happening on other behaviors. Will happen on every behavior, I think
 
         if (this.state.rightTile) {
             
