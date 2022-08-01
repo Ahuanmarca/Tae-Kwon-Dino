@@ -1,7 +1,7 @@
 
 // TODO Don't use hard coded values !!
 
-class Viewport {
+export class Viewport {
     constructor(level, player) {
         
         this.vpWidth = 640;

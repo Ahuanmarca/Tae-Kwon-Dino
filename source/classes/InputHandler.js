@@ -3,7 +3,7 @@
 //      Number of keys being pressed
 //      Dictionary with pressed keys as booleans 
 
-class InputHandler {
+export class InputHandler {
     constructor() {
         this.keys = [];
         this.keysDict = {

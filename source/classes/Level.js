@@ -96,7 +96,7 @@ export class Tile {
 }
 
 
-function createTiles(tilesInfo) {
+export function createTiles(tilesInfo) {
     const tiles = {};
     tilesInfo.forEach(tile => {
         tiles[tile.code] = new Tile(tile)
@@ -105,7 +105,7 @@ function createTiles(tilesInfo) {
 }
 
 
-function getTileMap(levelInfo) {
+export function getTileMap(levelInfo) {
 
     let tileMapString = "";
     levelInfo.tileMapString.forEach(line => {

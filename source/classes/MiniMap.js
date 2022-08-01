@@ -1,11 +1,11 @@
-miniMapConfig = {
+const miniMapConfig = {
     surfaceColor: "brown",
     surfaceWidth: 1,
     playerBoxLineWidth: 1,
 }
 
 
-class MiniMap {
+export class MiniMap {
 
     constructor(level, player, scale) {
 
