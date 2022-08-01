@@ -23,7 +23,7 @@ I need to know:
 */
 
 
-function getAnimations(spriteInfo) {
+export function getAnimations(spriteInfo) {
 
     const spriteCoordinates = {};
 

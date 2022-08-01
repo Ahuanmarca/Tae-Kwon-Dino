@@ -1,3 +1,5 @@
+import { importImage } from '../helpers/importImage.js'
+
 // Contents:
 //      class Level
 //      class Tile
@@ -5,7 +7,7 @@
 //      class Background
 
 
-class Level {
+export class Level {
     constructor(levelInfo) {
         this.level = levelInfo.metadata.level;
         this.name = levelInfo.metadata.name;
@@ -69,7 +71,7 @@ class Level {
 }
 
 
-class Tile {
+export class Tile {
     constructor(tileInfo) {
         const { name, 
             u, 
@@ -107,7 +109,7 @@ function getTileMap(levelInfo) {
 
     let tileMapString = "";
     levelInfo.tileMapString.forEach(line => {
-        for (char of line) {
+        for (const char of line) {
             if (char != " ") {
                 tileMapString = tileMapString + char;
             }
@@ -121,7 +123,7 @@ function getTileMap(levelInfo) {
 
     const tileMap = {}
 
-    for (i = 0; i < levelLength; i++) {
+    for (let i = 0; i < levelLength; i++) {
         const tile = {};
         tile.type = tileMapString[i];
         tile.y = levelHeight - (parseInt(tileMapString[i + levelLength])+1)*64;
@@ -136,7 +138,7 @@ function getTileMap(levelInfo) {
 }
 
 
-class Layer {
+export class Layer {
     constructor(imageURL, depth, width, height) {
 
         this.imageURL = imageURL;
@@ -182,7 +184,7 @@ class Layer {
 
 // The Background class collects all layers and controls them
 
-class Background {
+export class Background {
     constructor(backgroundInfo) {
 
         this.width = backgroundInfo.metadata.width;
@@ -201,13 +203,13 @@ class Background {
 }
 
 
-function createBackground(backgroundInfo) {
+export function createBackground(backgroundInfo) {
     const createdBackground = new Background(backgroundInfo);
     return createdBackground;
 }
 
 
-function createLayers(backgroundInfo) {
+export function createLayers(backgroundInfo) {
     const layers = [];
     const { width, height, baseSpeed } = backgroundInfo.metadata;
 

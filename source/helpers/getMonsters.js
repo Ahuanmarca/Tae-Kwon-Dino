@@ -1,4 +1,6 @@
-function getMonsters(startingState, monstersInfo) {
+import { Monster } from '../classes/Characters.js'
+
+export function getMonsters(startingState, monstersInfo) {
     const monsterArray = [];
     for (let monster of startingState.monsters) {
         //                            First argument = position,     second argument = Info
