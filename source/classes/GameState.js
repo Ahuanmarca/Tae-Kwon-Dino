@@ -1,9 +1,7 @@
 class GameState {
     constructor(gameInfo) {
 
-        this.gameTitle = gameInfo.gameTitle;
-
-        this.isRunning = false; // TODO Chek notes at the end
+        this.isActive = false; // TODO Chek notes at the end
         this.onTitle = true;
         this.onGameOver = false;
         this.onGameEnding = false;
@@ -15,8 +13,10 @@ class GameState {
         this.loopFrame = 0;
         this.staggerFrames = 10;
 
+        this.currentMonsters = undefined;
+
         this.validStates = { // TODO Chek notes at the end
-            isRunning: "isRunning",
+            isActive: "isActive",
             onTitle: "onTitle",
             onGameOver: "onGameOver",
             onGameEnding: "onGameEnding",
@@ -40,7 +40,7 @@ class GameState {
 
     setState = { // TODO Chek notes at the end
         onTitle: () => this.toggleBooleans(this.validStates.onTitle),
-        isRunning: () => this.toggleBooleans(this.validStates.isRunning),
+        isActive: () => this.toggleBooleans(this.validStates.isActive),
         onGameOver: () => this.toggleBooleans(this.validStates.onGameOver),
         onGameEnding: () => this.toggleBooleans(this.validStates.onGameEnding),
         onTransition: () => this.toggleBooleans(this.validStates.onTransition),
@@ -50,7 +50,7 @@ class GameState {
     toggleBooleans(newState) {
         for (let key in this) {
             if (typeof this[key] === 'boolean') {
-                this[key] = key === newState ? true : false;
+                this[key] = key === newState;
             }
         }
     }

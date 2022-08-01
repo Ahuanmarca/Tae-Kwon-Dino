@@ -47,7 +47,6 @@ function showVariables(objectName, gameState, gameObject) {
             document.getElementById(key).innerText = gameObject[key];
         }
     }
-
 }
 
 // const animationLength = player.metadata.animations[player.state.actionSprite].length;

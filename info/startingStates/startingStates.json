@@ -4,6 +4,7 @@
         "playerPosition": [40, 200],
         "monsters": [
             ["greenDino", 500, 250],
+            ["greenDino", 1150, 450],
             ["redDino", 1800, 450]
         ]
     },
@@ -12,6 +13,7 @@
         "playerPosition": [40, 200],
         "monsters": [
             ["greenDino", 500, 250],
+            ["redDino", 950, 450],
             ["redDino", 1800, 450]
         ]
     },

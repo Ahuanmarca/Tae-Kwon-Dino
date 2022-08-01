@@ -35,7 +35,10 @@ async function unpackToDict(arrPack) {
 
     const levelsInfo = await unpackToArray(gameInfo.levelsInfo);
     const playerInfo = await fetchJson(gameInfo.playerInfo);
+    
+    // TODO This wont' allow to have multiple monsters with the same name!!
     const monstersInfo = await unpackToDict(gameInfo.monstersInfo);
+
     const startingStates = await fetchJson(gameInfo.startingStates);
  
     // startingStates go with levelsInfo items
@@ -100,8 +103,8 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
         context.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
-        if (gameState.isRunning) {
-    
+        if (gameState.isActive) {
+
             // Player: updates state, position, movement
             currentPlayer.update(input, levels[gameState.currentLevel]);
 
@@ -115,10 +118,6 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     
             // Minimap
             currentMiniMap.update(levels[gameState.currentLevel], currentPlayer, miniContext);
-    
-            // Debugger
-            showVariables("currentPlayer.state", gameState, currentPlayer.state);
-            // showVariables("currentViewPort", gameState, currentViewPort);
     
             currentPlayer.state.isTakingDamage = false;
     
@@ -140,15 +139,13 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
             // TODO Clean hardcoded value(s)
             if (currentPlayer.state.x >= levels[gameState.currentLevel].length - currentPlayer.metadata.spriteWidth - 16) {
                 gameState.increaseLevel();
-                currentPlayer.state.x = 40; // TODO Refactor to game restarter function
-                currentMonsters[0].state.x = 400; // TODO Refactor to game restarted function
+                resetLevel(levels[gameState.currentLevel], currentPlayer)
             }
 
-            gameState.updateFrames();
+
 
         }
 
-        // TODO Create a gameState Class, with methods that update the state
         // TODO Need some function to restore the initial state of the levels
 
 
@@ -160,7 +157,8 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
             );
 
             if (input.keysDict.KeyQty > 0) {
-                gameState.setState.isRunning();
+                gameState.setState.isActive();
+
             }
         }
 
@@ -171,13 +169,6 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 importImage("./assets/other/game_over.png"),
                 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT
             );
-
-            if (input.keysDict.KeyQty > 0) {
-                gameState.setState.onTitle();
-                currentPlayer.state.x = 40; // TODO Refactor
-                currentPlayer.state.currentHealth = 50; // TODO Refactor
-                currentMonsters[0].state.x = 400; // TODO Refactor
-            }
         }
         
 
@@ -187,25 +178,32 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 importImage("./assets/other/game_ending.png"),
                 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT
             );
-
-            if (input.keysDict.KeyQty > 0) {
-                gameState.setState.onTitle();
-                currentPlayer.state.x = 40; // TODO Refactor to game restarter
-                currentPlayer.state.currentHealth = 50; // TODO Refactor to game restarter
-                currentMonsters[0].state.x = 400; // TODO Refactor to game restarter
-            }
         }
+
+        // Debugger
+        showVariables("player state", gameState, currentPlayer.state);
+        showVariables("gameState", gameState, gameState);
+        // showVariables("currentViewPort", gameState, currentViewPort);
+        // console.log(gameState.isActive);
+        
+        gameState.updateFrames();
 
         requestAnimationFrame(animate);
     }
 
     animate();
 
-    console.log("currentLevel", levels[gameState.currentLevel]);
-    console.log("currentPlayer", currentPlayer);
-    console.log("currentMonsters", currentMonsters);
-    console.log('currentViewPort', currentViewPort);
-    console.log('currentMiniMap', currentMiniMap);
+    // for (let level of levels) {
+    //     console.log("monsters:", level.monsters);
+    //     console.log("startingState", level.startingState);
+    // }
+
+
+    // console.log("currentLevel", levels[gameState.currentLevel]);
+    // console.log("currentPlayer", currentPlayer);
+    // console.log("currentMonsters", currentMonsters);
+    // console.log('currentViewPort', currentViewPort);
+    // console.log('currentMiniMap', currentMiniMap);
 
 
 }
