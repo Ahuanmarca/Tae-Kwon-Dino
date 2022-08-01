@@ -77,6 +77,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     const currentMiniMap = new MiniMap(levels[gameState.currentLevel], currentPlayer, miniMapScale);
     const currentViewPort = new Viewport(levels[gameState.currentLevel], currentPlayer);
 
+    const audioPlayer = new AudioPlayer();
 
     /*
     █▀▀ ▄▀█ █▄░█ █░█ ▄▀█ █▀
@@ -130,6 +131,9 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 }            
             }
     
+            // Audio Player
+            audioPlayer.update(currentPlayer);
+
             // Trigger game over screen
             if (currentPlayer.state.currentHealth <= 0) {
                 gameState.setState.onGameOver();
@@ -146,9 +150,6 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
         }
 
-        // TODO Need some function to restore the initial state of the levels
-
-
         // Start Screen
         if (gameState.onTitle) {
             context.drawImage(
@@ -158,10 +159,8 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
             if (input.keysDict.KeyQty > 0) {
                 gameState.setState.isActive();
-
             }
         }
-
 
         // Game Over Screen
         if (gameState.onGameOver) {
@@ -170,7 +169,6 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT
             );
         }
-        
 
         // Game Ending Screen
         if (gameState.onGameEnding) {
@@ -187,17 +185,10 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
         // console.log(gameState.isActive);
         
         gameState.updateFrames();
-
         requestAnimationFrame(animate);
     }
 
     animate();
-
-    // for (let level of levels) {
-    //     console.log("monsters:", level.monsters);
-    //     console.log("startingState", level.startingState);
-    // }
-
 
     // console.log("currentLevel", levels[gameState.currentLevel]);
     // console.log("currentPlayer", currentPlayer);
