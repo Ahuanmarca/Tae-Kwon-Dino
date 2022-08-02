@@ -26,7 +26,7 @@ const audioPaths = {
 export class AudioPlayer {
     constructor() {
 
-        this.isActive = true;
+        this.isActive = false;
 
         this.currentTrack = { // can contain only booleans
             none: true,
@@ -74,7 +74,7 @@ export class AudioPlayer {
         this.updatePlayerState(currentPlayer);
         this.isActive && this.playPlayerSounds(currentPlayer);
         this.updateCurrentTrack(gameState);
-        this.playGameMusic();
+        this.isActive && this.playGameMusic();
         // this.updateGameState(gameState);
     }
 
@@ -120,11 +120,14 @@ export class AudioPlayer {
         }
     }
 
-    // updateGameState(gameState) { // ! Not yet in use
+    // TODO
+    // Needed to check if state just changed
+    // I think I need this to avoid unwanted loops
+    
+    // updateGameState(gameState) { // TODO Put to use!
     //     this.gameState.old = Object.assign({}, this.gameState.new);
     //     this.gameState.new = Object.assign({}, gameState);
     // }
-
 
     updateCurrentTrack(gameState) {
         gameState.currentLevel === 0 && this.toggleBooleans("level01");
@@ -160,11 +163,9 @@ export class AudioPlayer {
         }
     }
 
-
-
     // accepts dictionary that has only booleans
     // toTrue is key of property that will become true, others will become false
-    toggleBooleans(toTrue) { // ! To switch current track, not yet in use
+    toggleBooleans(toTrue) {
         for (let key in this.currentTrack) {
             this.currentTrack[key] = key === toTrue;
         }

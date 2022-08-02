@@ -38,14 +38,6 @@ export class Character {
                 right: "right",
                 left: "left",
             },
-
-            // ! Trying to pass all this to an AudioPlayer Class !!
-            // soundFX: {
-            //     jumpStart: importAudio("assets/sounds/Jump-2.wav"),
-            //     jumpLand: importAudio("assets/sounds/jumpland.wav"),
-            //     bite: importAudio("assets/sounds/random2.wav"),
-            //     attack: importAudio("assets/sounds/tube-plastic-whoosh-01.wav"),
-            // },
         };
 
         this.state = {
@@ -114,6 +106,7 @@ export class Character {
     ╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱┃┃
     ╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╰╯
     -------------------------------------------
+    State Update
     Only updates state booleans
     Only cares about:
         - Input
@@ -195,6 +188,7 @@ export class Character {
     ┃┃┃┃┃┃╰╯┣╮╭┫┃━┫┃┃┃┃━┫┃┃┃╰╮
     ╰╯╰╯╰┻━━╯╰╯╰━━┻┻┻┻━━┻╯╰┻━╯
     ------------------------------
+    Movement
     Cares about state and position
     Should not use kbrd input
     ------------------------------ */
@@ -228,6 +222,33 @@ export class Character {
             if (Shift) {
                 ArrowRight && (this.state.velocityX += this.state.movementSpeed*this.state.runSpeedMultiplier);
                 ArrowLeft && (this.state.velocityX -= this.state.movementSpeed*this.state.runSpeedMultiplier);
+            }
+
+            // Push back
+            // TODO Push back must take away the control for an instant
+            // TODO Push back must turn the player so it faces the enemy, before doing the push back itself
+            // I need the enemy position
+            if (this.state.isTakingDamage) {
+
+                // ! Problem: when chasing monster from right to left, player forces throuhg monster
+                // TODO Fix it!
+
+                if (this.tmp > this.state.x) { // This means monster is to the right
+                    this.state.isFacingRight = true;                    
+                    this.state.isFacingLeft = false;
+                } else { // monster to the left
+                    this.state.isFacingRight = false;                    
+                    this.state.isFacingLeft = true;
+                }
+                
+                if (this.state.isFacingRight) {
+                    this.state.velocityX -= 7;
+                    this.state.velocityY -= 7;
+                } else {
+                    this.state.velocityX += 7;
+                    this.state.velocityY -= 7;
+                }
+
             }
         }
     }
@@ -292,6 +313,7 @@ export class Character {
     ╱╱╱╱┃┃
     ╱╱╱╱╰╯
     -------------------------------
+    Sprite Animation
     Update Sprite Animation
     Use State Info, don't use Input
     ------------------------------- */
@@ -337,6 +359,7 @@ export class Character {
     ┃╰━╯┃╭╮┃┃┃┣╮╭┫╭╮┣━━┃╭╯╰╯┃┃┃╭╮┣╮╭╮╭╯
     ╰━━━┻╯╰┻╯╰╯╰╯╰╯╰┻━━╯╰━━━┻╯╰╯╰╯╰╯╰╯
     -----------------------
+    Canvas Draw
     SPRITE CANVAS DRAWING
     ----------------------- */
 
@@ -369,6 +392,7 @@ export class Character {
     ╰━━━╯╰━┻┻━┻┻━┻┻━━┻━━╯
     𝓤 𝓽 𝓲 𝓵 𝓲 𝓽 𝓲 𝓮 𝓼
     -------------------------------------------
+    Utilities
     Convenience functions
     ------------------------------------------- */
 
@@ -380,22 +404,58 @@ export class Character {
         return [[tlX, tlY], [brX, brY]];
     }
 
+    // TODO I need to know different types of collition
+    // Player hits enemy from above
+    // Enemy is to the right when the collition happens
+    // Enemmy is to the left when the collition happens
+    // Can I use this function to return that as well?
     testCollition(gameObject) {
         const [tl, br] = this.boundingBox();
         const [_tl, _br] = gameObject.boundingBox();
 
         // collition happens if any of the two corners of gameObject is within our two corners
+
+        //  p_left   m_left    m_left   p_right    
+
+        // Top left of the Monster is inside of the player's bounding box
         if (tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1] ) {
             return true;
+        // Bottom right of the Monster is inside of player's bounding box
         } else if (tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1] )  {
             return true;
+            // Top left of player is inside Monster bounding box
         } else if (_tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1] ) {
             return true;
+        // Bottom right of player is inside Monster bounding box
         } else if (_tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1] )  {
             return true;
         } else {
             return false;
         }
+    }
+
+    getCollitionRelation(gameObject) {
+
+        const [tl, br] = this.boundingBox();
+        const [_tl, _br] = gameObject.boundingBox();
+
+        if (br[0] == _tl[0]) {
+
+            const toAttach = document.createElement("p");
+            toAttach.innerText = "fromRight"
+            document.querySelector("#toAttach").appendChild(toAttach);
+
+            return "fromRight";
+
+        } else if (tl[0] == _br[0]) {
+
+            const toAttach = document.createElement("p");
+            toAttach.innerText = "fromLeft"
+            document.querySelector("#toAttach").appendChild(toAttach);
+
+            return "fromLeft";
+        }
+
     }
 
     

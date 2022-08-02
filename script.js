@@ -82,7 +82,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
         levels.push(tmpLev);
     })
 
-    const currentPlayer = new Player({x: 40, y: 100}, spriteInfo);
+    const currentPlayer = new Player({x: 40, y: 100}, spriteInfo); // TODO rename spriteInfo
     let currentMonsters = levels[gameState.currentLevel].monsters;
 
     const input = new InputHandler();
@@ -139,9 +139,12 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 if (currentPlayer.testCollition(currentMonsters[i])) {
                     currentPlayer.state.isTakingDamage = true;
                     currentPlayer.state.currentHealth -= 1;
+
+                    currentPlayer.tmp = currentMonsters[i].state.x;
+
+                    // currentPlayer.getCollitionRelation(currentMonsters[i]);
                 }
             }
-
 
 
             // Trigger game over screen
@@ -208,6 +211,4 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     // console.log('currentViewPort', currentViewPort);
     // console.log('currentMiniMap', currentMiniMap);
 
-
 }
-

@@ -6,7 +6,7 @@ export class GameState {
         this.onGameOver = false;
         this.onGameEnding = false;
         this.onTransition = false;
-        this.acceptingInput = true;
+        this.acceptingInput = true; // TODO Actually use this
 
         this.currentLevel = 0;
         this.gameFrame = 0;
