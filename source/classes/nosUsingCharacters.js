@@ -228,12 +228,12 @@ export class Character {
             // TODO Push back must take away the control for an instant
             // TODO Push back must turn the player so it faces the enemy, before doing the push back itself
             // I need the enemy position
-            if (this.state.currentHealth > 0 && this.state.isTakingDamage) {
+            if (this.state.isTakingDamage) {
 
                 // ! Problem: when chasing monster from right to left, player forces throuhg monster
                 // TODO Fix it!
 
-                if (this.monsterX >= this.state.cX) { // This means monster is to the right
+                if (this.tmp > this.state.x) { // This means monster is to the right
                     this.state.isFacingRight = true;                    
                     this.state.isFacingLeft = false;
                 } else { // monster to the left
@@ -292,22 +292,14 @@ export class Character {
     }
 
     verticalFriction(level) {
-        if (this.state.currentHealth <= 0) {
-            return;
-        }
-
         this.state.velocityY *= level.verticalFriction;
     }
 
     applyFloorLimit() {
-
-        if (this.state.currentHealth > 0) {
-            if (this.state.y > this.state.groundLevel - this.metadata.spriteHeight) {
-                this.state.y = this.state.groundLevel - this.metadata.spriteHeight;
-                this.state.velocityY = 0;
-            }
+        if (this.state.y > this.state.groundLevel - this.metadata.spriteHeight) {
+            this.state.y = this.state.groundLevel - this.metadata.spriteHeight;
+            this.state.velocityY = 0;
         }
-
     }
 
 
@@ -423,22 +415,49 @@ export class Character {
 
         // collition happens if any of the two corners of gameObject is within our two corners
 
+        //  r🦖 < |👹  &&  |👹 < 🦖| && |🦖 < |👹 && |👹 < 🦖|    
+        
+        const collitionRelation = [false, false, false, false];
+        
+        collitionRelation[0] = ( // ? MONSTER COMES FROM THE RIGHT
+            tl[0] <= _tl[0] && // leftMost of Player < leftMost of Monster
+            _tl[0] <= br[0] && // leftMost of Monster < rightMost of Player
+            tl[1] <= _tl[1] && // topMost of Player < topMost of Mosnter
+            _tl[1] <= br[1] ) // topMost of Monster < bottomMost of Player
+
+        collitionRelation[1] = (tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1] ) // ? MONSTER COMING FROM THE LEFT
+        collitionRelation[2] = (_tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1] )
+        collitionRelation[3] = (_tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1] )
+
+        return collitionRelation;
+
         // Top left of the Monster is inside of the player's bounding box
-        if        (tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1] ) {
-            return true;
-        // Bottom right of the Monster is inside of player's bounding box
-        } else if (tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1] )  {
-            return true;
-            // Top left of player is inside Monster bounding box
-        } else if (_tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1] ) {
-            return true;
-        // Bottom right of player is inside Monster bounding box
-        } else if (_tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1] )  {
-            return true;
-        } else {
-            return false;
-        }
+        // if (
+        //     tl[0] <= _tl[0] && // leftMost of Player < leftMost of Monster
+        //     _tl[0] <= br[0] && // leftMost of Monster < rightMost of Player
+        //     tl[1] <= _tl[1] && // topMost of Player < topMost of Mosnter
+        //     _tl[1] <= br[1] ) { // topMost of Monster < bottomMost of Player
+        //     return true;
+        // // Bottom right of the Monster is inside of player's bounding box
+        // } else if (
+        //     tl[0] <= _br[0] && 
+        //     _br[0] <= br[0] && 
+        //     tl[1] <= _br[1] && 
+        //     _br[1] <= br[1] )  {
+        //     return true;
+        //     // Top left of player is inside Monster bounding box
+        // } else if (_tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1] ) {
+        //     return true;
+        // // Bottom right of player is inside Monster bounding box
+        // } else if (_tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1] )  {
+        //     return true;
+        // } else {
+        //     return false;
+        // }
     }
+
+
+    // ! Not in use, still doesn't work
 
     // getCollitionRelation(gameObject) {
 
@@ -506,11 +525,6 @@ export class Monster extends Character {
     // Some code is unactive but will be used later
 
     generateInput(currentLevel, currentPlayer) {
-
-        if (this.state.currentHealth <= 0) {
-            return fakeKeypress([]);
-        }
-
         if (this.metadata.primaryAction === "patrol") {
             return this.patrolPlatform();
         }
@@ -523,13 +537,6 @@ export class Monster extends Character {
                 return this.patrolPlatform();
             }
         }
-    }
-
-
-    die() {
-        this.state.currentHealth = 0;
-        this.state.isTakingDamage = true;
-        this.state.velocityY = 10;
     }
 
     patrolPlatform() {

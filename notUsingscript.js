@@ -10,7 +10,6 @@ import { importImage } from './source/helpers/importImage.js'
 import { getMonsters } from './source/helpers/getMonsters.js'
 import { showVariables } from './source/helpers/showVariables.js'
 import { resetLevel } from './source/helpers/resetLevel.js'
-import { fakeKeypress } from './source/helpers/fakeKeypress.js'
 
 /*
     ╭━━━━╮╱╱╱╱╱╭╮╭━╮╱╱╱╱╱╱╱╱╱╱╭━━━╮
@@ -119,9 +118,6 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
         if (gameState.isActive) {
 
-
-
-
             // Player: updates state, position, movement
             currentPlayer.update(input, levels[gameState.currentLevel]);
 
@@ -130,45 +126,50 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 currentMonster.update(currentMonster.generateInput(levels[gameState.currentLevel], currentPlayer), levels[gameState.currentLevel]);
             });
 
+
+
+            currentPlayer.state.isTakingDamage = false;
+
+            // Damage from monsters
+            for (let i = 0; i < currentMonsters.length; i++) {
+
+                // const toPrint = currentPlayer.testCollition(currentMonsters[i]).every(element => element === true);
+                // document.querySelector("#showTestCollition").innerText = currentPlayer.testCollition(currentMonsters[i]);
+
+                const tmp = () => {
+                    switch (currentPlayer.testCollition(currentMonsters[i])) {
+                    case [true, false, false, false]:
+                        return true;
+                    case [false, true, false, false]:
+                        return true;
+                    case [false, false, true, false]:
+                        return true;
+                    case [false, false, false, true]:
+                        return true;
+                    default:
+                        return false;
+                    }
+                }
+
+                console.log(currentPlayer.testCollition(currentMonsters[i]))
+                // console.log(tmp())
+
+                // if (currentPlayer.testCollition(currentMonsters[i])) {
+                if (tmp()) {
+                    currentPlayer.state.isTakingDamage = true;
+                    currentPlayer.state.currentHealth -= 1;
+
+                    currentPlayer.tmp = currentMonsters[i].state.x;
+
+                    // currentPlayer.getCollitionRelation(currentMonsters[i]);
+                }
+            }
+
             // Viewport: renders tiles, player and background drawings
             currentViewPort.update(levels[gameState.currentLevel], currentPlayer, currentMonsters, gameState, context);
 
             // Minimap
             currentMiniMap.update(levels[gameState.currentLevel], currentPlayer, miniContext);
-
-            currentPlayer.state.isTakingDamage = false;
-
-
-            // Collition with Monster 
-
-            for (let i = 0; i < currentMonsters.length; i++) {
-
-                let monster = currentMonsters[i];
-
-                if (monster.state.currentHealth > 0 && currentPlayer.testCollition(monster)) {
-
-                    console.log(currentPlayer.testCollition(monster));
-                    // TODO Update the y
-                    // We will need a tolerance here
-
-                    // Player kills monster
-                    if (currentPlayer.state.y < monster.state.y && currentPlayer.state.isFalling && currentPlayer.state.velocityY > 10) {
-                        console.log("KILLING!!");
-
-                        currentPlayer.state.velocityY -= 10;
-                        console.log("Monsted died!")
-                        monster.die();
-                    // Damage from monsters
-                    
-                    } else {
-                        console.log("NOT KILLING");
-                        currentPlayer.state.isTakingDamage = true;
-                        currentPlayer.state.currentHealth -= 1;
-                        currentPlayer.monsterX = monster.state.cX; // storing mosnter center into player    
-                    }
-                }
-            }
-
 
             // Trigger game over screen
             if (currentPlayer.state.currentHealth <= 0) {
@@ -180,8 +181,6 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 gameState.increaseLevel();
                 resetLevel(levels[gameState.currentLevel], currentPlayer)
             }
-
-
 
         }
 
