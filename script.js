@@ -126,11 +126,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 currentMonster.update(currentMonster.generateInput(levels[gameState.currentLevel], currentPlayer), levels[gameState.currentLevel]);
             });
 
-            // Viewport: renders tiles, player and background drawings
-            currentViewPort.update(levels[gameState.currentLevel], currentPlayer, currentMonsters, gameState, context);
 
-            // Minimap
-            currentMiniMap.update(levels[gameState.currentLevel], currentPlayer, miniContext);
 
             currentPlayer.state.isTakingDamage = false;
 
@@ -146,6 +142,11 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 }
             }
 
+            // Viewport: renders tiles, player and background drawings
+            currentViewPort.update(levels[gameState.currentLevel], currentPlayer, currentMonsters, gameState, context);
+
+            // Minimap
+            currentMiniMap.update(levels[gameState.currentLevel], currentPlayer, miniContext);
 
             // Trigger game over screen
             if (currentPlayer.state.currentHealth <= 0) {
@@ -157,8 +158,6 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 gameState.increaseLevel();
                 resetLevel(levels[gameState.currentLevel], currentPlayer)
             }
-
-
 
         }
 

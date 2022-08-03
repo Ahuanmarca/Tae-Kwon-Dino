@@ -415,8 +415,8 @@ export class Character {
 
         // collition happens if any of the two corners of gameObject is within our two corners
 
-        //  p_left   m_left    m_left   p_right    
-
+        //  r🦖 < |👹  &&  |👹 < 🦖| && |🦖 < |👹 && |👹 < 🦖|    
+        
         // Top left of the Monster is inside of the player's bounding box
         if (tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1] ) {
             return true;
@@ -433,6 +433,9 @@ export class Character {
             return false;
         }
     }
+
+
+    // ! Not in use, still doesn't work
 
     getCollitionRelation(gameObject) {
 
