@@ -417,49 +417,71 @@ export class Character {
 
         //  r🦖 < |👹  &&  |👹 < 🦖| && |🦖 < |👹 && |👹 < 🦖|    
         
+        const collitionRelation = [false, false, false, false];
+        
+        collitionRelation[0] = ( // ? MONSTER COMES FROM THE RIGHT
+            tl[0] <= _tl[0] && // leftMost of Player < leftMost of Monster
+            _tl[0] <= br[0] && // leftMost of Monster < rightMost of Player
+            tl[1] <= _tl[1] && // topMost of Player < topMost of Mosnter
+            _tl[1] <= br[1] ) // topMost of Monster < bottomMost of Player
+
+        collitionRelation[1] = (tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1] ) // ? MONSTER COMING FROM THE LEFT
+        collitionRelation[2] = (_tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1] )
+        collitionRelation[3] = (_tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1] )
+
+        return collitionRelation;
+
         // Top left of the Monster is inside of the player's bounding box
-        if (tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1] ) {
-            return true;
-        // Bottom right of the Monster is inside of player's bounding box
-        } else if (tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1] )  {
-            return true;
-            // Top left of player is inside Monster bounding box
-        } else if (_tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1] ) {
-            return true;
-        // Bottom right of player is inside Monster bounding box
-        } else if (_tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1] )  {
-            return true;
-        } else {
-            return false;
-        }
+        // if (
+        //     tl[0] <= _tl[0] && // leftMost of Player < leftMost of Monster
+        //     _tl[0] <= br[0] && // leftMost of Monster < rightMost of Player
+        //     tl[1] <= _tl[1] && // topMost of Player < topMost of Mosnter
+        //     _tl[1] <= br[1] ) { // topMost of Monster < bottomMost of Player
+        //     return true;
+        // // Bottom right of the Monster is inside of player's bounding box
+        // } else if (
+        //     tl[0] <= _br[0] && 
+        //     _br[0] <= br[0] && 
+        //     tl[1] <= _br[1] && 
+        //     _br[1] <= br[1] )  {
+        //     return true;
+        //     // Top left of player is inside Monster bounding box
+        // } else if (_tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1] ) {
+        //     return true;
+        // // Bottom right of player is inside Monster bounding box
+        // } else if (_tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1] )  {
+        //     return true;
+        // } else {
+        //     return false;
+        // }
     }
 
 
     // ! Not in use, still doesn't work
 
-    getCollitionRelation(gameObject) {
+    // getCollitionRelation(gameObject) {
 
-        const [tl, br] = this.boundingBox();
-        const [_tl, _br] = gameObject.boundingBox();
+    //     const [tl, br] = this.boundingBox();
+    //     const [_tl, _br] = gameObject.boundingBox();
 
-        if (br[0] == _tl[0]) {
+    //     if (br[0] == _tl[0]) {
 
-            const toAttach = document.createElement("p");
-            toAttach.innerText = "fromRight"
-            document.querySelector("#toAttach").appendChild(toAttach);
+    //         const toAttach = document.createElement("p");
+    //         toAttach.innerText = "fromRight"
+    //         document.querySelector("#toAttach").appendChild(toAttach);
 
-            return "fromRight";
+    //         return "fromRight";
 
-        } else if (tl[0] == _br[0]) {
+    //     } else if (tl[0] == _br[0]) {
 
-            const toAttach = document.createElement("p");
-            toAttach.innerText = "fromLeft"
-            document.querySelector("#toAttach").appendChild(toAttach);
+    //         const toAttach = document.createElement("p");
+    //         toAttach.innerText = "fromLeft"
+    //         document.querySelector("#toAttach").appendChild(toAttach);
 
-            return "fromLeft";
-        }
+    //         return "fromLeft";
+    //     }
 
-    }
+    // }
 
     
     // TODO Can I use the boundingBox() function instead of all this?
