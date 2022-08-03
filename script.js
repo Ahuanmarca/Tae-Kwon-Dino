@@ -135,15 +135,20 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
                 // const tmp = currentPlayer.testCollition(currentMonsters[i]).every(element => element === true);
 
-                switch (currentPlayer.testCollition(currentMonsters[i])) {
+                const tmp = () => {
+                    switch (currentPlayer.testCollition(currentMonsters[i])) {
                     case [true, false, false, false]:
                         // do something
+                        return true;
+                    case [false, true, false, false]:
+                        return true;
+                    default:
+                        return false;
+                    }
                 }
 
-
-
-                if (currentPlayer.testCollition(currentMonsters[i])) {
-                // if (tmp) {
+                // if (currentPlayer.testCollition(currentMonsters[i])) {
+                if (tmp) {
                     currentPlayer.state.isTakingDamage = true;
                     currentPlayer.state.currentHealth -= 1;
 
