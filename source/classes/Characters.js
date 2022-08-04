@@ -182,7 +182,10 @@ export class Character {
         this.state.groundLevel = currentLevel.getGroundHeight(this.state.cX);
     }
 
+    
     checkMonstersCollision (currentMonsters) {
+        this.state.isTakingDamage = false;
+        
         for (let i = 0; i < currentMonsters.length; i++) {
 
                 let monster = currentMonsters[i];
@@ -200,8 +203,8 @@ export class Character {
                         this.state.velocityY -= 10;
                         console.log("Monsted died!")
                         monster.die();
+                        
                     // Damage from monsters
-                    
                     } else {
                         console.log("NOT KILLING");
                         this.state.isTakingDamage = true;

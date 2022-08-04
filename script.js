@@ -119,9 +119,6 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
         if (gameState.isActive) {
 
-
-
-
             // Player: updates state, position, movement
             currentPlayer.update(input, levels[gameState.currentLevel], currentMonsters);
 
@@ -134,10 +131,9 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
             currentViewPort.update(levels[gameState.currentLevel], currentPlayer, currentMonsters, gameState, context);
 
             // Minimap
-            currentMiniMap.update(levels[gameState.currentLevel], currentPlayer, miniContext);
+            currentMiniMap.update(levels[gameState.currentLevel], currentPlayer, currentMonsters, miniContext);
 
-            currentPlayer.state.isTakingDamage = false;
-
+            // currentPlayer.state.isTakingDamage = false;
 
             // Trigger game over screen
             if (currentPlayer.state.currentHealth <= 0) {
@@ -149,8 +145,6 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
                 gameState.increaseLevel();
                 resetLevel(levels[gameState.currentLevel], currentPlayer)
             }
-
-
 
         }
 

@@ -31,19 +31,38 @@ export class MiniMap {
         }
     }
 
-    update(currentLevel, currentPlayer, miniContext) {
+    update(currentLevel, currentPlayer, currentMonsters, miniContext) {
         miniContext.clearRect(0, 0, this.width, this.height);
         this.drawSurfaceLine(currentLevel, miniContext);
-        this.drawPlayerBox(currentPlayer, miniContext);
+        this.drawPlayerBox(currentPlayer, miniContext, "#4d92bc");
+
+        currentMonsters.forEach(monster => {
+            this.drawPlayerBox(monster, miniContext, "#00FF00");
+        })
     }
 
     drawSurfaceLine(currentLevel, miniContext) {
 
         for (let key in currentLevel.tileMap) {
-
+            
             const scale = this.scale;
             const tile = currentLevel.tileMap[key];
             const { height, width, platform, slope, wall } = currentLevel.tiles[tile.type];
+            
+            const colorCodes = {
+                "_": "black",
+                ")": "brown", 
+                "(": "orange",
+                "[": "magenta",
+                "]": "pink",
+                ">": "blue",
+                "<": "green",
+                ".": "white",
+                "^": "purple",
+            }
+
+            let colorCode = colorCodes[tile.type];
+            
 
             const x = tile.x * scale;
             const y = tile.y * scale;
@@ -57,27 +76,49 @@ export class MiniMap {
 
             // Platform start and end
             //      each platforms draws from it's start to it's end
-            const platformStart = platform[1][0] * scale;
+            const platformStart = platform[1][0] * scale; // platform is two values that modify y position for drawing
             const platformEnd = platform[1][1] * scale;
 
             miniContext.beginPath();
-            miniContext.strokeStyle = miniMapConfig.surfaceColor;
+            miniContext.strokeStyle = colorCode;
             miniContext.lineWidth = miniMapConfig.surfaceWidth;
 
             // Draw platforms
             miniContext.moveTo(x+platformStart, y+slopeStart);
             miniContext.lineTo(x+platformEnd, y+slopeEnd);
+            // miniContext.stroke();
 
             // Draw walls
-            wall && miniContext.moveTo((x+platformEnd)-platformStart, y);
-            wall && miniContext.lineTo((x+platformEnd)-platformStart, bottom);
+            if (tile.type == "[" || tile.type == "]") {
+                miniContext.moveTo((x+platformEnd)-platformStart, y);
+                miniContext.lineTo((x+platformEnd)-platformStart, bottom);
+                // miniContext.stroke();
+            }
         
+            // Draw Ledges
+            if (tile.type == ")") {
+                // miniContext.strokeStyle = "#FFC0CB";
+                miniContext.moveTo( (x+platformEnd)-platformStart, y );
+                miniContext.lineTo( (x+platformEnd)-platformStart, bottom );
+                // miniContext.stroke();
+                // miniContext.strokeStyle = miniMapConfig.surfaceColor;
+            }
+
+            if (tile.type == "(") {
+                // miniContext.strokeStyle = "#FFC0CB";
+                miniContext.moveTo( (x+platformEnd)-platformStart, y );
+                miniContext.lineTo( (x+platformEnd)-platformStart, bottom );
+                // miniContext.stroke();
+                // miniContext.strokeStyle = miniMapConfig.surfaceColor;
+            }
+
             // Perform the stroke, unless the tile is a "Hole"
             tile.type != currentLevel.tileTypes.hole && miniContext.stroke();
+            // tile.type != currentLevel.tileTypes.hole;
         }
     }
 
-    drawPlayerBox(player, miniContext) {
+    drawPlayerBox(player, miniContext, color) {
 
         const x = player.state.x*this.scale;
         const y = player.state.y*this.scale;
@@ -85,7 +126,8 @@ export class MiniMap {
         const h = player.metadata.spriteHeight*this.scale;
 
         miniContext.beginPath();
-        miniContext.strokeStyle = "#4d92bc";
+        // miniContext.strokeStyle = "#4d92bc";
+        miniContext.strokeStyle = color;
         miniContext.lineWidth = miniMapConfig.playerBoxLineWidth;
 
         miniContext.moveTo(x,y);
