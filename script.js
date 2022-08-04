@@ -123,7 +123,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
 
             // Player: updates state, position, movement
-            currentPlayer.update(input, levels[gameState.currentLevel]);
+            currentPlayer.update(input, levels[gameState.currentLevel], currentMonsters);
 
             // Monsters behaviours
             currentMonsters.forEach(currentMonster => {
@@ -137,37 +137,6 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
             currentMiniMap.update(levels[gameState.currentLevel], currentPlayer, miniContext);
 
             currentPlayer.state.isTakingDamage = false;
-
-
-            // Collition with Monster 
-
-            for (let i = 0; i < currentMonsters.length; i++) {
-
-                let monster = currentMonsters[i];
-
-                if (monster.state.currentHealth > 0 && currentPlayer.testCollition(monster)) {
-
-                    console.log(currentPlayer.testCollition(monster));
-                    // TODO Update the y
-                    // We will need a tolerance here
-
-                    // Player kills monster
-                    if (currentPlayer.state.y < monster.state.y && currentPlayer.state.isFalling && currentPlayer.state.velocityY > 10) {
-                        console.log("KILLING!!");
-
-                        currentPlayer.state.velocityY -= 10;
-                        console.log("Monsted died!")
-                        monster.die();
-                    // Damage from monsters
-                    
-                    } else {
-                        console.log("NOT KILLING");
-                        currentPlayer.state.isTakingDamage = true;
-                        currentPlayer.state.currentHealth -= 1;
-                        currentPlayer.monsterX = monster.state.cX; // storing mosnter center into player    
-                    }
-                }
-            }
 
 
             // Trigger game over screen

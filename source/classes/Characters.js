@@ -83,13 +83,15 @@ export class Character {
         };
     }
 
-    update(input, currentLevel) {
+    // TODO: look into why currentMonsters is undefined 3/4 times
+    update(input, currentLevel, currentMonsters = []) {
         this.updateState(input, currentLevel);
         this.updatePosition(input, currentLevel);
         if (this.state.y > currentLevel.levelHeight*2) {
             this.fallDamage();
         }
         this.updateAnimation();
+        this.checkMonstersCollision(currentMonsters);
     }
 
     fallDamage() {
@@ -179,6 +181,37 @@ export class Character {
         // Update ground level
         this.state.groundLevel = currentLevel.getGroundHeight(this.state.cX);
     }
+
+    checkMonstersCollision (currentMonsters) {
+        for (let i = 0; i < currentMonsters.length; i++) {
+
+                let monster = currentMonsters[i];
+            
+                if (monster.state.currentHealth > 0 && this.testCollition(monster)) {
+            
+                    // console.log(this.testCollition(monster));
+                    // TODO Update the y
+                    // We will need a tolerance here
+            
+                    // Player kills monster
+                    if (this.state.y < monster.state.y && this.state.isFalling && this.state.velocityY > 10) {
+                        console.log("KILLING!!");
+            
+                        this.state.velocityY -= 10;
+                        console.log("Monsted died!")
+                        monster.die();
+                    // Damage from monsters
+                    
+                    } else {
+                        console.log("NOT KILLING");
+                        this.state.isTakingDamage = true;
+                        this.state.currentHealth -= 1;
+                        this.monsterX = monster.state.cX; // storing mosnter center into player    
+                    }
+                }
+            }
+    }
+
 
     /*  
     ╭━╮╭━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╭╮
