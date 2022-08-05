@@ -3,7 +3,7 @@ import { GameState } from './source/classes/GameState.js'
 import { Level } from './source/classes/Level.js'
 import { InputHandler } from './source/classes/InputHandler.js'
 import { MiniMap } from './source/classes/MiniMap.js'
-import { Viewport } from './source/classes/Viewport.js'
+import { Viewport } from './source/classes/ViewPort.js'
 import { AudioPlayer } from './source/classes/AudioPlayer.js'
 
 import { importImage } from './source/helpers/importImage.js'
