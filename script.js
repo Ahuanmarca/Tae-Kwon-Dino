@@ -79,12 +79,17 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
     const levels = [];
     levelsInfo.forEach(levelInfo => {
         const tmpLev = new Level(levelInfo);
-        tmpLev.monsters = getMonsters(tmpLev.startingState, monstersInfo);
+        // tmpLev.monsters = getMonsters(tmpLev.startingState, monstersInfo);
         levels.push(tmpLev);
     })
 
     const currentPlayer = new Player({x: 40, y: 100}, spriteInfo); // TODO rename spriteInfo
-    let currentMonsters = levels[gameState.currentLevel].monsters;
+
+    // TODO Go back to creating different monsters for each level
+    const currentMonsters = getMonsters(levels[0].startingState, monstersInfo);    
+    // console.log(currentMonsters);
+
+    // let currentMonsters = levels[gameState.currentLevel].monsters;
 
     const input = new InputHandler();
     const currentMiniMap = new MiniMap(levels[gameState.currentLevel], currentPlayer, miniMapScale);
@@ -191,7 +196,7 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
     animate();
 
-    // console.log("currentLevel", levels[gameState.currentLevel]);
+    console.log("currentLevel", levels[gameState.currentLevel]);
     // console.log("currentPlayer", currentPlayer);
     // console.log("currentMonsters", currentMonsters);
     // console.log('currentViewPort', currentViewPort);

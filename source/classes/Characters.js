@@ -183,6 +183,9 @@ export class Character {
     }
 
     
+
+
+
     checkMonstersCollision (currentMonsters) {
         this.state.isTakingDamage = false;
         
@@ -192,21 +195,20 @@ export class Character {
             
                 if (monster.state.currentHealth > 0 && this.testCollition(monster)) {
             
-                    // console.log(this.testCollition(monster));
-                    // TODO Update the y
-                    // We will need a tolerance here
-            
+                    // TODO Update mosnter's cY
+                    // TODO We will need a tolerance
+
+                    // Clues: console.log result is different if I print the values vs the whole objects
+                    // console.log("player:", this, "monster:", monster);
+                    // console.log("player's y:", this.state.y, "monster's y:", monster.state.y)
+
                     // Player kills monster
                     if (this.state.y < monster.state.y && this.state.isFalling && this.state.velocityY > 10) {
-                        console.log("KILLING!!");
-            
-                        this.state.velocityY -= 10;
-                        console.log("Monsted died!")
+                        this.state.velocityY -= 20;
                         monster.die();
-                        
                     // Damage from monsters
                     } else {
-                        console.log("NOT KILLING");
+                    //    console.log("NOT KILLING");
                         this.state.isTakingDamage = true;
                         this.state.currentHealth -= 1;
                         this.monsterX = monster.state.cX; // storing mosnter center into player    
@@ -448,32 +450,29 @@ export class Character {
         return [[tlX, tlY], [brX, brY]];
     }
 
-    // TODO I need to know different types of collition
-    // Player hits enemy from above
-    // Enemy is to the right when the collition happens
-    // Enemmy is to the left when the collition happens
-    // Can I use this function to return that as well?
+    
+    /*
+    ---------------------------------------
+    This was the home of the Mystery Bug 🐛
+    --------------------------------------- */
+
     testCollition(gameObject) {
+
         const [tl, br] = this.boundingBox();
         const [_tl, _br] = gameObject.boundingBox();
 
-        // collition happens if any of the two corners of gameObject is within our two corners
+        // collition happens if any of the four corners of gameObject is within our bounding box
 
-        // Top left of the Monster is inside of the player's bounding box
-        if        (tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1] ) {
-            return true;
-        // Bottom right of the Monster is inside of player's bounding box
-        } else if (tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1] )  {
-            return true;
-            // Top left of player is inside Monster bounding box
-        } else if (_tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1] ) {
-            return true;
-        // Bottom right of player is inside Monster bounding box
-        } else if (_tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1] )  {
-            return true;
-        } else {
-            return false;
-        }
+        if (        tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1])   return true;
+        else if (   tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1])   return true;
+        else if (   tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1])   return true;
+        else if (   tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1])   return true;
+        else if (   _tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1])   return true;
+        else if (   _tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1])   return true;
+        else if (   _tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1])   return true;
+        else if (   _tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1])   return true;
+        else return false;
+
     }
 
     // getCollitionRelation(gameObject) {
