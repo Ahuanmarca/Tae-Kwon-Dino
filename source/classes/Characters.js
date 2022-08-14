@@ -52,6 +52,7 @@ export class Character {
             isFacingRight: true,
             isFacingLeft: false,
             isTakingDamage: false,
+            isHurting: false,
 
             currentHealth: this.metadata.startingHealth,
 
@@ -180,10 +181,11 @@ export class Character {
 
         // Update ground level
         this.state.groundLevel = currentLevel.getGroundHeight(this.state.cX);
+
+        // Hurting State (For Sprite Animation)
+        this.state.isGrounded && (this.state.isHurting = false);
+        this.state.isTakingDamage && (this.state.isHurting = true);
     }
-
-    
-
 
 
     checkMonstersCollision (currentMonsters) {
@@ -262,32 +264,6 @@ export class Character {
                 ArrowLeft && (this.state.velocityX -= this.state.movementSpeed*this.state.runSpeedMultiplier);
             }
 
-            // Push back
-            // TODO Push back must take away the control for an instant
-            // TODO Push back must turn the player so it faces the enemy, before doing the push back itself
-            // I need the enemy position
-            if (this.state.currentHealth > 0 && this.state.isTakingDamage) {
-
-                // ! Problem: when chasing monster from right to left, player forces throuhg monster
-                // TODO Fix it!
-
-                if (this.monsterX >= this.state.cX) { // This means monster is to the right
-                    this.state.isFacingRight = true;                    
-                    this.state.isFacingLeft = false;
-                } else { // monster to the left
-                    this.state.isFacingRight = false;                    
-                    this.state.isFacingLeft = true;
-                }
-                
-                if (this.state.isFacingRight) {
-                    this.state.velocityX -= 7;
-                    this.state.velocityY -= 7;
-                } else {
-                    this.state.velocityX += 7;
-                    this.state.velocityY -= 7;
-                }
-
-            }
         }
     }
 
@@ -382,9 +358,10 @@ export class Character {
 
         // Jumping Sprite
         !this.state.isGrounded && this.setActionSprite(this.metadata.actionSprites.jump);
+        // input.keysDict.ArrowUp && this.setActionSprite(this.metadata.actionSprites.jump);
 
         // Taking Damage
-        this.state.isTakingDamage && this.setActionSprite(this.metadata.actionSprites.hurt);
+        this.state.isHurting && this.setActionSprite(this.metadata.actionSprites.hurt);
     }
 
     setDirectionSprite(directionSprite) {
@@ -528,6 +505,17 @@ export class Character {
 
         return [previousGroundLevel > currentLevel.levelHeight, nextGroundLevel > currentLevel.levelHeight]
     }
+
+    turnRight() {
+        this.state.isFacingRight = true;
+        this.state.isFacingLeft = false;
+    }
+
+    turnLeft() {
+        this.state.isFacingRight = false;
+        this.state.isFacingLeft = true;
+    }
+
 } // ! Character Class definition ends here !!
 
 
