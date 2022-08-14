@@ -8,7 +8,12 @@
 
 table {
     border: 1px solid black;
+    border-collapse: collapse;
+    font-size: 0.7em;
+    font-family: 'Courier New', Courier, monospace;
+    /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); */
 }
+
 td {
     border: 1px solid black;
     width: 160px;
@@ -18,13 +23,6 @@ td {
 #columnsContainer {
     display: flex;
     justify-content: space-around;
-}
-
-table {
-    border-collapse: collapse;
-    font-size: 0.8em;
-    font-family: 'Courier New', Courier, monospace;
-    /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); */
 }
 
 #column1 {

@@ -185,7 +185,8 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
         audioPlayer.update(currentPlayer, gameState);
 
         // Debugger
-        showVariables("player state", gameState, currentPlayer.state);
+        showVariables("playerState", gameState, currentPlayer.state);
+        showVariables("monster01", gameState, currentMonsters[0].state);
         showVariables("gameState", gameState, gameState);
         // showVariables("currentViewPort", gameState, currentViewPort);
         // console.log(gameState.isActive);
