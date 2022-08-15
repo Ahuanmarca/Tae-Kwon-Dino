@@ -92,7 +92,9 @@ export class Character {
             this.fallDamage();
         }
         this.updateAnimation();
-        this.checkMonstersCollision(currentMonsters);
+
+        // TODO Refactor the collision tracking to it's own function????????
+        // this.checkMonstersCollision(currentMonsters);
     }
 
     fallDamage() {
@@ -169,17 +171,22 @@ export class Character {
         // Grounded State 
         const difference = (this.state.groundLevel - this.metadata.spriteHeight) - this.state.y;
         this.state.isGrounded = difference <= 6.5;
-        // this.state.isGrounded = (this.state.groundLevel - this.metadata.spriteHeight) === this.state.y;
 
         // Update neighbors
         this.state.centerTile = currentLevel.getTileInfo(this.state.cX);
-        this.state.leftTile = currentLevel.getTileInfo(this.boundingBox()[0][0]);
-        this.state.rightTile = currentLevel.getTileInfo(this.boundingBox()[1][0]);
+        this.state.leftTile = currentLevel.getTileInfo(this.boundingBox().left);
+        this.state.rightTile = currentLevel.getTileInfo(this.boundingBox().right);
 
         // Update center x
         this.state.cX = this.state.x + this.metadata.spriteWidth / 2;
 
+        // Update center y
+        this.state.cY = this.state.x + this.metadata.spriteHeight / 2;
+
         // Update ground level
+        // TODO Apparently there is a bug because the player and monster
+        // are computing their ground levels differently at the beginning
+        // of the level
         this.state.groundLevel = currentLevel.getGroundHeight(this.state.cX);
 
         // Hurting State (For Sprite Animation)
@@ -187,33 +194,31 @@ export class Character {
         this.state.isTakingDamage && (this.state.isHurting = true);
     }
 
-
-    checkMonstersCollision (currentMonsters) {
+    // TODO We will need a tolerance for the edge cases
+    trackCollisions (currentMonsters) {
         this.state.isTakingDamage = false;
         
         for (let i = 0; i < currentMonsters.length; i++) {
-
                 let monster = currentMonsters[i];
             
-                if (monster.state.currentHealth > 0 && this.testCollition(monster)) {
-            
-                    // TODO Update mosnter's cY
-                    // TODO We will need a tolerance
-
-                    // Clues: console.log result is different if I print the values vs the whole objects
-                    // console.log("player:", this, "monster:", monster);
-                    // console.log("player's y:", this.state.y, "monster's y:", monster.state.y)
-
+                if (monster.state.currentHealth > 0 && this.testCollision(monster)) {
                     // Player kills monster
                     if (this.state.y < monster.state.y && this.state.isFalling && this.state.velocityY > 10) {
                         this.state.velocityY -= 20;
                         monster.die();
                     // Damage from monsters
                     } else {
-                    //    console.log("NOT KILLING");
                         this.state.isTakingDamage = true;
                         this.state.currentHealth -= 1;
-                        this.monsterX = monster.state.cX; // storing mosnter center into player    
+                        // this.monsterX = monster.state.cX; // storing monster center into player
+
+                        // Make sure player is facing monster
+                        this.state.x < monster.state.x && this.turnRight();
+                        this.state.x > monster.state.x && this.turnLeft();
+                        // Push back to opposing side
+                        this.state.velocityY -= 10;
+                        this.state.isFacingRight && (this.state.velocityX -= 7)
+                        this.state.isFacingLeft && (this.state.velocityX += 7)
                     }
                 }
             }
@@ -252,6 +257,9 @@ export class Character {
         if (this.touchingBarrier(currentLevel)) {
             this.state.velocityX = 0;
         } else {
+
+            if (this.state.isHurting) return; // Can't control player while hurting
+
             // Walking velocity
             if (!Shift) {
                 ArrowRight && (this.state.velocityX += this.state.movementSpeed);
@@ -419,70 +427,39 @@ export class Character {
     Convenience functions
     ------------------------------------------- */
 
-    boundingBox() { // Corners are top left and bottom right
-        const tlX = this.state.x + this.metadata.boundingBoxOffset; // offset to inside of sprite for contact
-        const tlY = this.state.y;
-        const brX = this.state.x + this.metadata.spriteWidth - this.metadata.boundingBoxOffset;
-        const brY = this.state.y + this.metadata.spriteHeight;
-        return [[tlX, tlY], [brX, brY]];
+
+    // Returns top, bottom, left and right values
+    boundingBox() {
+        return {
+            top: this.state.y,
+            bottom: this.state.y + this.metadata.spriteHeight,
+            left: this.state.x + this.metadata.boundingBoxOffset, // offset to inside of sprite for contact
+            right: this.state.x + this.metadata.spriteWidth - this.metadata.boundingBoxOffset,
+        }
     }
 
-    
-    /*
-    ---------------------------------------
-    This was the home of the Mystery Bug 🐛
-    --------------------------------------- */
 
-    testCollition(gameObject) {
+    testCollision(gameObject) {
+        const playerBox = this.boundingBox();
+        const monsterBox = gameObject.boundingBox();
 
-        const [tl, br] = this.boundingBox();
-        const [_tl, _br] = gameObject.boundingBox();
-
-        // collition happens if any of the four corners of gameObject is within our bounding box
-
-        if (        tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1])   return true;
-        else if (   tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1])   return true;
-        else if (   tl[0] <= _br[0] && _br[0] <= br[0] && tl[1] <= _tl[1] && _tl[1] <= br[1])   return true;
-        else if (   tl[0] <= _tl[0] && _tl[0] <= br[0] && tl[1] <= _br[1] && _br[1] <= br[1])   return true;
-        else if (   _tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1])   return true;
-        else if (   _tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1])   return true;
-        else if (   _tl[0] <= br[0] && br[0] <= _br[0] && _tl[1] <= tl[1] && tl[1] <= _br[1])   return true;
-        else if (   _tl[0] <= tl[0] && tl[0] <= _br[0] && _tl[1] <= br[1] && br[1] <= _br[1])   return true;
-        else return false;
-
+        // Testing for absense of collision first
+        if (    playerBox.bottom < monsterBox.top || 
+                playerBox.top > monsterBox.bottom || 
+                playerBox.right < monsterBox.left || 
+                playerBox.left > monsterBox.right) {
+            return false;
+        }
+        return true;
     }
 
-    // getCollitionRelation(gameObject) {
 
-    //     const [tl, br] = this.boundingBox();
-    //     const [_tl, _br] = gameObject.boundingBox();
-
-    //     if (br[0] == _tl[0]) {
-
-    //         const toAttach = document.createElement("p");
-    //         toAttach.innerText = "fromRight"
-    //         document.querySelector("#toAttach").appendChild(toAttach);
-
-    //         return "fromRight";
-
-    //     } else if (tl[0] == _br[0]) {
-
-    //         const toAttach = document.createElement("p");
-    //         toAttach.innerText = "fromLeft"
-    //         document.querySelector("#toAttach").appendChild(toAttach);
-
-    //         return "fromLeft";
-    //     }
-
-    // }
-
-    
     // TODO Can I use the boundingBox() function instead of all this?
     touchingBarrier(currentLevel) {
 
         const tolerance = 30;
-        const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[0][0]);
-        const nextGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[1][0]);
+        const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox().left);
+        const nextGroundLevel = currentLevel.getGroundHeight(this.boundingBox().right);
 
         const nextGroundLevelIsHigher = nextGroundLevel + tolerance < (this.state.y + this.metadata.spriteHeight);
         const previousGroundLevelIsHigher = previousGroundLevel + tolerance < this.state.y + this.metadata.spriteHeight
@@ -502,7 +479,6 @@ export class Character {
     onCliffBorder(currentLevel) {
         const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[0][0]);
         const nextGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[1][0]);
-
         return [previousGroundLevel > currentLevel.levelHeight, nextGroundLevel > currentLevel.levelHeight]
     }
 
@@ -555,6 +531,7 @@ export class Monster extends Character {
         this.state.velocityY = 10;
     }
 
+
     patrolPlatform() {
 
         // !Problem: Need to ckeck if rightTime is null because it's indexed before it's defined
@@ -595,26 +572,18 @@ export class Monster extends Character {
                     return fakeKeypress(["ArrowLeft", "Shift"]);
                 }
 
-
             } else if (currentPlayer.state.x > this.state.x + this.metadata.spriteWidth - 36 && !this.onCliffBorder(currentLevel)[1]) {
-
 
                 if (this.touchingBarrier(currentLevel)) {
                     return fakeKeypress(["ArrowRight", "Shift", "ArrowUp"]);
                 } else {
                     return fakeKeypress(["ArrowRight", "Shift"]);
                 }
-
-
             } else {
                 return fakeKeypress([]);
             }
-
         } else {
             return fakeKeypress([]);
         }
-
-
     }
-
 }

@@ -10,7 +10,6 @@ import { importImage } from './source/helpers/importImage.js'
 import { getMonsters } from './source/helpers/getMonsters.js'
 import { showVariables } from './source/helpers/showVariables.js'
 import { resetLevel } from './source/helpers/resetLevel.js'
-import { fakeKeypress } from './source/helpers/fakeKeypress.js'
 
 /*
     ╭━━━━╮╱╱╱╱╱╭╮╭━╮╱╱╱╱╱╱╱╱╱╱╭━━━╮
@@ -85,12 +84,8 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
     const currentPlayer = new Player({x: 40, y: 100}, spriteInfo); // TODO rename spriteInfo
 
-    // TODO Go back to creating different monsters for each level
+    // TODO Fix bug: monsters not loading on other levels, just repeating monsters from first level
     const currentMonsters = levels[gameState.currentLevel].monsters;
-    // const currentMonsters = getMonsters(levels[0].startingState, monstersInfo);    
-    // console.log(currentMonsters);
-
-    // let currentMonsters = levels[gameState.currentLevel].monsters;
 
     const input = new InputHandler();
     const currentMiniMap = new MiniMap(levels[gameState.currentLevel], currentPlayer, miniMapScale);
@@ -132,6 +127,11 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
             currentMonsters.forEach(currentMonster => {
                 currentMonster.update(currentMonster.generateInput(levels[gameState.currentLevel], currentPlayer), levels[gameState.currentLevel]);
             });
+
+            // TODO Refactor trackCollisions to a class that takes care of tracking all collisions
+            // The class should call each object's own methods for testing / tracking collisions
+            // Using Player's own method for now...
+            currentPlayer.trackCollisions(currentMonsters);
 
             // Viewport: renders tiles, player and background drawings
             currentViewPort.update(levels[gameState.currentLevel], currentPlayer, currentMonsters, gameState, context);
@@ -189,8 +189,6 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
         showVariables("playerState", gameState, currentPlayer.state);
         showVariables("monster01", gameState, currentMonsters[0].state);
         showVariables("gameState", gameState, gameState);
-        // showVariables("currentViewPort", gameState, currentViewPort);
-        // console.log(gameState.isActive);
 
         gameState.updateFrames();
         requestAnimationFrame(animate);
@@ -200,8 +198,5 @@ function runGame(levelsInfo, spriteInfo, monstersInfo) {
 
     console.log("currentLevel", levels[gameState.currentLevel]);
     console.log("currentPlayer", currentPlayer);
-    // console.log("currentMonsters", currentMonsters);
-    // console.log('currentViewPort', currentViewPort);
-    // console.log('currentMiniMap', currentMiniMap);
 
 }
