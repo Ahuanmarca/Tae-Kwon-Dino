@@ -477,8 +477,8 @@ export class Character {
     }
 
     onCliffBorder(currentLevel) {
-        const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[0][0]);
-        const nextGroundLevel = currentLevel.getGroundHeight(this.boundingBox()[1][0]);
+        const previousGroundLevel = currentLevel.getGroundHeight(this.boundingBox().left);
+        const nextGroundLevel = currentLevel.getGroundHeight(this.boundingBox().right);
         return [previousGroundLevel > currentLevel.levelHeight, nextGroundLevel > currentLevel.levelHeight]
     }
 
@@ -534,56 +534,33 @@ export class Monster extends Character {
 
     patrolPlatform() {
 
-        // !Problem: Need to ckeck if rightTime is null because it's indexed before it's defined
-        // TODO: Try to fix it, so I can avoid the nesting
-        // Problem is also happening on other behaviors. Will happen on every behavior, I think
+        // Beware: righTile and leftTile are checked before they are defined
+        (this.state.rightTile?.type != "_") && this.turnLeft();
+        (this.state.leftTile?.type != "_") && this.turnRight();
 
-        if (this.state.rightTile) {
-            
-            if (this.state.rightTile.type != "_") {
-                this.state.isFacingRight = false;
-                this.state.isFacingLeft = true;
-            }
-            
-            if (this.state.leftTile.type != "_") {
-                this.state.isFacingRight = true;
-                this.state.isFacingLeft = false;
-            }
-            
-            if (this.state.isFacingRight) {
-                return fakeKeypress(["ArrowRight"]);
-            } else {
-                return fakeKeypress(["ArrowLeft"]);
-            }
+        if (this.state.isFacingRight) {
+            return fakeKeypress(["ArrowRight"]);
         } else {
             return fakeKeypress(["ArrowLeft"]);
         }
     }
 
+    // follow player, jumps over barriers, stops at cliffs
     followPlayer(currentLevel, currentPlayer) {
 
-        if (this.state.rightTile) {
-
-            if (currentPlayer.state.x + currentPlayer.metadata.spriteWidth - 36 < this.state.x && !this.onCliffBorder(currentLevel)[0]) {
-
-                if (this.touchingBarrier(currentLevel)) {
-                    return fakeKeypress(["ArrowLeft", "Shift", "ArrowUp"]);
-                } else {
-                    return fakeKeypress(["ArrowLeft", "Shift"]);
-                }
-
-            } else if (currentPlayer.state.x > this.state.x + this.metadata.spriteWidth - 36 && !this.onCliffBorder(currentLevel)[1]) {
-
-                if (this.touchingBarrier(currentLevel)) {
-                    return fakeKeypress(["ArrowRight", "Shift", "ArrowUp"]);
-                } else {
-                    return fakeKeypress(["ArrowRight", "Shift"]);
-                }
+        if (currentPlayer.state.x + currentPlayer.metadata.spriteWidth - 36 < this.state.x && !this.onCliffBorder(currentLevel)[0]) {
+            if (this.touchingBarrier(currentLevel)) {
+                return fakeKeypress(["ArrowLeft", "Shift", "ArrowUp"]);
             } else {
-                return fakeKeypress([]);
+                return fakeKeypress(["ArrowLeft", "Shift"]);
             }
-        } else {
-            return fakeKeypress([]);
+        } else if (currentPlayer.state.x > this.state.x + this.metadata.spriteWidth - 36 && !this.onCliffBorder(currentLevel)[1]) {
+            if (this.touchingBarrier(currentLevel)) {
+                return fakeKeypress(["ArrowRight", "Shift", "ArrowUp"]);
+            } else {
+                return fakeKeypress(["ArrowRight", "Shift"]);
+            }
         }
+        return fakeKeypress([]);
     }
 }
